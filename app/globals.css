@@ -2954,3 +2954,9 @@ html[data-theme=light] .media-showcase-card{background:#ffffff!important;border-
 .work-section,.creator-band,.ticker,.project-art,.project-card.red .project-art,.project-card.white .project-art{background:#000000!important}
 html[data-theme=light] .work-section,html[data-theme=light] .creator-band,html[data-theme=light] .ticker,html[data-theme=light] .project-art,html[data-theme=light] .project-card.red .project-art,html[data-theme=light] .project-card.white .project-art{background:#ffffff!important}
 main::before,main::after{display:none!important;background:none!important;box-shadow:none!important;filter:none!important}
+
+/* Accessibility contrast correction: retain pure monochrome canvases. */
+.hero-art-heading > span,
+.hero-art-footer > span { color: #a3a3a3 !important; }
+html[data-theme="light"] .hero-art-heading > span,
+html[data-theme="light"] .hero-art-footer > span { color: #555555 !important; }
