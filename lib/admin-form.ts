@@ -6,6 +6,7 @@ const TIMESTAMP_FIELDS = new Set(["published_at"]);
 const NUMBER_FIELDS = new Set(["sort_order", "size_bytes"]);
 const EMAIL_FIELDS = new Set(["email"]);
 const URL_FIELDS = new Set([
+  "href",
   "url",
   "youtube_url",
   "live_url",

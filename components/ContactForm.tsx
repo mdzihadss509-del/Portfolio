@@ -6,15 +6,16 @@ export default function ContactForm() {
   const [state,setState]=useState<'idle'|'sending'|'sent'|'error'>('idle');
   const [message,setMessage]=useState('');
   async function submit(event:React.FormEvent<HTMLFormElement>) {
+    const formElement = event.currentTarget;
     event.preventDefault();
     setState('sending');setMessage('');
-    const form=new FormData(event.currentTarget);
+    const form=new FormData(formElement);
     const payload={name:String(form.get('name')||''),email:String(form.get('email')||''),subject:String(form.get('subject')||''),message:String(form.get('message')||''),website:String(form.get('website')||'')};
     try {
       const response=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const result=await response.json();
       if(!response.ok)throw new Error(result.error||'Unable to send your message.');
-      setState('sent');setMessage('Your message has been sent. Thank you for reaching out.');event.currentTarget.reset();
+      setState('sent');setMessage('Your message has been sent. Thank you for reaching out.');formElement.reset();
     } catch(error) {setState('error');setMessage(error instanceof Error?error.message:'Something went wrong. Please try again.');}
   }
   return <form className="contact-form" onSubmit={submit}>

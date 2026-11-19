@@ -1,7 +1,7 @@
 # Project Context — HADES Portfolio CMS
 
 **Last audited:** 2026-11-19 (Asia/Dhaka)
-**Status:** In progress. This project is not production-ready.
+**Status:** Live production deployment; code and public-site automated checks pass. Final production sign-off remains conditional on owner-only Admin/storage workflows, content population, recovery planning and hosting-plan compliance.
 **GitHub repository:** https://github.com/mdzihadss509-del/Portfolio
 **Default branch:** main
 **Local project:** `C:\Users\zihad\hades-portfolio`
@@ -65,7 +65,7 @@ Core source files:
 - `app/layout.tsx` — root layout and dynamic metadata.
 - `app/globals.css` — global theme, layout and component styles; currently a large stylesheet with historical overrides. Inspect the cascade before editing.
 - `app/admin/page.tsx` — Admin sign-in, CMS navigation, generic editor, CRUD and upload/delete handlers.
-- `app/api/contact/route.ts` — contact validation, honeypot, basic in-memory rate limit and Supabase insert.
+- `app/api/contact/route.ts` — origin/content-type validation, streaming JSON body cap, honeypot, validation and Supabase insert; current Vercel firewall enforces shared IP rate limiting.
 - `app/blog/[slug]/page.tsx` — article detail and metadata.
 - `components/ContactForm.tsx` — public contact form.
 - `components/ContentIcon.tsx` — Lucide icons, brand SVGs and custom icon URLs.
@@ -77,7 +77,7 @@ Core source files:
 - `lib/admin-form.ts` — Admin input conversion and validation.
 - `lib/supabase.ts` — browser Supabase client.
 - `public/icons/*.svg` — 11 social platform icons.
-- `tests/portfolio.spec.ts` — seven Playwright tests.
+- `tests/portfolio.spec.ts` — Playwright browser, contact API, form interaction, accessibility, Admin gate and navigation validation tests.
 - `supabase/migrations/` — local SQL setup/reference files.
 
 The homepage uses `getPortfolioData()` and refreshes data every 60 seconds. Main CMS sections are driven by the `sections` table; other collections render when corresponding rows are published/visible. Media Archive appears when `media_assets` has records with a non-null `public_url`, and its navigation item is added automatically if needed.
@@ -378,3 +378,51 @@ pm audit --omit=dev --audit-level=low reports 0 vulnerabilities. git diff --chec
 - GitHub commit `6b86c30777cda1f06d9ebafba41b7d98ecd6102f` was auto-deployed by Vercel as production deployment `dpl_KpPoEYLLdudbVHZStuW4keyjwdfF`; status **READY**, alias `hades-portfolio-amber.vercel.app`.
 - Post-deploy live browser regression confirms no serious/critical axe violations in dark or light theme, no JS/console errors or failed network responses, responsive widths 320–1440px without overflow, working hero entrance, CTA -3px hover, and CSS spinner. Live route smoke: `/`, `/admin`, `/robots.txt`, `/sitemap.xml` HTTP 200; QA fixture HTTP 404 and contact GET HTTP 405 as intended.
 - Vercel build still logs `npm warn Unknown env config "cache-dir"` during install and build. Confirmed there is no repository `.npmrc` and no project `NPM_CONFIG_*` environment variable. This matches a recently reported Vercel build-environment injection of `npm_config_cache_dir`, not a source/app configuration warning; track as a platform warning rather than adding a brittle workaround: https://vercel-community-mu.vercel.sh/t/npm-warn-unknown-env-config-cache-dir-caused-by-vercel-build-environment/51678.
+
+
+## 20. Production hardening pass — 2026-11-19 23:46 Asia/Dhaka
+
+### Code changes
+
+- Hardened `POST /api/contact`: rejects a mismatched Origin with 403, non-JSON content types with 415, malformed JSON and non-object bodies with 400, and requests above 16 KiB with 413. The body cap is enforced while streaming the request rather than after buffering the whole payload. Validated field lengths/email, retained the honeypot, and added `Cache-Control: no-store` to JSON responses. Shared IP rate limiting continues to be enforced at the active Vercel firewall.
+- Fixed a contact-form async event bug: capture the form element before awaiting fetch, then reset the captured form after a successful response. Added a browser interaction test for success feedback, form reset and button recovery.
+- Added global response headers: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, a restrictive Permissions Policy, and CSP `frame-ancestors 'none'`.
+- Removed the wildcard remote-image optimizer hostname from Next config. All current Next Image instances already use `unoptimized`, so images continue to load directly from their configured source without exposing a broad optimizer fetch target.
+- Added validation for Admin navigation `href` values. Executable URL schemes such as `javascript:` are rejected; internal anchors such as `#about` remain valid.
+- Improved Admin Storage hygiene: upload paths use UUIDs; newly uploaded but unsaved objects are tracked and removed on Cancel/navigation/sign-out or after a successful save when unreferenced. Navigation/cancel/sign-out controls are disabled while an upload or save is in progress to avoid racing cleanup.
+
+### Local verification
+
+- `npm run lint`: passed, 0 warnings/errors.
+- `npx tsc --noEmit`: passed.
+- `npm run build`: passed.
+- `npm run test:e2e`: **18/18 passed**. Tests cover home/navigation, both themes, responsive layouts, 3D/reduced motion, active hero/CTA/loader/reveal, media gallery and preview, no-store, security headers, unsafe URL rejection, SEO endpoints, dark/light serious/critical axe scans, contact success/reset, contact API cross-origin/malformed/null/non-JSON/oversize/honeypot/method checks and Admin sign-in screen.
+- `npm audit --audit-level=low`: **0 vulnerabilities**.
+- `git diff --check`: passed.
+- Tests use a local SVG QA fixture only; no demo rows or real contact messages were written to production.
+
+### Current live Supabase data and advisors
+
+Read-only row counts at this audit: 6 sections, 4 navigation items and 1 social link; 0 projects, skills, experiences, education, services, articles, videos, testimonials, categories, media assets and contact messages. Add only owner-approved real portfolio content; do not seed invented examples.
+
+- Health Advisor: no findings.
+- Security Advisor: one WARN, `auth_leaked_password_protection`. Supabase documents this feature as Pro+ only; the connected organization is Free. Do not report it enabled or upgrade the plan without approval.
+- Performance Advisor: two INFO unused indexes (`admin_audit_logs_actor_id_idx`, `articles_category_id_idx`). Retain them until real workload data supports a change.
+- Supabase Free projects may pause after a week of low activity, and Free projects do not include automatic database backups. An encrypted off-site export and restore test are still required for durable operations.
+
+### Hosting / business-use constraint
+
+The live project currently runs on Vercel Hobby. Vercel Terms restrict Hobby to personal or non-commercial use. This portfolio's documented purpose includes attracting freelance/client enquiries; if used to generate financial gain, the current Hobby host plan is not compliant. Official terms: https://vercel.com/legal/terms and fair-use guidelines: https://vercel.com/docs/limits/fair-use-guidelines.
+
+Netlify currently states its Free plan permits commercial use and supports Next.js App Router/SSR. Migrating would require the owner to connect the repository/account, configure the public Supabase environment variables, recreate the contact rate-limit rule and verify a Netlify preview before moving production traffic. No Netlify account/CLI integration is currently connected, so the verified Vercel site has intentionally been left live rather than silently switching hosts. References: https://www.netlify.com/pricing/ ; https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/ ; https://docs.netlify.com/manage/security/secure-access-to-sites/rate-limiting/.
+
+### Still required for full production sign-off
+
+1. Owner-authenticated test of Admin create/edit/delete, branding/social persistence and real Storage upload/replace/delete. The current automated suite tests the Admin gate and UI logic, not an owner session.
+2. Populate projects, skills, work history, articles, testimonials and media with real approved content. Current database collections are empty as listed above.
+3. Choose a hosting plan/provider compliant with the site's intended commercial use. For a $0 commercial option, assess and authorize Netlify Free migration; otherwise use an eligible commercial Vercel plan.
+4. Configure an owner-controlled custom domain if desired; only `hades-portfolio-amber.vercel.app` is attached now.
+5. Set up an encrypted off-site Supabase backup and perform a restore test; Free does not provide automatic backups.
+6. Leaked Password Protection remains a paid Supabase Auth feature; two unused-index INFO notices remain non-blocking.
+
+**Status:** App-side code and public-site automated checks are passing. The production deployment is live on the existing Vercel project. Do not describe the site as 100% production-ready for commercial use until the hosting-plan constraint, owner-only Admin/media verification, real content, and recovery arrangements are resolved.

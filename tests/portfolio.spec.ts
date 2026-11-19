@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { buildAdminPayload } from '../lib/admin-form';
 
 test.describe('Portfolio public experience', () => {
   test('homepage renders with one primary heading and working navigation targets', async ({ page }) => {
@@ -148,6 +149,23 @@ test.describe('Portfolio public experience', () => {
     expect(response.headers()['cache-control'] || '').toMatch(/no-store|no-cache/);
   });
 
+  test('production security headers are present on public pages', async ({ request }) => {
+    const response = await request.get('/');
+    expect(response.status()).toBe(200);
+    const headers = response.headers();
+    expect(headers['x-content-type-options']).toBe('nosniff');
+    expect(headers['x-frame-options']).toBe('DENY');
+    expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
+    expect(headers['permissions-policy']).toContain('camera=()');
+    expect(headers['content-security-policy']).toContain("frame-ancestors 'none'");
+  });
+
+  test('Admin navigation URLs reject executable schemes but allow internal anchors', () => {
+    expect(() => buildAdminPayload('navigation_items', { label: 'Unsafe', href: 'javascript:alert(1)' }))
+      .toThrow('href: enter a valid web address.');
+    expect(buildAdminPayload('navigation_items', { label: 'About', href: '#about' }).href).toBe('#about');
+  });
+
   test('favicon and search crawler endpoints are available', async ({ request }) => {
     const favicon = await request.get('/favicon.svg');
     expect(favicon.status()).toBe(200);
@@ -171,6 +189,74 @@ test.describe('Portfolio public experience', () => {
     await page.getByRole('button', { name: /toggle color theme/i }).click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     await scanTheme('light');
+  });
+});
+
+test.describe('Contact form interaction', () => {
+  test('shows success and resets fields after the API responds', async ({ page }) => {
+    await page.route('**/api/contact', (route) => route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ ok: true }),
+    }));
+    await page.goto('/');
+    const form = page.locator('.contact-form');
+    await form.locator('input[name="name"]').fill('Portfolio QA');
+    await form.locator('input[name="email"]').fill('qa@example.invalid');
+    await form.locator('textarea[name="message"]').fill('This is a successful contact form interaction test.');
+    await form.getByRole('button', { name: /send message/i }).click();
+    await expect(form.getByText(/your message has been sent/i)).toBeVisible();
+    await expect(form.locator('input[name="name"]')).toHaveValue('');
+    await expect(form.locator('input[name="email"]')).toHaveValue('');
+    await expect(form.locator('textarea[name="message"]')).toHaveValue('');
+    await expect(form.getByRole('button', { name: /send message/i })).toBeEnabled();
+  });
+});
+
+test.describe('Contact API validation', () => {
+  test('rejects cross-origin requests before they can write', async ({ request }) => {
+    const response = await request.post('/api/contact', {
+      headers: { Origin: 'https://attacker.example' },
+      data: { name: 'QA', email: 'qa@example.invalid', message: 'This is a rejected origin test.' },
+    });
+    expect(response.status()).toBe(403);
+    expect((await response.json()).error).toBe('Invalid request origin.');
+  });
+
+  test('returns client errors for malformed, null and non-JSON request bodies', async ({ request }) => {
+    const malformed = await request.post('/api/contact', {
+      headers: { 'Content-Type': 'application/json' }, data: '{"name":',
+    });
+    expect(malformed.status()).toBe(400);
+
+    const nullBody = await request.post('/api/contact', {
+      headers: { 'Content-Type': 'application/json' }, data: 'null',
+    });
+    expect(nullBody.status()).toBe(400);
+
+    const wrongType = await request.post('/api/contact', {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, data: 'name=qa',
+    });
+    expect(wrongType.status()).toBe(415);
+  });
+
+  test('rejects oversized payloads and quietly accepts the honeypot', async ({ request }) => {
+    const oversized = await request.post('/api/contact', {
+      headers: { 'Content-Type': 'application/json' },
+      data: JSON.stringify({ name: 'QA', message: 'x'.repeat(17 * 1024) }),
+    });
+    expect(oversized.status()).toBe(413);
+
+    const honeypot = await request.post('/api/contact', {
+      data: { website: 'bot-filled-this', name: '', email: '', message: '' },
+    });
+    expect(honeypot.status()).toBe(200);
+    expect(await honeypot.json()).toEqual({ ok: true });
+  });
+
+  test('contact API only accepts POST', async ({ request }) => {
+    const response = await request.get('/api/contact');
+    expect(response.status()).toBe(405);
   });
 });
 
