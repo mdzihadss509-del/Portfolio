@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
-    icons: branding.favicon_url ? { icon: branding.favicon_url } : undefined,
+    icons: branding.favicon_url ? { icon: branding.favicon_url } : { icon: '/favicon.svg', shortcut: '/favicon.svg' },
     openGraph: { title, description, type: 'website', images: branding.og_image_url ? [branding.og_image_url] : undefined }
   };
 }
