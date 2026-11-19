@@ -329,3 +329,19 @@ pm audit --omit=dev --audit-level=low reports 0 vulnerabilities. git diff --chec
 - Regression coverage added for no-store homepage response. Media tests now account for the live database state (the media-preview test is skipped when there are no currently published image assets; this avoids assuming demo rows exist).
 - Verification: `npm run build` passed; `npx tsc --noEmit` passed; Playwright **9 passed, 1 skipped** (skip is because production media_assets currently has zero rows); serious/critical accessibility test passed. Lint: 0 errors, 6 existing `no-explicit-any` warnings.
 - Local production response smoke test: HTTP 200, cache-control no-store, no stale media gallery in HTML.
+
+## 16. Production QA verification - 2026-11-19
+
+- Re-ran a clean local production build: `npm run build` **passed**. `npx tsc --noEmit` **passed**.
+- Full Playwright production-mode browser suite: **10/10 passed** (homepage/navigation, dark/light theme, responsive widths 320/390/768/1024/1440, motion/reduced-motion, media gallery/filtering, image detail modal/download/close, no-store response, favicon/robots/sitemap, serious/critical axe accessibility, and Admin login gate).
+- `npm run lint`: **0 errors**, 6 non-blocking `no-explicit-any` warnings remain in dynamic Supabase CMS row types (`app/admin/page.tsx`, `app/page.tsx`, `lib/public-data.ts`).
+- `npm audit --omit=dev --audit-level=low`: **0 production dependency vulnerabilities**. `git diff --check`: passed.
+- Live production smoke tests: `/`, `/admin`, `/robots.txt`, `/sitemap.xml` all return HTTP **200**. `/api/contact` GET correctly returns **405**. Homepage and Admin responses send `private, no-cache, no-store` headers.
+- Contact API negative tests: invalid Origin POST returns **403**; invalid payload POST returns **400**. No contact message was inserted during these tests.
+- Read-only database check: all **18/18 public tables** have RLS enabled. Reviewed `contact_messages`, `media_assets`, `site_settings`, `user_roles`, and `storage.objects` policies: public contact insert is anon-only; Admin data mutations require authenticated Admin role; Storage upload/update/delete requires Admin role; public media reads are intentional.
+- Vercel production deployment `dpl_CoxidS7vGzikNmd7MLzWxDiqbx56` is **READY**, attached to `hades-portfolio-amber.vercel.app`, and serves commit `22dbc85356426148009311a3921241678e449765`. Active Firewall config includes the contact POST IP rate limit (5 per 600 seconds).
+- Supabase Health Advisor: no findings. Performance Advisor: only 3 INFO unused indexes (do not remove without workload evidence). Security Advisor: one WARN, Leaked Password Protection disabled; it must be enabled in Supabase Dashboard -> Authentication -> Providers -> Email -> Password security.
+- **Not yet eligible for 100% production sign-off:** owner-authenticated Admin create/edit/delete and real Storage upload/replace/delete have not been exercised; this requires the owner to sign in (no password requested or handled). Supabase leaked-password protection remains disabled. The project currently has only its verified Vercel subdomain; no owner custom domain was supplied/configured. GitHub automatic deployment linkage is not confirmed; the current production deployment is READY, but do not assume every future push auto-deploys.
+- No production content or schema was modified during this QA pass. This section records verification only.
+
+**QA status:** Core public website and production deployment are passing automated and HTTP checks. Keep the final production sign-off conditional until the owner completes the authenticated Admin workflow and leaked-password protection is enabled and rechecked.
