@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import {
   Archive,
   ArrowDownToLine,
@@ -132,7 +133,7 @@ function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) 
             onClick={() => setImageOpen(true)}
             aria-label={`View details for image: ${name}`}
           >
-            <img src={url} alt={label} loading="lazy"/>
+            <Image src={url} alt={label} width={1200} height={800} unoptimized loading="lazy"/>
             <span className="media-showcase-preview-corner">VIEW DETAILS <ArrowUpRight size={14}/></span>
           </button>
         )}
@@ -199,7 +200,7 @@ function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) 
           <div className="media-lightbox-panel" onClick={(event) => event.stopPropagation()}>
             <button type="button" className="media-lightbox-close" onClick={() => setImageOpen(false)} aria-label="Close image preview">×</button>
             <div className="media-lightbox-image-wrap">
-              <img src={url} alt={label}/>
+              <Image src={url} alt={label} width={1600} height={1200} unoptimized/>
             </div>
             <div className="media-lightbox-details">
               <span className="media-showcase-type"><ImageIcon size={14}/> IMAGE / MEDIA LIBRARY</span>

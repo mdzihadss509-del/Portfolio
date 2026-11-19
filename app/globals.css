@@ -1441,7 +1441,7 @@ html[data-theme=light] .emblem-orbit-four{border-color:rgba(79,101,133,.38)}
 html[data-theme=light] .hero-explore-link{border-color:rgba(25,31,43,.25);background:linear-gradient(110deg,rgba(18,29,54,.035),rgba(18,29,54,.01))}
 html[data-theme=light] .hero-explore-icon{background:#11141b;color:#fff}
 html[data-theme=light] .hero-explore-link:hover .hero-explore-icon{background:#315fbd;color:#fff}
-@keyframes hero-art-arrive{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes hero-art-arrive{from{transform:translateY(18px) scale(.985)}to{transform:translateY(0) scale(1)}}
 @keyframes emblem-core-presence{0%,100%{transform:translateZ(20px) scale(1);box-shadow:inset 2px 2px 5px rgba(255,255,255,.14),inset -22px -26px 34px rgba(0,0,0,.92),inset 0 0 0 7px rgba(255,255,255,.018),0 19px 36px rgba(0,0,0,.58),0 0 36px rgba(133,108,177,.13)}50%{transform:translateZ(20px) scale(1.012);box-shadow:inset 2px 2px 5px rgba(255,255,255,.18),inset -22px -26px 34px rgba(0,0,0,.92),inset 0 0 0 7px rgba(255,255,255,.018),0 22px 42px rgba(0,0,0,.62),0 0 48px rgba(133,108,177,.22)}}
 @keyframes emblem-reflection-pass{0%,25%{transform:rotate(24deg) translateX(-120%);opacity:0}40%{opacity:.9}68%,100%{transform:rotate(24deg) translateX(155%);opacity:0}}
 @keyframes emblem-edge-runner{to{transform:rotate(360deg)}}

@@ -1,19 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const limits = new Map<string,{count:number;expires:number}>();
-const WINDOW_MS=10*60*1000;
-const MAX_REQUESTS=5;
-
+// Request throttling is enforced at Vercel's shared edge firewall for POST /api/contact.
 export async function POST(request:NextRequest) {
   const origin=request.headers.get('origin');
   const expected=new URL(request.url).origin;
   if(origin && origin!==expected) return NextResponse.json({error:'Invalid request origin.'},{status:403});
-  const ip=(request.headers.get('x-forwarded-for')||'unknown').split(',')[0].trim();
-  const now=Date.now();
-  const bucket=limits.get(ip);
-  if(bucket && bucket.expires>now && bucket.count>=MAX_REQUESTS) return NextResponse.json({error:'Too many messages. Please try again later.'},{status:429});
-  if(!bucket || bucket.expires<=now) limits.set(ip,{count:1,expires:now+WINDOW_MS}); else bucket.count++;
   try {
     const body=await request.json();
     if(typeof body.website==='string' && body.website.trim()) return NextResponse.json({ok:true});

@@ -1,11 +1,11 @@
 # Project Context — HADES Portfolio CMS
 
-**Last audited:** 2026-11-19 (Asia/Dhaka)  
-**Status:** In progress. This project is not production-ready.  
-**GitHub repository:** https://github.com/mdzihadss509-del/Portfolio  
-**Default branch:** main  
-**Local project:** `C:\Users\zihad\hades-portfolio`  
-**Local website:** http://localhost:3000/  
+**Last audited:** 2026-11-19 (Asia/Dhaka)
+**Status:** In progress. This project is not production-ready.
+**GitHub repository:** https://github.com/mdzihadss509-del/Portfolio
+**Default branch:** main
+**Local project:** `C:\Users\zihad\hades-portfolio`
+**Local website:** http://localhost:3000/
 **Admin route:** http://localhost:3000/admin
 
 > Read this file before making future changes. Update the verification results and remaining-work list after each substantial task. Never mark an untested feature as complete.
@@ -296,3 +296,23 @@ Most recent code verification after the PostCSS security override:
 - Contact API rate limit is still process-local; durable distributed/edge rate limiting needs a provider and credentials.
 - Supabase reports 77 multiple-permissive-policy performance notices; do not mass-edit without role/access regression tests.
 - GitHub/Vercel automatic deployment connection remains unverified; verify after the source commit is pushed.
+
+
+## 14. Security hardening — 2026-11-19 20:14 Asia/Dhaka
+
+- Applied live Supabase migration `consolidate_admin_rls_policies` and committed its source at `supabase/migrations/20261119142007_consolidate_admin_rls_policies.sql`.
+- Removed the overlapping Admin `ALL` policies from 16 public tables and replaced them with role-scoped authenticated Admin INSERT/UPDATE/DELETE policies. Contact messages now have a separate authenticated Admin SELECT policy; public contact submissions are restricted to the `anon` role. The safe site-settings SELECT policy explicitly permits the Admin role to read private settings.
+- Verified with a transaction under the actual Admin user's authenticated JWT claims: `private.has_site_role('admin') = true`; the Admin can read project/settings rows and the messages table. The transaction was rolled back and made no data changes.
+- Supabase Performance Advisor no longer reports `multiple_permissive_policies`. It now reports only the 3 previously added FK indexes as unused (INFO; expected until production workload uses them).
+- Supabase Security Advisor still reports only `auth_leaked_password_protection`. This Auth dashboard setting is not exposed by the connected Supabase management tools; enable it in Supabase Dashboard → Authentication → Providers → Email → Password security / Leaked password protection. Do not claim this is enabled until the advisor confirms it.
+- Replaced the contact endpoint's process-local Map limiter. Vercel Firewall is enabled and its active configuration contains a valid custom rule matching only `POST /api/contact`, limiting each client IP to 5 requests per 600 seconds (10 minutes), with deny on excess. This is shared edge enforcement across serverless instances; the application route no longer keeps process-local counters.
+- Replaced all 9 raw `img` elements with Next.js `Image` components using explicit dimensions and `unoptimized` for user-supplied Supabase/brand URLs; replaced Admin internal home anchors with Next.js `Link`.
+- Latest lint run: 0 errors and 6 remaining `no-explicit-any` warnings (3 in Admin dynamic CMS row typing, 1 in homepage branding settings, 2 in public data types). The previous 19 warnings are reduced to 6.
+- Fresh production build after the changes: **passed**, exit code 0. TypeScript check passed.
+- Owner-authenticated Admin media upload/replace/edit/delete still requires the owner to sign in; no password was requested or handled. Leaked Password Protection remains the only Supabase Security Advisor warning.
+- The Vercel Firewall rule was verified active. Full end-to-end production API 429 load testing was intentionally not run because doing so from the owner network would consume its live 10-minute quota.
+
+**Current status:** RLS policy overlap warnings resolved; contact rate limiting moved to shared Vercel edge; all raw image and internal-anchor lint warnings removed. Remaining: enable Auth leaked-password protection in the dashboard, finish 6 type lint warnings, and run authenticated Admin upload/replace/edit/delete with the owner signed in.
+
+- Follow-up regression run after removing the hero-art entrance opacity fade: **9/9 Playwright tests passed**, including automated serious/critical accessibility checks.
+pm audit --omit=dev --audit-level=low reports 0 vulnerabilities. git diff --check passed.

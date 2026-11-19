@@ -1,4 +1,5 @@
 import * as Icons from 'lucide-react';
+import Image from 'next/image';
 
 const LUCIDE_ICONS: Record<string, keyof typeof Icons> = {
   Globe:'Globe', Mail:'Mail', Send:'Send', MessageCircle:'MessageCircle', Gamepad2:'Gamepad2',
@@ -63,9 +64,9 @@ export function defaultSocialIcon(platform:string):string {
 }
 
 export default function ContentIcon({name='Globe',imageUrl,className='',size=18}:{name?:string|null;imageUrl?:string|null;className?:string;size?:number}) {
-  if(imageUrl) return <img src={imageUrl} alt="" className={className} style={{width:size,height:size,objectFit:'contain'}} />;
+  if(imageUrl) return <Image src={imageUrl} alt="" width={size} height={size} unoptimized className={className} style={{objectFit:'contain'}} />;
   const brand=BRAND_ASSETS[name||''];
-  if(brand) return <img src={brand} alt="" className={className} style={{width:size,height:size,objectFit:'contain'}} />;
+  if(brand) return <Image src={brand} alt="" width={size} height={size} unoptimized className={className} style={{objectFit:'contain'}} />;
   const key=LUCIDE_ICONS[name||'Globe'] || 'Globe';
   const Icon=(Icons as unknown as Record<string,React.ComponentType<{size?:number;strokeWidth?:number;className?:string;'aria-hidden'?:boolean}>>)[key] || Icons.Globe;
   return <Icon size={size} strokeWidth={1.8} className={className} aria-hidden={true}/>;
