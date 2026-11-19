@@ -426,3 +426,14 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 6. Leaked Password Protection remains a paid Supabase Auth feature; two unused-index INFO notices remain non-blocking.
 
 **Status:** App-side code and public-site automated checks are passing. The production deployment is live on the existing Vercel project. Do not describe the site as 100% production-ready for commercial use until the hosting-plan constraint, owner-only Admin/media verification, real content, and recovery arrangements are resolved.
+
+
+## 21. Latest production deploy verification — 2026-11-19
+
+- Committed and pushed the hardening pass as `02408c1` (`Harden contact flow and production security`) to GitHub `main`. GitHub auto-created production deployment `dpl_A4JzR8j4yuHCbL6Ls7aaPWPwTtuG`; Vercel reports **READY**, exact commit SHA `02408c1f5fbea2ff02f48fe12b8fbb9355a692dc`, and alias `hades-portfolio-amber.vercel.app`.
+- Live production browser test passed: page HTTP 200; all added headers present; no JS/page/console errors or failed 5xx responses; dark and light axe scans had zero serious/critical violations; no horizontal overflow at 320/390/768/1024/1440px; hero animation and CTA hover work; contact form mock-success displays feedback and resets all fields.
+- Live contact API safe checks: cross-origin POST 403 with `Cache-Control: no-store`; malformed JSON POST 400; GET 405. No production contact row was inserted.
+- Latest Vercel runtime error scan (24h): no error clusters. Runtime warning/error event query (30m): no matching logs. The Vercel build still shows the known platform warning `npm warn Unknown env config "cache-dir"`; the build itself completes successfully.
+- Reconfirmed active custom Vercel firewall rule: POST `/api/contact`, per-IP fixed window, limit 5 per 600 seconds, deny; rule is valid and active. The active core managed security categories are configured to log rather than block; do not represent them as blocking.
+- Reconfirmed only one attached domain: verified Vercel subdomain `hades-portfolio-amber.vercel.app`; no owner-controlled custom domain is configured.
+- Final local checks before deploy: lint 0 warnings/errors, TypeScript pass, production build pass, Playwright **18/18**, npm audit 0 vulnerabilities, `git diff --check` pass. Repository working tree was clean after commit.
