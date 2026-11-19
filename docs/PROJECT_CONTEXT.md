@@ -345,3 +345,12 @@ pm audit --omit=dev --audit-level=low reports 0 vulnerabilities. git diff --chec
 - No production content or schema was modified during this QA pass. This section records verification only.
 
 **QA status:** Core public website and production deployment are passing automated and HTTP checks. Keep the final production sign-off conditional until the owner completes the authenticated Admin workflow and leaked-password protection is enabled and rechecked.
+
+## 17. Git auto-deploy and index advisor follow-up - 2026-11-19
+
+- Vercel Git deployment context confirms project `hades-portfolio` (`prj_i0FEfGBdlXVHhiXkgwVnePBQdRi2`) is linked to GitHub repository `mdzihadss509-del/Portfolio` on the Hobby team.
+- Latest GitHub `main` commit before this verification was `54b0e61` (`chore: verify GitHub to Vercel auto-deploy`), but Vercel returned no deployment for that SHA. Therefore repository linkage is confirmed, while push-triggered auto-deployment is not yet proven.
+- This documentation-only commit is being pushed to `main` as a fresh webhook test. Verify Vercel creates a deployment for its exact SHA before marking auto-deploy as working.
+- Rechecked Supabase Performance Advisor: two INFO findings remain for `admin_audit_logs_actor_id_idx` and `articles_category_id_idx`. Both are non-unique, non-primary B-tree indexes; `pg_stat_user_indexes` reports 0 scans and 8 KiB each.
+- The production DB is newly provisioned (Postgres started 2026-11-18); `admin_audit_logs` currently has 0 estimated live rows and `articles` 0 estimated live rows. The planner has no workload evidence to justify dropping either index. Keep both indexes; revisit after meaningful production traffic and data accumulation.
+- Supabase Health Advisor has no findings. No schema or production data was changed during this check.
