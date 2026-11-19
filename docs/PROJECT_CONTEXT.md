@@ -446,7 +446,7 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 - Found that the public Supabase anon insert policy on contact_messages allowed requests to bypass the Vercel /api/contact endpoint and its 5-per-10-minute IP firewall rule.
 - Added a server-only CONTACT_SUBMISSION_TOKEN to the Vercel project for Production, Preview and Development. It is stored as a Vercel Sensitive / Secret variable, not a readable encrypted config. It is never prefixed with NEXT_PUBLIC_ and is not included in the browser bundle.
 - Updated POST /api/contact to fail closed with 503 when the server-only token is missing and to forward the token only from the server-side Supabase client as x-contact-submission-token.
-- Added migration 20261119182022_protect_contact_insert_with_server_token.sql. It stores only the token's SHA-256 digest in a private, RLS-enabled table and replaces the anonymous insert policy with a SECURITY DEFINER validation function using PostgREST request headers. The function has a pinned empty search path and its execute privilege is limited to anon. This migration is prepared but not yet applied to production; apply after the updated application deploy is Ready, then test both the trusted route and direct unauthenticated REST denial.
+- Applied production migration 20261119184110_protect_contact_insert_with_server_token.sql. It stores only the token's SHA-256 digest in a private, RLS-enabled table and replaces the anonymous insert policy with a SECURITY DEFINER validation function using PostgREST request headers. The function has a pinned empty search path and its execute privilege is limited to anon. The follow-up migration 20261119184903_deny_client_access_to_contact_submission_secrets.sql adds an explicit restrictive deny-all policy for anon/authenticated on the private secret table.
 - Added a local test proving valid-looking submissions fail closed without the server token. Added CONTACT_SUBMISSION_TOKEN to .env.example without adding any value.
 - Admin Media Library now explicitly warns that files are publicly viewable by anyone with the URL; private or sensitive documents must not be uploaded there. Existing public bucket access is intentional for portfolio media.
 
@@ -463,10 +463,53 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 
 ### Remaining release gates
 
-1. Push/deploy the server-side contact token change. Apply the prepared Supabase migration immediately after the new production deployment reaches READY; verify the real contact route succeeds and a direct REST insert with only the public key is rejected. Do not call this migration complete until both are verified.
+1. Contact write-path protection is now deployed and verified: real POST /api/contact returns 200, while a direct Supabase REST insert using only the public publishable key returns 401 / 42501 (RLS violation). All temporary QA contact rows were removed; remaining QA rows = 0.
 2. Owner-authenticated Admin CRUD and actual media upload/replace/delete tests remain pending because no owner session has been used. Do not request or store an owner password/OTP.
 3. Supabase Free still cannot enable Leaked Password Protection; two unused-index INFO findings are retained pending workload evidence.
 4. Vercel Hobby remains a hosting-plan constraint for business/commercial use. Check and resolve the plan/provider against the intended use before claiming commercial-production compliance.
 5. Real project/blog/media content, off-site database backup and restore test, and custom domain remain owner-side production tasks.
 
-**Status at this checkpoint:** Fresh local application checks are clean. The server-side contact protection is configured in Vercel and the migration is prepared, but production RLS is not yet changed and the new commit has not yet been deployed. No full production sign-off yet.
+**Status at this checkpoint:** Contact RLS hardening is deployed and verified. Fresh local application checks are clean (19/19 E2E). Full production sign-off is still blocked by the non-code operational items listed below and in Section 23.
+
+
+## 23. Applied contact RLS verification and migration-history cleanup — 2026-11-20
+
+### Verified live production state
+
+- Production deployment for commit 62610ad929ab03343dbe395ab8de77743e1e7f19 is READY on the existing alias hades-portfolio-amber.vercel.app.
+- Live public endpoints: /, /admin, /robots.txt and /sitemap.xml return 200; /qa-media-fixture returns 404 in production; GET /api/contact returns 405.
+- After both migrations, a real contact API POST using the server-only Vercel secret returned 200 {"ok":true}.
+- A direct POST to Supabase REST /contact_messages using only the public publishable key returned 401 / 42501 with an RLS violation. This confirms the public direct-write bypass is closed.
+- The private contact secret table has RLS enabled, no client table privileges, and a restrictive policy denying anon/authenticated access. The SECURITY DEFINER validator remains postgres-owned with an empty search_path.
+- All temporary contact QA records were deleted. Query confirms zero remaining HADES_*_QA_20261120 rows.
+- All 18 public tables have RLS enabled. Security Advisor now reports only the Free-plan Leaked Password Protection warning; the temporary private-table no-policy INFO has been eliminated. Health Advisor is clean. Performance Advisor retains two unused-index INFO notices; do not drop without workload evidence.
+- Vercel runtime error scan: no errors in the selected 24-hour period; the latest 30-minute warning/error log query returned no matching rows.
+- The active Vercel Firewall rate limit remains valid: POST /api/contact, per-IP fixed window, 5 requests per 600 seconds, deny.
+
+### Migration source hygiene
+
+- Renamed the local media access migration to its registered remote version: 20261119083007_public_media_assets_read_access.sql.
+- Local contact migrations now match their remote applied versions: 20261119184110 and 20261119184903.
+- Archived supabase/migrations/001_initial_schema.sql under supabase/legacy/001_initial_schema.sql. It is a stale earlier schema snapshot that includes obsolete role-helper/contact policies. It must never be rerun or put back under active migrations.
+- The connected Supabase project records its actual initial baseline as 20261118154243_initial_portfolio_cms_schema. The original canonical SQL for that baseline is not currently mirrored in the active local migrations directory. This has been documented in supabase/legacy/README.md.
+- No supabase db push, db reset or migration repair was run. There is no supabase/config.toml/project link in this checkout, and it would be unsafe to attempt a blind migration push while the original baseline source is unreconciled. Restore the canonical baseline SQL/history before using CLI schema reset or push.
+
+### Current verified application state
+
+- Latest local build: pass.
+- Playwright on the freshly built production server: 19/19 pass.
+- ESLint: 0 warnings / 0 errors.
+- TypeScript: pass.
+- npm audit --audit-level=low: 0 vulnerabilities.
+- git diff --check: pass.
+- Vercel deployment dpl_5hKXW2Lbc9jxuTJRZcqb8aYMc7xy: READY, latest source commit 62610ad.
+
+### Remaining blockers before full production sign-off
+
+1. Vercel Hobby is restricted to personal/non-commercial use. This portfolio's stated client/freelance inquiry purpose can constitute commercial use; do not represent Hobby as compliant for a revenue-generating portfolio. Either use an eligible commercial Vercel plan or migrate, with owner approval, to a host whose free tier permits the intended commercial use.
+2. Admin owner-authenticated create/edit/delete and actual media upload/replace/delete flows remain untested. Do not request or store owner credentials; an owner must perform an authenticated session while testing.
+3. Real approved portfolio projects, skills, experience, education, services, posts, testimonials and media assets still need to be populated. Do not invent or seed false portfolio work.
+4. Supabase Free cannot enable Leaked Password Protection; the remaining Security Advisor warning is plan-limited. A weekly pause after low activity and absence of automatic Free-tier backups are separate operational risks; configure encrypted off-site export and perform a restore test.
+5. No owner-controlled custom domain is attached; only the Vercel subdomain is live.
+
+**Honest status:** The code, public-site automated tests, live contact form write path, direct-write protection and deploy are verified. The website is live and technically hardened, but it is not honestly 100% production-ready for commercial operation until hosting-plan compliance, owner-only Admin/media verification, real approved content and recovery arrangements are completed.
