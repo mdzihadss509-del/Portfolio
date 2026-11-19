@@ -1,10 +1,10 @@
-# HADES Portfolio
+# HADES Portfolio CMS
 
 A personal portfolio and content-management system built with **Next.js 15, React 19, TypeScript, and Supabase**.
 
-The project includes a responsive portfolio website, a protected Admin workspace, editable CMS sections, social links, a blog, YouTube embeds, a public Media Archive, and a contact form.
+The project includes a responsive portfolio website, protected Admin workspace, editable CMS sections, social links, blog, YouTube embeds, public Media Archive, and contact form.
 
-## Quick start
+## Local setup
 
 Requirements: Node.js 20.9 or newer and an existing Supabase project.
 
@@ -13,38 +13,12 @@ npm ci
 cp .env.example .env.local
 ```
 
-Set these values in `.env.local`:
-
-```dotenv
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-```
-
-Then run:
-
-```bash
-npm run dev
-```
-
-Open:
+Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local`, then run `npm run dev`.
 
 - Website: http://localhost:3000
 - Admin: http://localhost:3000/admin
 
-Never commit `.env.local`, service-role keys, passwords, access tokens, or other secrets.
-
-## Main capabilities
-
-- Dynamic portfolio sections backed by Supabase.
-- Admin sign-in through Supabase Auth and an explicit `user_roles.role = 'admin'` record.
-- CMS modules for sections, projects, skills, experience, education, services, articles, videos, social links, testimonials, navigation, messages, media assets, site settings, and categories.
-- Branding controls for logo, favicon, SEO and site details.
-- Media Library uploads (up to 50 MB) and public Media Archive cards for images, video, audio, documents, archives, and other files.
-- Dark/light themes, responsive layouts, motion reveals, and pointer-based 3D surfaces.
-- Contact form API with validation, honeypot field, and basic in-memory request limiting.
-- Individual published article pages at `/blog/[slug]`.
-
-## Useful commands
+## Main commands
 
 ```bash
 npm run dev
@@ -55,29 +29,26 @@ npm run build
 npm start
 ```
 
-## Supabase setup
+## Main capabilities
 
-SQL migrations are in `supabase/migrations/`.
+- Dynamic portfolio sections and navigation backed by Supabase.
+- Admin sign-in through Supabase Auth and `user_roles`.
+- CMS for sections, projects, skills, experience, education, services, articles, videos, social links, testimonials, navigation, messages, media assets, site settings and categories.
+- Branding controls, media library, responsive layouts, themes and motion interactions.
+- Contact form API and published article pages at `/blog/[slug]`.
 
-1. Apply `001_initial_schema.sql` only when setting up a new database.
-2. Configure the public Storage bucket named `portfolio-media` and its upload/delete policies for the intended Admin role.
-3. Create the first Supabase Auth account and insert its user ID into `public.user_roles` with role `admin`.
-4. Disable public signups after creating the administrator.
-5. Configure Supabase Auth password protections and review the security notes in `PROJECT_CONTEXT.md`.
+## Design acceptance criteria
 
-The existing connected database already has the schema and the media-assets public-read policy applied. Do not re-run migrations blindly against that database.
+- Dark theme: pure black page background (`#000000`), white text, **no neon/glow**, luminous shadows, or colored section fills.
+- Light theme: pure white page background (`#ffffff`), dark text, **no neon/glow**, luminous shadows, or colored section fills.
+- Keep surfaces neutral and readable; avoid gradients that tint large page sections.
 
 ## Project handover
 
-**Read [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md) before changing this project.** It records the architecture, current database state, working checks, confirmed defects, pending work, and continuation instructions.
+Read [docs/PROJECT_CONTEXT.md](docs/PROJECT_CONTEXT.md) before continuing development. It records architecture, current implementation, known gaps, test history and next tasks. Features must be verified before being marked complete.
 
-## Current verification status
+## Security
 
-The latest local checks recorded in the handover document are:
+Never commit `.env.local`, service-role keys, tokens, passwords, database dumps or private media. `.env.example` contains placeholders only.
 
-- Production build: passed.
-- TypeScript: passed.
-- ESLint: 0 errors, 18 warnings.
-- Playwright: 6 passed, 1 failed. The remaining failure is the strict theme-background test; the actual light/dark surface mismatches are documented in `PROJECT_CONTEXT.md`.
-
-No production deployment has been performed.
+No production deployment is implied by this repository update.
