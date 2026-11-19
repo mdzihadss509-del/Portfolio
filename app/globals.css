@@ -113,6 +113,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 .admin-editor-actions .admin-action{min-height:40px;padding-inline:16px}
 @keyframes site-nav-in{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes hero-fade-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes hero-copy-rise{from{transform:translateY(18px)}to{transform:translateY(0)}}
 @keyframes section-enter{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 @keyframes orbit-spin{from{rotate:0deg}to{rotate:360deg}}
 @keyframes stamp-float{0%,100%{translate:0 0;rotate:-12deg}50%{translate:0 -10px;rotate:-7deg}}
@@ -1109,7 +1110,6 @@ html[data-theme=light] .orbit-four:before{background:conic-gradient(from 220deg,
   z-index:2;
   max-width:650px;
   padding:18px 0 22px;
-  animation:hero-fade-up .85s .12s both;
 }
 .hero-studio-kicker{
   display:flex;
@@ -3073,7 +3073,8 @@ html[data-theme="light"] body main .hero-art-heading > span:nth-child(2) { color
   .hero-studio-title > span { display: inline-block; animation: hades-hero-arrive .78s .14s cubic-bezier(.22, 1, .36, 1) both; }
   .hero-studio-title > em { display: inline-block; animation: hades-hero-arrive .82s .23s cubic-bezier(.22, 1, .36, 1) both; }
   .hero-studio-description { animation: hades-hero-arrive .72s .34s cubic-bezier(.22, 1, .36, 1) both; }
-  .hero-studio-actions { animation: hades-hero-arrive .72s .43s cubic-bezier(.22, 1, .36, 1) both; }
+  /* Move the CTA row without fading the small, low-contrast micro-label. */
+  .hero-studio-actions { animation: hero-copy-rise .72s .43s cubic-bezier(.22, 1, .36, 1) both; }
   .hero-art-column { animation: hades-art-arrive .9s .18s cubic-bezier(.22, 1, .36, 1) both; }
 
   .nav-links a, .nav-cta, .hero-explore-link, .button-primary, .button-ghost,

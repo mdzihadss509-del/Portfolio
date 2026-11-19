@@ -160,11 +160,17 @@ test.describe('Portfolio public experience', () => {
     expect(await sitemap.text()).toContain('https://hades-portfolio-amber.vercel.app');
   });
 
-  test('homepage has no serious or critical automated accessibility violations', async ({ page }) => {
+  test('homepage has no serious or critical automated accessibility violations in either theme', async ({ page }) => {
     await page.goto('/');
-    const results = await new AxeBuilder({ page }).exclude('iframe').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
-    const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact || ''));
-    expect(serious, JSON.stringify(serious.map((item) => ({ id: item.id, help: item.help, nodes: item.nodes.length })), null, 2)).toEqual([]);
+    const scanTheme = async (theme: 'dark' | 'light') => {
+      const results = await new AxeBuilder({ page }).exclude('iframe').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+      const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact || ''));
+      expect(serious, `${theme} theme: ${JSON.stringify(serious.map((item) => ({ id: item.id, help: item.help, nodes: item.nodes.length })), null, 2)}`).toEqual([]);
+    };
+    await scanTheme('dark');
+    await page.getByRole('button', { name: /toggle color theme/i }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await scanTheme('light');
   });
 });
 

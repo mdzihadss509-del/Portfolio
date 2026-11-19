@@ -363,3 +363,16 @@ pm audit --omit=dev --audit-level=low reports 0 vulnerabilities. git diff --chec
 - Post-deploy smoke tests returned HTTP 200 for `/`, `/admin`, `/robots.txt`, and `/sitemap.xml`.
 - Git working tree is clean and `main` is synchronized with `origin/main`.
 - Conclusion: GitHub `main` push -> Vercel production auto-deploy is verified. Two Supabase unused-index INFO notices remain intentionally unchanged pending real workload evidence.
+
+
+## 19. Repeat production QA and hero contrast correction — 2026-11-19
+
+- Re-tested the deployed public site: `/`, `/admin`, `/robots.txt`, and `/sitemap.xml` returned HTTP 200; `/qa-media-fixture` returned 404 as intended in production; `/api/contact` GET returned 405 as intended.
+- Production browser smoke check found no JavaScript page errors, console errors, failed network responses, or horizontal overflow at 320, 390, 768, 1024, and 1440px widths. Hero animation is active, and the primary navigation CTA hover moves upward by 3px. The CSS loading spinner and reduced-motion behavior were also checked.
+- Contact API negative checks: invalid Origin POST returned 403; malformed payload returned 400. These rejected requests did not create contact records.
+- Vercel runtime error clusters over the previous 24 hours: none. Recent production warning/error log query: no records returned.
+- A full local regression run initially found one serious WCAG contrast issue on the 8px `IDEAS / SYSTEMS / EXPERIENCES` hero label. Its ancestor and CTA-row entrance animations were fading opacity during the entrance. Changed these hero entrance motions to translate-only so the label remains fully opaque; preserved the site's layout, palette and animation timing intent.
+- Expanded the axe accessibility regression to scan both dark and light themes. Final local checks: `npm run lint` passed with no warnings; `npx tsc --noEmit` passed; `npm run build` passed; Playwright **11/11 passed** including both-theme serious/critical accessibility scan; `npm audit --audit-level=low` reported **0 vulnerabilities**; `git diff --check` passed.
+- Supabase advisors rechecked: Health has no findings. Security still has one `auth_leaked_password_protection` warning; Supabase's official documentation confirms the feature is available on Pro and above, so it cannot be enabled on this Free project without changing plans. Performance reports two INFO unused indexes (`admin_audit_logs_actor_id_idx`, `articles_category_id_idx`); both are retained pending meaningful workload evidence.
+- Owner-authenticated Admin CRUD and actual upload/replace/delete are still not part of the automated sign-off because they require the owner to sign in. No password or OTP was requested or accessed.
+- The CSS/test changes have passed local verification. Production must be rechecked against the new Git commit/deployment before declaring this correction live.
