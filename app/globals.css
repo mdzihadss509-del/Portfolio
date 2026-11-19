@@ -2915,3 +2915,42 @@ main:not(.admin-shell):not(.admin-login)::before,
   -webkit-backdrop-filter: none !important;
 }
 html { background: var(--bg) !important; background-image: none !important; }
+
+/* FINAL THEME OVERRIDE — strict neutral backgrounds, no neon or glow. */
+:root{--bg:#000000;--surface:#080808;--surface2:#111111;--text:#f5f5f5;--muted:#a3a3a3;--line:#292929;--blue:#a78bfa;--purple:#a78bfa;--red:#e05260;--glow:transparent;color-scheme:dark}
+html[data-theme=light]{--bg:#ffffff;--surface:#ffffff;--surface2:#f7f7f7;--text:#111111;--muted:#666666;--line:#dedede;--blue:#315fbd;--purple:#315fbd;--red:#c83f4c;--glow:transparent;color-scheme:light}
+html,body{background:#000000!important;color:var(--text)}
+html[data-theme=light],html[data-theme=light] body{background:#ffffff!important;color:var(--text)}
+main,.admin-login,.admin-shell,.admin-main,.admin-sidebar,.admin-content{background:var(--bg)!important}
+.work-section,.creator-band,.ticker,.project-art,.admin-notice,.admin-media-upload-card{background:var(--surface)!important;color:var(--text)!important;border-color:var(--line)!important}
+html[data-theme=light] .work-section,html[data-theme=light] .creator-band,html[data-theme=light] .ticker,html[data-theme=light] .project-art,html[data-theme=light] .admin-notice,html[data-theme=light] .admin-media-upload-card{background:#ffffff!important;color:#111111!important;border-color:#dedede!important}
+.creator-inner>div>p,.creator-inner .section-no,.creator-caption{color:var(--muted)!important}
+.creator-band .button-primary,.creator-inner .button-primary,.creator-inner .button-ghost{background:var(--surface2)!important;color:var(--text)!important;border:1px solid var(--line)!important}
+html[data-theme=light] .creator-band .button-primary,html[data-theme=light] .creator-inner .button-primary,html[data-theme=light] .creator-inner .button-ghost{background:#ffffff!important;color:#111111!important;border-color:#dedede!important}
+.orb{background:#292929!important;color:#ffffff!important;box-shadow:none!important;filter:none!important;animation:none!important}
+html[data-theme=light] .orb{background:#eeeeee!important;color:#111111!important;box-shadow:none!important}
+.orbit,.orbit-one,.orbit-two{border-color:var(--line)!important;box-shadow:none!important}
+.hero-spark,.live-dot,.admin-status i{box-shadow:none!important;filter:none!important;text-shadow:none!important}
+.brand-mark,.creator-stamp,.creator-visual,.project-card,.admin-overview-grid article,.login-card,.admin-confirm-modal,.back-to-top{box-shadow:none!important;filter:none!important}
+.creator-band:before,.creator-band:after,.creator-visual:after,.pixel-grid{display:none!important;background:none!important;animation:none!important}
+.project-art,.project-card.red .project-art,.project-card.white .project-art{background:var(--surface2)!important}
+html[data-theme=light] .project-art,html[data-theme=light] .project-card.red .project-art,html[data-theme=light] .project-card.white .project-art{background:#f7f7f7!important}
+.nav,.admin-sidebar,.admin-topbar{backdrop-filter:none!important}
+*,*::before,*::after{text-shadow:none!important}
+*:not(.reveal){filter:none!important}
+*:hover{box-shadow:none!important;text-shadow:none!important}
+button,a,.project-card,.socials a,.admin-nav-item,.admin-action{box-shadow:none!important}
+.contact-form input:focus,.contact-form textarea:focus,.admin-field select:focus,.admin-platform-option.selected{box-shadow:none!important}
+.admin-modal-backdrop{backdrop-filter:none!important}
+html[data-theme=light] main{background:#ffffff!important}
+html[data-theme=light] .media-showcase,html[data-theme=light] .media-card{background:#ffffff!important;color:#111111!important}
+
+/* Gallery cards inherit the page's exact monochrome canvas. */
+.media-showcase-card{background:#000000!important;border-color:#292929!important}
+html[data-theme=light] .media-showcase-card{background:#ffffff!important;border-color:#dedede!important}
+*::before,*::after{box-shadow:none!important;text-shadow:none!important;filter:none!important}
+
+/* Section canvases must match the exact theme background, not tinted surfaces. */
+.work-section,.creator-band,.ticker,.project-art,.project-card.red .project-art,.project-card.white .project-art{background:#000000!important}
+html[data-theme=light] .work-section,html[data-theme=light] .creator-band,html[data-theme=light] .ticker,html[data-theme=light] .project-art,html[data-theme=light] .project-card.red .project-art,html[data-theme=light] .project-card.white .project-art{background:#ffffff!important}
+main::before,main::after{display:none!important;background:none!important;box-shadow:none!important;filter:none!important}
