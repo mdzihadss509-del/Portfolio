@@ -93,13 +93,15 @@ export async function POST(request: NextRequest) {
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) {
+  const submissionToken = process.env.CONTACT_SUBMISSION_TOKEN;
+  if (!url || !key || !submissionToken) {
     return jsonResponse({ error: 'Contact form is not configured yet.' }, 503);
   }
 
   try {
     const supabase = createClient(url, key, {
       auth: { persistSession: false, autoRefreshToken: false },
+      global: { headers: { 'x-contact-submission-token': submissionToken } },
     });
     const { error } = await supabase
       .from('contact_messages')

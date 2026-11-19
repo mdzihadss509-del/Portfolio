@@ -254,6 +254,15 @@ test.describe('Contact API validation', () => {
     expect(await honeypot.json()).toEqual({ ok: true });
   });
 
+  test('valid contact submissions fail closed when the server-only token is missing', async ({ request }) => {
+    const response = await request.post('/api/contact', {
+      headers: { 'Content-Type': 'application/json' },
+      data: { name: 'Portfolio QA', email: 'qa@example.invalid', message: 'This must not be stored without server auth.' },
+    });
+    expect(response.status()).toBe(503);
+    expect((await response.json()).error).toBe('Contact form is not configured yet.');
+  });
+
   test('contact API only accepts POST', async ({ request }) => {
     const response = await request.get('/api/contact');
     expect(response.status()).toBe(405);

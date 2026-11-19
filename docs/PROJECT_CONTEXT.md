@@ -437,3 +437,36 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 - Reconfirmed active custom Vercel firewall rule: POST `/api/contact`, per-IP fixed window, limit 5 per 600 seconds, deny; rule is valid and active. The active core managed security categories are configured to log rather than block; do not represent them as blocking.
 - Reconfirmed only one attached domain: verified Vercel subdomain `hades-portfolio-amber.vercel.app`; no owner-controlled custom domain is configured.
 - Final local checks before deploy: lint 0 warnings/errors, TypeScript pass, production build pass, Playwright **18/18**, npm audit 0 vulnerabilities, `git diff --check` pass. Repository working tree was clean after commit.
+
+
+## 22. Contact write-path hardening and continued QA — 2026-11-20
+
+### Contact API security
+
+- Found that the public Supabase anon insert policy on contact_messages allowed requests to bypass the Vercel /api/contact endpoint and its 5-per-10-minute IP firewall rule.
+- Added a server-only CONTACT_SUBMISSION_TOKEN to the Vercel project for Production, Preview and Development. It is stored as a Vercel Sensitive / Secret variable, not a readable encrypted config. It is never prefixed with NEXT_PUBLIC_ and is not included in the browser bundle.
+- Updated POST /api/contact to fail closed with 503 when the server-only token is missing and to forward the token only from the server-side Supabase client as x-contact-submission-token.
+- Added migration 20261119182022_protect_contact_insert_with_server_token.sql. It stores only the token's SHA-256 digest in a private, RLS-enabled table and replaces the anonymous insert policy with a SECURITY DEFINER validation function using PostgREST request headers. The function has a pinned empty search path and its execute privilege is limited to anon. This migration is prepared but not yet applied to production; apply after the updated application deploy is Ready, then test both the trusted route and direct unauthenticated REST denial.
+- Added a local test proving valid-looking submissions fail closed without the server token. Added CONTACT_SUBMISSION_TOKEN to .env.example without adding any value.
+- Admin Media Library now explicitly warns that files are publicly viewable by anyone with the URL; private or sensitive documents must not be uploaded there. Existing public bucket access is intentional for portfolio media.
+
+### Continued local verification
+
+- Fresh npm run build: passed.
+- Fresh npm run test:e2e against the newly built production server: 19/19 passed (includes the new missing-token fail-closed test).
+- npm run lint: passed with 0 warnings/errors.
+- npx tsc --noEmit: passed.
+- npm audit --audit-level=low: 0 vulnerabilities.
+- git diff --check: passed.
+- Vercel Firewall active config rechecked: valid POST /api/contact fixed-window rate limit, 5 requests per IP per 600 seconds, deny.
+- Vercel env metadata rechecked: CONTACT_SUBMISSION_TOKEN is sensitive with visibility=secret across all three environments, and has no Vercel environment-variable security issue flags.
+
+### Remaining release gates
+
+1. Push/deploy the server-side contact token change. Apply the prepared Supabase migration immediately after the new production deployment reaches READY; verify the real contact route succeeds and a direct REST insert with only the public key is rejected. Do not call this migration complete until both are verified.
+2. Owner-authenticated Admin CRUD and actual media upload/replace/delete tests remain pending because no owner session has been used. Do not request or store an owner password/OTP.
+3. Supabase Free still cannot enable Leaked Password Protection; two unused-index INFO findings are retained pending workload evidence.
+4. Vercel Hobby remains a hosting-plan constraint for business/commercial use. Check and resolve the plan/provider against the intended use before claiming commercial-production compliance.
+5. Real project/blog/media content, off-site database backup and restore test, and custom domain remain owner-side production tasks.
+
+**Status at this checkpoint:** Fresh local application checks are clean. The server-side contact protection is configured in Vercel and the migration is prepared, but production RLS is not yet changed and the new commit has not yet been deployed. No full production sign-off yet.
