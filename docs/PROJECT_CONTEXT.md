@@ -354,3 +354,12 @@ pm audit --omit=dev --audit-level=low reports 0 vulnerabilities. git diff --chec
 - Rechecked Supabase Performance Advisor: two INFO findings remain for `admin_audit_logs_actor_id_idx` and `articles_category_id_idx`. Both are non-unique, non-primary B-tree indexes; `pg_stat_user_indexes` reports 0 scans and 8 KiB each.
 - The production DB is newly provisioned (Postgres started 2026-11-18); `admin_audit_logs` currently has 0 estimated live rows and `articles` 0 estimated live rows. The planner has no workload evidence to justify dropping either index. Keep both indexes; revisit after meaningful production traffic and data accumulation.
 - Supabase Health Advisor has no findings. No schema or production data was changed during this check.
+
+## 18. GitHub push-to-production auto-deploy confirmed - 2026-11-19
+
+- Pushed documentation commit `b8fa3329544eea35e66eeb7301c04f56f2a9d674` to GitHub `main`.
+- Vercel automatically created production deployment `dpl_H4AjsLBWq34Caj9sXBBxdYrKEujF` from Git source, cloning `mdzihadss509-del/Portfolio`, branch `main`, exact commit `b8fa332`; no manual deployment was created.
+- Deployment completed with state **READY** and assigned the production alias `hades-portfolio-amber.vercel.app`.
+- Post-deploy smoke tests returned HTTP 200 for `/`, `/admin`, `/robots.txt`, and `/sitemap.xml`.
+- Git working tree is clean and `main` is synchronized with `origin/main`.
+- Conclusion: GitHub `main` push -> Vercel production auto-deploy is verified. Two Supabase unused-index INFO notices remain intentionally unchanged pending real workload evidence.
