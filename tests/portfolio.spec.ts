@@ -66,7 +66,7 @@ test.describe('Portfolio public experience', () => {
     const cta = page.locator('.nav-cta');
     await expect(cta).toBeVisible();
     await cta.hover();
-    await expect.poll(() => cta.evaluate((element) => getComputedStyle(element).transform)).not.toBe('none');
+    await expect.poll(() => cta.evaluate((element) => getComputedStyle(element).transform)).toContain(', -3)');
 
     const loader = await page.evaluate(() => {
       const form = document.createElement('form');
