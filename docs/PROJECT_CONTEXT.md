@@ -268,3 +268,39 @@ For every future session:
 - Production build passed after the final theme CSS adjustment. Routes built: /, /admin, /api/contact, /blog/[slug].
 - Local commits: ce71e2d (theme correction) and ca11369 (handover status). No production deployment.
 - Remaining: resolve lint warnings; full authenticated Admin CRUD and actual media upload tests require an admin session and sample files; rerun full Playwright suite once; clean obsolete local backup files only after confirming they are not needed; production deployment not performed.
+
+
+## 2026-11-19 production-readiness verification
+
+### Confirmed in this session
+- Clean `npm run build`: **passed**, exit code 0. Routes generated: `/`, `/admin`, `/api/contact`, `/blog/[slug]`.
+- `npx.cmd tsc --noEmit`: **passed**, exit code 0.
+- `npm run lint`: **passed**, 0 errors and 18 warnings remain.
+- Production-mode server started with `next start`; `/` and `/admin` both returned HTTP 200.
+- Full Playwright suite against the production-mode server: **7/7 passed** in 18.9 seconds. This includes theme, responsive widths, pointer 3D/reduced motion, real media gallery/filter, axe serious/critical accessibility, and Admin login screen.
+- Contact API validation: cross-origin POST rejected with HTTP 403; malformed payload without Origin rejected with HTTP 400. No test contact message was inserted.
+- Confirmed the configured Admin email has an explicit `admin` row in `public.user_roles`; the password was not accessed or changed.
+- Confirmed all 18 public tables have RLS enabled.
+- Confirmed Storage bucket `portfolio-media` is public for reads, has a 50 MB size limit, and authenticated Admin-role users are required for object INSERT/UPDATE/DELETE.
+- Confirmed `media_assets` public SELECT and admin-management policies both exist.
+- Confirmed `.env.local` is not tracked by Git; only the placeholder `.env.example` is tracked.
+- Local production server is currently running at `http://localhost:3000`.
+
+### Current blockers before calling the project fully production-ready
+1. **Admin workflow not end-to-end tested:** the Admin screen is covered, and the Admin role exists, but authenticated login and actual CRUD/settings/icon persistence still require the owner to sign in. Real file upload/replace/delete for video, audio, PDF and archives also needs safe sample files.
+2. **Supabase security advisor warnings remain:** `public.has_site_role(text)` is SECURITY DEFINER and callable by anon/authenticated; leaked-password protection is disabled. Do not revoke function EXECUTE blindly because RLS and Storage policies depend on it. Review a private-schema migration and enable leaked-password protection in Supabase Auth settings.
+3. **Supabase performance advisor warnings remain:** 3 unindexed foreign keys (`admin_audit_logs.actor_id`, `articles.category_id`, `project_media.project_id`) and 77 multiple-permissive-policy notices. The policies are functionally intentional but should be consolidated only through a reviewed migration and regression checks.
+4. **Migration drift remains:** live migration versions and local SQL filenames do not match; the local bootstrap file is not a complete representation of the current live schema. Do not run the current migration folder against the connected production database. Reconcile a complete schema/policy snapshot before setting up a fresh database or adopting Supabase CLI migrations.
+5. **Contact rate limiting is process-local:** the current in-memory limit is not shared across serverless instances. Add a persistent/distributed rate limiter (or a trusted edge/WAF rate limit) before high-traffic production use.
+6. **Code-quality warnings:** 18 ESLint warnings remain (explicit `any`, raw `img`, and internal anchor usage). They do not fail the production build but should be cleaned in a focused pass.
+7. **Hosting/domain not configured:** no production deployment was performed. Set the hosting project, production environment variables, domain and deployment secrets before launch.
+
+### Safe deployment sequence
+1. Reconcile/backup the live Supabase schema and policies; do not replay the mismatched bootstrap migrations.
+2. Verify the owner can sign in to `/admin`, then test one create/edit/delete cycle in a safe content table and one test upload/replace/delete cycle.
+3. Enable leaked-password protection in Supabase Auth; review the SECURITY DEFINER function exposure without breaking policies.
+4. Configure production environment variables: `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Never add a service-role key to client-exposed variables.
+5. Deploy the current `main` source to the chosen host, run the production build, configure the domain and HTTPS, and verify homepage, Admin, contact form, media and blog on the deployed URL.
+6. Re-run the browser suite against the deployed URL and review Supabase security/performance advisors.
+
+**Status:** Production build and public-site regression are verified. The app is deployable to a configured host, but it is not yet certified fully production-ready until the Admin end-to-end checks and the listed security/deployment blockers are resolved.
