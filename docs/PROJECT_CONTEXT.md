@@ -304,3 +304,13 @@ For every future session:
 6. Re-run the browser suite against the deployed URL and review Supabase security/performance advisors.
 
 **Status:** Production build and public-site regression are verified. The app is deployable to a configured host, but it is not yet certified fully production-ready until the Admin end-to-end checks and the listed security/deployment blockers are resolved.
+
+
+## 2026-11-19 dependency security remediation
+
+- `npm audit` initially found 2 production dependency advisories in PostCSS 8.4.31 (1 high, 1 moderate) through Next.js 15.5.29.
+- Added a targeted npm override pinning PostCSS to `8.5.33`, which remains compatible with the existing Next.js 15 dependency contract. No major framework upgrade was forced.
+- `npm install` completed successfully; resolved tree is Next.js `15.5.29` with PostCSS `8.5.33` overridden.
+- Full `npm audit`: **0 vulnerabilities**. Production-only `npm audit --omit=dev`: **0 vulnerabilities**.
+- After the dependency update: TypeScript check passed, ESLint passed with 0 errors / 18 warnings, clean production build passed, and all 7 Playwright tests passed again against the production-mode server (18.5 seconds).
+- The 18 lint warnings are quality/performance warnings, not known dependency vulnerabilities or build errors.
