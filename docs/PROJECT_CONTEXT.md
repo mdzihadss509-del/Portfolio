@@ -154,163 +154,81 @@ The connected database migration history reports:
 - `20261118154243` — `initial_portfolio_cms_schema`
 - `20261119083007` — `public_media_assets_read_access`
 
-The local/GitHub source paths currently include:
+The earlier local/GitHub source paths included:
 - `supabase/migrations/001_initial_schema.sql`
 - `supabase/migrations/20261119082940_public_media_assets_read_access.sql`
 
-These local filenames do **not** match the live migration versions. In addition, the live database contains icon-related columns such as `icon_url` and `icon_name` on several CMS tables (and `thumbnail_url` on videos) that are not fully represented in the original 001 schema file. Some current read/Storage policies are also separate from that original bootstrap SQL.
+These local filenames do **not** match the live migration versions. The live database also contains icon-related columns and policies not fully represented in the original bootstrap SQL.
 
 Therefore:
-- Do not run the repository's current migrations against the existing connected database.
-- Do not assume a fresh Supabase database can be reproduced accurately from the current migration folder.
+- Do not run the repository's original migrations against the existing connected database.
+- Do not assume a fresh Supabase database can be reproduced accurately from the bootstrap file.
 - Before a new installation or Supabase CLI migration workflow, reconcile migration versions and rebuild a complete, reviewed schema snapshot from the live schema and policies.
 - Preserve current Admin write/delete protections. After any schema/policy update, verify with read-only SQL and Supabase advisors.
 
 ## 6. Security and performance findings
 
-Supabase advisors reported:
-- Security warning: `public.has_site_role(required_role text)` is a SECURITY DEFINER function callable by `anon` and `authenticated`. RLS and Storage policies depend on it, so review carefully; do not simply revoke EXECUTE without testing the resulting policies.
+Supabase advisors previously reported:
+- Security warning: `public.has_site_role(required_role text)` is a SECURITY DEFINER function callable by `anon` and `authenticated`. RLS and Storage policies depend on it; do not simply revoke EXECUTE without testing the resulting policies.
 - Security warning: Leaked Password Protection is disabled in Supabase Auth.
 - Performance warning: 77 multiple-permissive-policy findings, largely from admin ALL policies overlapping public read policies.
 - Performance info: missing covering indexes for `admin_audit_logs.actor_id`, `articles.category_id` and `project_media.project_id`.
 
-These are review items, not proof of an exploitable incident. Do not make production policy changes without understanding the effects and verifying Admin access, public reads and uploads/deletes afterward.
+**2026-11-19 update:** The three missing FK indexes have now been added to the live database through migration `add_foreign_key_indexes` and committed as `supabase/migrations/20261119183000_add_foreign_key_indexes.sql`. The latest performance advisor no longer reports unindexed foreign keys; it now reports the three just-created indexes as unused (expected until workload uses them). The 77 multiple-permissive-policy notices remain. Do not change policy logic without a full role/access regression test.
 
-The contact route uses an in-memory Map for rate limiting (5 requests per 10 minutes per forwarded IP). This is process-local and not durable across serverless instances; consider a distributed/persistent rate limiter before production.
+The `has_site_role` function body only checks whether `auth.uid()` has the requested role in `public.user_roles`; however, it remains SECURITY DEFINER and callable by anon/authenticated. Its exposure should be reviewed without breaking policies. Leaked Password Protection must be enabled in Supabase Auth settings.
+
+The contact route uses an in-memory Map for rate limiting (5 requests per 10 minutes per forwarded IP). This is process-local and not durable across serverless instances; use a distributed/persistent rate limiter or trusted edge/WAF rate limit before high-traffic production use.
 
 ## 7. Latest verification snapshot — 2026-11-19
 
-Fresh local checks performed after the latest Media Archive source changes:
-- `npm run build`: **passed**, exit code 0. Next.js compiled and generated all six static pages.
-- `npx tsc --noEmit`: **passed**, exit code 0.
-- `npm run lint`: **passed**, 0 errors and 18 warnings. Warnings include explicit `any` types, `<img>` elements where Next Image optimization may be appropriate, and internal `<a>` navigation.
-- `npm run test:e2e`: **6 passed, 1 failed** on the latest full rerun.
-
-Playwright tests that passed:
-- One primary heading and valid navigation targets.
-- Responsive widths 320, 390, 768, 1024 and 1440 px without horizontal overflow.
-- Hero pointer 3D tilt and reduced-motion behavior.
-- Media Archive renders the two real live image assets and filters work.
-- No serious/critical axe violations in site-owned UI (third-party YouTube iframe excluded).
-- Admin sign-in fields are labelled and no public signup is shown.
-
-The failing test is `both themes use solid black or white with no neon glow`. Browser measurements confirmed:
-- Dark: page/body canvas is black (`rgb(0,0,0)`), but Media Archive card/preview surfaces are `rgb(8,8,8)`, failing the strict pure-black test.
-- Light: `html` and `main` are white, but `body` measured black; `.work-section` measured light blue (`rgb(243,247,255)`), `.creator-band` measured blue (`rgb(36,89,230)`), and Media Archive cards/previews remained dark (`rgb(8,8,8)`).
-- A scan for `box-shadow`, `text-shadow` and CSS `filter` returned zero glowing elements.
-
-The theme test currently fails first on the dark card surfaces; light theme was also measured separately and has the defects above. Keep the test strict and fix the actual CSS cascade rather than weakening assertions.
-
-No production deployment has been performed.
-
-## 8. Known gaps and next tasks
-
-### Priority 0 — theme defect
-1. Make every dark theme canvas/card/preview pure black where required.
-2. Make every light theme canvas, section, card and preview pure white.
-3. Fix `body` not following the light theme, blue/tinted work and creator sections, and dark Media Archive surfaces in light mode.
-4. Preserve purple/red accents in dark mode and blue/red accents in light mode, without tinting large surfaces.
-5. Inspect and consolidate duplicate historical CSS overrides rather than appending yet another override layer.
-6. Re-run both-theme browser measurements and get all seven Playwright tests passing.
-
-### Priority 1 — functional integration
-1. Sign in using the existing Admin account and verify role-gated access.
-2. Exercise safe create/edit/delete for representative CMS tables.
-3. Verify site settings, logo/favicon, navigation, icon selection and persistence after save/reload.
-4. Test image and non-image uploads (video, audio, PDF, Office and archive), public display, download/open behavior, replace and delete.
-5. Verify deleting a Media Library record also removes its Storage object.
-6. Submit a safe test contact message only with permission and verify the resulting `contact_messages` record.
-
-### Priority 1 — backend/security
-1. Review SECURITY DEFINER function exposure without breaking RLS/Storage policies.
-2. Enable leaked-password protection in Supabase Auth after review.
-3. Review/optimize duplicate permissive RLS policies.
-4. Add the three missing FK indexes through a reviewed migration and verify advisor results.
-5. Reconcile the migration folder with the live migration history and full current schema before fresh setup.
-
-### Priority 2 — code quality
-1. Replace explicit `any` types with safer types.
-2. Consider Next.js `Link` for internal routes and `Image` where appropriate; retain custom Storage URL behavior.
-3. Audit dead/duplicate code, stale CSS selectors, unused assets and abandoned dependencies before deleting anything.
-4. Add automated tests for Admin CRUD, contact submission and actual non-image media workflows.
-5. Consider persistent/distributed rate limiting for the contact endpoint.
-
-### Deployment and content
-- No production host/domain is configured in this handover.
-- No deployment has been done. Do not deploy unless explicitly requested.
-- Populate empty CMS collections only with owner-provided/approved content.
-- Verify personal text, links, SEO and social destinations before launch; do not invent portfolio content.
-
-## 9. Repository hygiene and continuation workflow
-
-- GitHub repository is `mdzihadss509-del/Portfolio`, branch `main`.
-- The repository contains application source, configs, tests, public SVG icons, README and this handover document.
-- `.env.local`, `node_modules`, `.next`, backups, Playwright reports/results and local TypeScript build metadata must stay out of Git.
-- Local Git initialization/remote tracking must be checked before the next local commit; the original local project directory did not have a `.git` directory during the audit.
-
-For every future session:
-1. Read `README.md` and this file first.
-2. Check the current GitHub `main` commit and local `git status` before editing.
-3. Make focused changes and inspect the diff.
-4. Preserve the Admin media upload/delete code unless the owner explicitly asks to change it.
-5. Before Supabase work, inspect live schema, policies and migration history.
-6. Run checks serially (avoid parallel Next build/type/test processes that race over `.next`).
-7. After meaningful work, update the verification results and remaining tasks in this file.
-8. Commit only source, configuration, tests, docs and reviewed migrations; never secrets or generated artifacts.
-
-
-## 2026-11-19 theme correction and verification
-
-- Strict final theme override applied: dark page and major section canvases are pure black (#000000); light page and major section canvases are pure white (#ffffff). Neon glow, luminous shadows, text glow, decorative overlays and glow filters are disabled. The hero orb is now a neutral flat element.
-- Focused Playwright test for both themes passed after remaining #080808 section backgrounds were corrected to exact black/white.
-- The full Playwright run immediately before the final adjustment had 6 passing tests and 1 theme test failure; the focused theme test passed after the correction. The full 7-test suite was not rerun after that final correction.
-- TypeScript check passed. ESLint: 0 errors, 18 warnings remain (any types, raw img tags, internal anchor links).
-- Production build passed after the final theme CSS adjustment. Routes built: /, /admin, /api/contact, /blog/[slug].
-- Local commits: ce71e2d (theme correction) and ca11369 (handover status). No production deployment.
-- Remaining: resolve lint warnings; full authenticated Admin CRUD and actual media upload tests require an admin session and sample files; rerun full Playwright suite once; clean obsolete local backup files only after confirming they are not needed; production deployment not performed.
-
-
-## 2026-11-19 production-readiness verification
-
-### Confirmed in this session
-- Clean `npm run build`: **passed**, exit code 0. Routes generated: `/`, `/admin`, `/api/contact`, `/blog/[slug]`.
-- `npx.cmd tsc --noEmit`: **passed**, exit code 0.
-- `npm run lint`: **passed**, 0 errors and 18 warnings remain.
-- Production-mode server started with `next start`; `/` and `/admin` both returned HTTP 200.
-- Full Playwright suite against the production-mode server: **7/7 passed** in 18.9 seconds. This includes theme, responsive widths, pointer 3D/reduced motion, real media gallery/filter, axe serious/critical accessibility, and Admin login screen.
-- Contact API validation: cross-origin POST rejected with HTTP 403; malformed payload without Origin rejected with HTTP 400. No test contact message was inserted.
-- Confirmed the configured Admin email has an explicit `admin` row in `public.user_roles`; the password was not accessed or changed.
+Most recent code verification after the PostCSS security override:
+- `npm audit`: **0 vulnerabilities**.
+- `npm audit --omit=dev`: **0 vulnerabilities**.
+- `npx tsc --noEmit`: **passed**.
+- `npm run lint`: **passed**, 0 errors and 18 warnings remain (explicit `any`, raw `img`, internal anchor usage).
+- Clean `npm run build`: **passed**, exit code 0.
+- Production-mode server: homepage and Admin both returned HTTP 200.
+- Full Playwright suite against production-mode server: **7/7 passed**.
+- Contact API validation: cross-origin POST rejected HTTP 403; malformed payload without Origin rejected HTTP 400. No test contact message was inserted.
+- Confirmed configured Admin email has explicit `admin` row in `public.user_roles`; password was not accessed or changed.
 - Confirmed all 18 public tables have RLS enabled.
-- Confirmed Storage bucket `portfolio-media` is public for reads, has a 50 MB size limit, and authenticated Admin-role users are required for object INSERT/UPDATE/DELETE.
-- Confirmed `media_assets` public SELECT and admin-management policies both exist.
-- Confirmed `.env.local` is not tracked by Git; only the placeholder `.env.example` is tracked.
-- Local production server is currently running at `http://localhost:3000`.
+- Confirmed `portfolio-media` Storage bucket is public for reads, 50 MB limit, and authenticated Admin-role users required for object INSERT/UPDATE/DELETE.
+- Confirmed `.env.local` is not tracked; only placeholder `.env.example` is tracked.
+- Three FK indexes applied successfully and source migration committed to GitHub.
+- Local Git branch is synced to GitHub `main` at commit `6c06377`.
 
-### Current blockers before calling the project fully production-ready
-1. **Admin workflow not end-to-end tested:** the Admin screen is covered, and the Admin role exists, but authenticated login and actual CRUD/settings/icon persistence still require the owner to sign in. Real file upload/replace/delete for video, audio, PDF and archives also needs safe sample files.
-2. **Supabase security advisor warnings remain:** `public.has_site_role(text)` is SECURITY DEFINER and callable by anon/authenticated; leaked-password protection is disabled. Do not revoke function EXECUTE blindly because RLS and Storage policies depend on it. Review a private-schema migration and enable leaked-password protection in Supabase Auth settings.
-3. **Supabase performance advisor warnings remain:** 3 unindexed foreign keys (`admin_audit_logs.actor_id`, `articles.category_id`, `project_media.project_id`) and 77 multiple-permissive-policy notices. The policies are functionally intentional but should be consolidated only through a reviewed migration and regression checks.
-4. **Migration drift remains:** live migration versions and local SQL filenames do not match; the local bootstrap file is not a complete representation of the current live schema. Do not run the current migration folder against the connected production database. Reconcile a complete schema/policy snapshot before setting up a fresh database or adopting Supabase CLI migrations.
-5. **Contact rate limiting is process-local:** the current in-memory limit is not shared across serverless instances. Add a persistent/distributed rate limiter (or a trusted edge/WAF rate limit) before high-traffic production use.
-6. **Code-quality warnings:** 18 ESLint warnings remain (explicit `any`, raw `img`, and internal anchor usage). They do not fail the production build but should be cleaned in a focused pass.
-7. **Hosting/domain not configured:** no production deployment was performed. Set the hosting project, production environment variables, domain and deployment secrets before launch.
+## 8. Remaining blockers before full production sign-off
 
-### Safe deployment sequence
-1. Reconcile/backup the live Supabase schema and policies; do not replay the mismatched bootstrap migrations.
-2. Verify the owner can sign in to `/admin`, then test one create/edit/delete cycle in a safe content table and one test upload/replace/delete cycle.
-3. Enable leaked-password protection in Supabase Auth; review the SECURITY DEFINER function exposure without breaking policies.
-4. Configure production environment variables: `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Never add a service-role key to client-exposed variables.
-5. Deploy the current `main` source to the chosen host, run the production build, configure the domain and HTTPS, and verify homepage, Admin, contact form, media and blog on the deployed URL.
-6. Re-run the browser suite against the deployed URL and review Supabase security/performance advisors.
+1. **Admin end-to-end verification:** Owner must sign in at `/admin` to test real CRUD, site settings, icon/logo persistence and actual upload/replace/delete with safe sample image/video/audio/PDF/archive files. Automated UI tests only verify the login screen, not authenticated workflows.
+2. **Supabase Auth security:** Enable Leaked Password Protection in Supabase Auth settings. No connected action was available to toggle this setting safely.
+3. **SECURITY DEFINER review:** Review whether `public.has_site_role(text)` can be moved into a private schema or otherwise hardened; preserve RLS/Storage policy behavior and test every role before changing it.
+4. **RLS policy consolidation:** 77 multiple-permissive-policy notices remain. Most are intentional overlaps of admin management and public read policies; avoid broad automated policy edits.
+5. **Migration reconciliation:** Original local bootstrap migration history still differs from the live database. The new FK-index migration is additive and already applied; do not replay the original bootstrap migrations against production.
+6. **Distributed rate limiting:** Contact endpoint still uses process-local memory. A durable Redis/Upstash/edge rate limiter needs an external provider and credentials.
+7. **Code-quality cleanup:** 18 ESLint warnings remain; they do not fail build or tests.
+8. **Vercel connection/deployment:** Vercel account has a Hobby team but no linked project. Creating the Git-linked project was blocked because the GitHub integration is not installed for this Vercel account/repository. The local machine also has no Vercel CLI installed. Install/authorize the Vercel GitHub App for `mdzihadss509-del/Portfolio`, then create/link the project. Set production environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in Vercel before deployment. No production deployment has been performed.
+9. **Domain/content:** Add the desired custom domain and verify all owner-approved portfolio content, links, SEO and social destinations before public launch.
 
-**Status:** Production build and public-site regression are verified. The app is deployable to a configured host, but it is not yet certified fully production-ready until the Admin end-to-end checks and the listed security/deployment blockers are resolved.
+## 9. Safe deployment sequence
 
+1. Install/authorize the Vercel GitHub integration for this repository and link the project to the `main` branch.
+2. Configure production environment variables: `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Never add a service-role key to client-exposed variables.
+3. Owner signs in to `/admin`; verify one safe create/edit/delete cycle and sample upload/replace/delete.
+4. Enable leaked-password protection; review the SECURITY DEFINER function and RLS policy warnings without breaking public reads/Admin access.
+5. Deploy to Vercel, configure domain and HTTPS, then verify homepage, Admin, contact form, blog and media on the deployed URL.
+6. Re-run Playwright against the deployed URL and re-check Supabase advisors.
 
-## 2026-11-19 dependency security remediation
+**Status:** Core website, build, public-site regression, dependency audit and FK indexes are verified. The project is not yet fully production-ready or live because authenticated Admin workflows, remaining Supabase hardening, distributed rate limiting, Vercel GitHub integration, production environment variables and domain setup remain unresolved.
 
-- `npm audit` initially found 2 production dependency advisories in PostCSS 8.4.31 (1 high, 1 moderate) through Next.js 15.5.29.
-- Added a targeted npm override pinning PostCSS to `8.5.33`, which remains compatible with the existing Next.js 15 dependency contract. No major framework upgrade was forced.
-- `npm install` completed successfully; resolved tree is Next.js `15.5.29` with PostCSS `8.5.33` overridden.
-- Full `npm audit`: **0 vulnerabilities**. Production-only `npm audit --omit=dev`: **0 vulnerabilities**.
-- After the dependency update: TypeScript check passed, ESLint passed with 0 errors / 18 warnings, clean production build passed, and all 7 Playwright tests passed again against the production-mode server (18.5 seconds).
-- The 18 lint warnings are quality/performance warnings, not known dependency vulnerabilities or build errors.
+## 10. Repository hygiene and continuation workflow
+
+- GitHub repository: `mdzihadss509-del/Portfolio`, branch `main`.
+- Never commit `.env.local`, service-role keys, passwords, tokens, database dumps or private data.
+- Keep `node_modules`, `.next`, backups, Playwright reports/results and local TypeScript build metadata out of Git.
+- Before editing, check current GitHub `main` and local `git status`.
+- Make focused changes and inspect diffs.
+- Preserve Admin media upload/delete behavior unless explicitly asked to change it.
+- Before Supabase work, inspect live schema, policies and migration history.
+- Run Next build/type/test commands serially to avoid `.next` races.
+- After meaningful work, update this handover and remaining-work list.
