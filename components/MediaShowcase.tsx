@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import MotionSurface from '@/components/MotionSurface';
+import Reveal from '@/components/Reveal';
 import type { MediaAsset } from '@/lib/public-data';
 
 type AssetKind = 'image' | 'video' | 'audio' | 'document' | 'archive' | 'file';
@@ -294,7 +295,11 @@ export default function MediaShowcase({ assets }: { assets: MediaAsset[] }) {
 
       {filteredAssets.length ? (
         <div className="media-showcase-grid">
-          {filteredAssets.map((asset, index) => <MediaAssetCard key={asset.id} asset={asset} index={index}/>)}
+          {filteredAssets.map((asset, index) => (
+            <Reveal key={asset.id} className="media-card-reveal">
+              <MediaAssetCard asset={asset} index={index}/>
+            </Reveal>
+          ))}
         </div>
       ) : (
         <div className="media-showcase-empty">

@@ -56,6 +56,35 @@ test.describe('Portfolio public experience', () => {
     await page.reload();
     await expect(page.locator('.emblem-interactive')).not.toHaveClass(/motion-surface/);
   });
+  test('media reveal animation is visible by default and disabled for reduced motion', async ({ page }) => {
+    await page.goto('/');
+    const normalMotion = await page.evaluate(() => {
+      const probe = document.createElement('div');
+      probe.className = 'media-card-reveal';
+      document.body.append(probe);
+      const before = getComputedStyle(probe).opacity;
+      probe.style.transition = 'none';
+      probe.classList.add('is-visible');
+      const after = getComputedStyle(probe).opacity;
+      probe.remove();
+      return { before, after };
+    });
+    expect(normalMotion.before).toBe('0');
+    expect(normalMotion.after).toBe('1');
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const reducedMotion = await page.evaluate(() => {
+      const probe = document.createElement('div');
+      probe.className = 'media-card-reveal';
+      document.body.append(probe);
+      const style = getComputedStyle(probe);
+      const result = { opacity: style.opacity, transform: style.transform, duration: style.transitionDuration };
+      probe.remove();
+      return result;
+    });
+    expect(reducedMotion.opacity).toBe('1');
+    expect(reducedMotion.transform).toBe('none');
+  });
   test('published media library assets render in the glass gallery and filters work', async ({ page }) => {
     await page.goto('/');
     const gallery = page.locator('#media-library');
