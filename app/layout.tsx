@@ -9,9 +9,9 @@ const siteUrl = 'https://hades-portfolio-amber.vercel.app';
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getPortfolioData();
-  const general = data.settings.general || {};
-  const seo = data.settings.seo || {};
-  const branding = data.settings.branding || {};
+  const general = (data.settings.general || {}) as Record<string, string>;
+  const seo = (data.settings.seo || {}) as Record<string, string>;
+  const branding = (data.settings.branding || {}) as Record<string, string>;
   const siteName = branding.site_name || general.display_name || 'HADES';
   const title = seo.title || (general.display_name ? general.display_name + ' — Portfolio' : 'HADES — Portfolio & Creative Work');
   const description = seo.description || 'Professional portfolio, selected projects, creator work and collaborations.';

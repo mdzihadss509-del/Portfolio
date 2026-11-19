@@ -4,6 +4,8 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const db = url && key ? createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } }) : null;
 
+// Public CMS records have table-specific columns that are validated by the consuming section renderers.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PortfolioRow = Record<string, any>;
 export type MediaAsset = {
   id: string;
@@ -15,7 +17,7 @@ export type MediaAsset = {
   created_at: string | null;
 };
 export type PortfolioData = {
-  settings: Record<string, any>;
+  settings: Record<string, unknown>;
   sections: PortfolioRow[];
   projects: PortfolioRow[];
   skills: PortfolioRow[];

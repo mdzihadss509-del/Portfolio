@@ -24,5 +24,6 @@ export default defineConfig({
     url: testUrl,
     reuseExistingServer: false,
     timeout: 120_000,
+    env: { PORTFOLIO_QA_FIXTURES: '1' },
   },
 });

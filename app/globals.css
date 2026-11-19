@@ -3058,3 +3058,101 @@ html[data-theme="light"] body main .hero-art-heading > span:nth-child(2) { color
   .media-card-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .media-lightbox-panel { animation: none !important; }
 }
+
+/* HADES motion pass — interaction-only; no layout, typography, colour or content changes. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    transition: opacity .78s cubic-bezier(.22, 1, .36, 1), transform .78s cubic-bezier(.22, 1, .36, 1);
+    will-change: opacity, transform;
+  }
+  .project-reveal:nth-child(3n + 2) { transition-delay: 80ms; }
+  .project-reveal:nth-child(3n) { transition-delay: 150ms; }
+
+  .nav-entrance { animation: hades-nav-arrive .72s cubic-bezier(.22, 1, .36, 1) both; }
+  .hero-studio-kicker { animation: hades-hero-arrive .65s .08s cubic-bezier(.22, 1, .36, 1) both; }
+  .hero-studio-title > span { display: inline-block; animation: hades-hero-arrive .78s .14s cubic-bezier(.22, 1, .36, 1) both; }
+  .hero-studio-title > em { display: inline-block; animation: hades-hero-arrive .82s .23s cubic-bezier(.22, 1, .36, 1) both; }
+  .hero-studio-description { animation: hades-hero-arrive .72s .34s cubic-bezier(.22, 1, .36, 1) both; }
+  .hero-studio-actions { animation: hades-hero-arrive .72s .43s cubic-bezier(.22, 1, .36, 1) both; }
+  .hero-art-column { animation: hades-art-arrive .9s .18s cubic-bezier(.22, 1, .36, 1) both; }
+
+  .nav-links a, .nav-cta, .hero-explore-link, .button-primary, .button-ghost,
+  .site-endcap-cta, .email-link, .text-link, .socials a, .site-endcap-socials a,
+  .media-showcase-filters button, .media-showcase-actions > a,
+  .media-lightbox-close, .back-to-top {
+    transition: transform .28s cubic-bezier(.22, 1, .36, 1),
+      color .22s ease, background-color .22s ease, border-color .22s ease, opacity .22s ease;
+  }
+  .nav-links a:hover { color: var(--blue); transform: translateY(-2px); }
+  .nav-cta:hover, .button-primary:hover, .button-ghost:hover, .site-endcap-cta:hover {
+    transform: translateY(-3px);
+  }
+  .nav-cta:active, .button-primary:active, .button-ghost:active, .site-endcap-cta:active {
+    transform: translateY(0) scale(.985);
+  }
+  .hero-explore-link:hover { transform: translateX(4px); }
+  .hero-explore-link:hover .hero-explore-icon,
+  .site-endcap-cta:hover svg { transform: translate(3px, -3px) rotate(3deg); }
+  .text-link:hover, .email-link:hover { transform: translateX(3px); color: var(--blue); }
+  .socials a:hover, .site-endcap-socials a:hover { transform: translateY(-4px) rotate(-4deg); color: var(--blue); border-color: var(--blue); }
+  .media-showcase-filters button:hover { transform: translateY(-2px); border-color: var(--blue); }
+  .media-showcase-filters button:active { transform: scale(.97); }
+  .media-showcase-image-button img { transition: transform .7s cubic-bezier(.22, 1, .36, 1); }
+  .media-showcase-image-button:hover img { transform: scale(1.035); }
+  .media-showcase-card { transition: border-color .3s ease; }
+  .media-showcase-item:hover .media-showcase-card { border-color: var(--blue); }
+  .media-showcase-actions > a:hover svg { transform: translate(2px, -2px); }
+  .media-lightbox-close:hover { transform: rotate(90deg); }
+  .project-card .project-art { transition: background-size .7s cubic-bezier(.22, 1, .36, 1); }
+  .project-card:hover .art-lines { animation: hades-lines-drift 8s linear infinite; }
+  .contact-form button:disabled::after, .login-submit:disabled::after,
+  .admin-editor-actions .admin-action:disabled::after {
+    content: "";
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    margin-left: 8px;
+    border: 1.6px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    vertical-align: middle;
+    animation: hades-spinner .7s linear infinite;
+  }
+  .back-to-top:hover { transform: translateY(-4px); }
+}
+
+@keyframes hades-nav-arrive {
+  from { opacity: 0; transform: translate3d(0, -10px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes hades-hero-arrive {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes hades-art-arrive {
+  from { opacity: 0; transform: translate3d(0, 12px, 0) scale(.99); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes hades-lines-drift {
+  from { transform: translate3d(-1.5%, 0, 0) rotate(-9deg); }
+  to { transform: translate3d(1.5%, 0, 0) rotate(-9deg); }
+}
+@keyframes hades-spinner { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .nav-entrance, .hero-studio-kicker, .hero-studio-title > span,
+  .hero-studio-title > em, .hero-studio-description, .hero-studio-actions,
+  .hero-art-column, .project-reveal, .project-card .art-lines {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    will-change: auto !important;
+  }
+  .nav-links a, .nav-cta, .hero-explore-link, .button-primary, .button-ghost,
+  .site-endcap-cta, .email-link, .text-link, .socials a, .site-endcap-socials a,
+  .media-showcase-filters button, .media-showcase-actions > a, .media-lightbox-close,
+  .back-to-top { transition: none !important; }
+  .contact-form button:disabled::after, .login-submit:disabled::after,
+  .admin-editor-actions .admin-action:disabled::after { animation: none !important; }
+}

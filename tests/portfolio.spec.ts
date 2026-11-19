@@ -56,34 +56,48 @@ test.describe('Portfolio public experience', () => {
     await page.reload();
     await expect(page.locator('.emblem-interactive')).not.toHaveClass(/motion-surface/);
   });
-  test('media reveal animation is visible by default and disabled for reduced motion', async ({ page }) => {
+  test('real homepage reveal, hero entrance and button hover animations are applied', async ({ page }) => {
     await page.goto('/');
-    const normalMotion = await page.evaluate(() => {
-      const probe = document.createElement('div');
-      probe.className = 'media-card-reveal';
-      document.body.append(probe);
-      const before = getComputedStyle(probe).opacity;
-      probe.style.transition = 'none';
-      probe.classList.add('is-visible');
-      const after = getComputedStyle(probe).opacity;
-      probe.remove();
-      return { before, after };
-    });
-    expect(normalMotion.before).toBe('0');
-    expect(normalMotion.after).toBe('1');
+    const heroTitle = page.locator('.hero-studio-title');
+    await expect(heroTitle).toBeVisible();
+    const heroAnimation = await heroTitle.locator('> span').evaluate((element) => getComputedStyle(element).animationName);
+    expect(heroAnimation).toBe('hades-hero-arrive');
 
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    const reducedMotion = await page.evaluate(() => {
-      const probe = document.createElement('div');
-      probe.className = 'media-card-reveal';
-      document.body.append(probe);
-      const style = getComputedStyle(probe);
-      const result = { opacity: style.opacity, transform: style.transform, duration: style.transitionDuration };
-      probe.remove();
+    const cta = page.locator('.nav-cta');
+    await expect(cta).toBeVisible();
+    await cta.hover();
+    await expect.poll(() => cta.evaluate((element) => getComputedStyle(element).transform)).not.toBe('none');
+
+    const loader = await page.evaluate(() => {
+      const form = document.createElement('form');
+      form.className = 'contact-form';
+      const button = document.createElement('button');
+      button.disabled = true;
+      form.append(button);
+      document.body.append(form);
+      const style = getComputedStyle(button, '::after');
+      const result = { animation: style.animationName, width: style.width };
+      form.remove();
       return result;
     });
-    expect(reducedMotion.opacity).toBe('1');
-    expect(reducedMotion.transform).toBe('none');
+    expect(loader.animation).toBe('hades-spinner');
+    expect(loader.width).toBe('13px');
+
+    const reveal = page.locator('#about .reveal').first();
+    await reveal.scrollIntoViewIfNeeded();
+    await expect.poll(() => reveal.evaluate((element) => element.classList.contains('is-visible'))).toBe(true);
+    await expect.poll(() => reveal.evaluate((element) => getComputedStyle(element).opacity)).toBe('1');
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.reload();
+    const reduced = await page.locator('.hero-studio-title > span').evaluate((element) => ({
+      animation: getComputedStyle(element).animationName,
+      opacity: getComputedStyle(element).opacity,
+      transform: getComputedStyle(element).transform,
+    }));
+    expect(reduced.animation).toBe('none');
+    expect(reduced.opacity).toBe('1');
+    expect(reduced.transform).toBe('none');
   });
   test('published media library assets render in the glass gallery and filters work', async ({ page }) => {
     await page.goto('/');
@@ -105,9 +119,14 @@ test.describe('Portfolio public experience', () => {
   });
   test('media image opens a detailed preview and closes from the panel or backdrop', async ({ page }) => {
     await page.goto('/');
-    const gallery = page.locator('#media-library');
-    const preview = gallery.locator('.media-showcase-image-button').first();
-    test.skip(await preview.count() === 0, 'No image assets are currently published in the live media library.');
+    let gallery = page.locator('#media-library');
+    let preview = gallery.locator('.media-showcase-image-button').first();
+    if (await preview.count() === 0) {
+      // Use a local SVG fixture when the real public library has no published image.
+      await page.goto('/qa-media-fixture');
+      gallery = page.locator('#media-library');
+      preview = gallery.locator('.media-showcase-image-button').first();
+    }
     await expect(preview).toBeVisible();
     await preview.click();
     const dialog = page.getByRole('dialog', { name: /image details/i });

@@ -2,12 +2,14 @@
 import { useCallback,useEffect,useMemo,useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { LayoutDashboard,FolderKanban,FileText,Image as ImageIcon,Settings,LogOut,ShieldCheck,AlertCircle,Plus,Pencil,Trash2,RefreshCw,BriefcaseBusiness,GraduationCap,Wrench,Video,Share2,MessageSquare,Star,PanelsTopLeft,Menu,X,ExternalLink,Save,Search,Code2,Upload } from 'lucide-react';
+import { LayoutDashboard,FolderKanban,FileText,Image as ImageIcon,Settings,LogOut,ShieldCheck,AlertCircle,Plus,Pencil,Trash2,RefreshCw,BriefcaseBusiness,GraduationCap,Wrench,Video,Share2,MessageSquare,Star,PanelsTopLeft,Menu,X,ExternalLink,Save,Search,Code2,Upload, type LucideIcon } from 'lucide-react';
 import { createClient,supabaseConfigured } from '@/lib/supabase';
 import ContentIcon,{ICON_CHOICES,SOCIAL_PLATFORMS,defaultSocialIcon} from '@/components/ContentIcon';
 import { buildAdminPayload, formatAdminInputValue, getAdminInputType, getAdminSelectOptions, isAdminRequired } from '@/lib/admin-form';
+// CMS rows are schema-driven across different tables; this loose record is narrowed by the active module at runtime.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RowData=Record<string,any>;
-type Module={key:string;label:string;table:string;icon:any;description:string;sample:RowData};
+type Module={key:string;label:string;table:string;icon:LucideIcon;description:string;sample:RowData};
 const MAX_MEDIA_UPLOAD_BYTES = 50 * 1024 * 1024;
 const modules:Module[]=[
 {key:'sections',label:'Page sections',table:'sections',icon:PanelsTopLeft,description:'Edit homepage copy, section visibility and order.',sample:{icon_url:'',icon_name:'PanelsTopLeft',slug:'about',title:'About',content:{heading:'About me',body:'Write your introduction here.'},is_visible:true,sort_order:0}},
@@ -39,7 +41,7 @@ useEffect(()=>{if(signed&&active)void loadRows();},[signed,active,loadRows]);
 async function login(e:React.FormEvent){e.preventDefault();setError('');if(!sb){setError('Supabase is not connected.');return;}setLoading(true);try{const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;const {data:role,error:roleError}=await sb.from('user_roles').select('role').eq('user_id',data.user.id).eq('role','admin').maybeSingle();if(roleError||!role){await sb.auth.signOut();throw new Error('This account does not have the admin role.');}setSigned(true);}catch(err){setError(err instanceof Error?err.message:'Unable to sign in.');}finally{setLoading(false);}}
 function openNew(){if(!active)return;setEditing(null);setEditor({...active.sample});setNestedKey('');setError('');}
 function openEdit(row:RowData){const formatted={...row};for(const key of ['start_date','end_date','published_at'])if(key in formatted)formatted[key]=formatAdminInputValue(key,formatted[key]);setEditing(row);setEditor({...formatted,icon_name:row.icon_name||(row.platform?defaultSocialIcon(row.platform):(row.icon||undefined))});setNestedKey('');setError('');}
-function updateField(key:string,value:any){setEditor(prev=>prev?({...prev,[key]:value}):prev);}
+function updateField(key:string,value:unknown){setEditor(prev=>prev?({...prev,[key]:value}):prev);}
 function updateNestedField(parent:string,sub:string,raw:string|boolean){
 setEditor(prev=>{
 if(!prev)return prev;

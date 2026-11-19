@@ -20,8 +20,8 @@ function videoId(url: string) {
   } catch {}
   return '';
 }
-function Brand({ settings }: { settings: Record<string, any> }) {
-  const branding = settings.branding || {};
+function Brand({ settings }: { settings: Record<string, unknown> }) {
+  const branding = (settings.branding || {}) as Record<string, string>;
   return <a className="brand" href="#home">{branding.logo_url ? <Image src={branding.logo_url} alt="" width={34} height={34} unoptimized style={{objectFit:'contain'}}/> : <span className="brand-mark">{branding.logo_text || 'H.'}</span>}<span>{branding.site_name || 'HADES'}<span className="brand-muted"> / PORTFOLIO</span></span></a>;
 }
 function ProjectCard({ project, index }: { project: PortfolioRow; index: number }) {
@@ -37,7 +37,7 @@ export default async function Home() {
   const content = (slug:string) => section(slug)?.content || {};
   const enabled = (slug:string) => !!section(slug);
   const home = content('home'), about = content('about'), work = content('work'), skills = content('skills'), creator = content('creator'), contact = content('contact');
-  const general = data.settings.general || {}, contactSettings = data.settings.contact || {};
+  const general = (data.settings.general || {}) as Record<string, string>, contactSettings = (data.settings.contact || {}) as Record<string, string>;
   const email = contactSettings.email || '';
   const baseNav: PortfolioRow[] = data.navigation.length ? data.navigation : [{label:'About',href:'#about'},{label:'Selected work',href:'#work'},{label:'Expertise',href:'#skills'},{label:'Contact',href:'#contact'}];
   const nav: PortfolioRow[] = data.mediaAssets.length && !baseNav.some((item) => item.href === '#media-library')
