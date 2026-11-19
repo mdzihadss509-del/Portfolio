@@ -69,3 +69,5 @@ The repository is buildable, but a production host/domain has not yet been confi
 7. Configure the production domain/HTTPS, then test the deployed homepage, Admin, contact form, blog and media URLs.
 
 See the latest verified status and outstanding blockers in [docs/PROJECT_CONTEXT.md](docs/PROJECT_CONTEXT.md). The app is not marked fully production-ready until the remaining Admin, security and hosting checks are completed.
+
+- Run `npm audit` as part of the dependency security check; the current resolved dependency tree reports 0 vulnerabilities.
