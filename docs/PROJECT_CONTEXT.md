@@ -257,3 +257,14 @@ For every future session:
 6. Run checks serially (avoid parallel Next build/type/test processes that race over `.next`).
 7. After meaningful work, update the verification results and remaining tasks in this file.
 8. Commit only source, configuration, tests, docs and reviewed migrations; never secrets or generated artifacts.
+
+
+## 2026-11-19 theme correction and verification
+
+- Strict final theme override applied: dark page and major section canvases are pure black (#000000); light page and major section canvases are pure white (#ffffff). Neon glow, luminous shadows, text glow, decorative overlays and glow filters are disabled. The hero orb is now a neutral flat element.
+- Focused Playwright test for both themes passed after remaining #080808 section backgrounds were corrected to exact black/white.
+- The full Playwright run immediately before the final adjustment had 6 passing tests and 1 theme test failure; the focused theme test passed after the correction. The full 7-test suite was not rerun after that final correction.
+- TypeScript check passed. ESLint: 0 errors, 18 warnings remain (any types, raw img tags, internal anchor links).
+- Production build passed after the final theme CSS adjustment. Routes built: /, /admin, /api/contact, /blog/[slug].
+- Local commits: ce71e2d (theme correction) and ca11369 (handover status). No production deployment.
+- Remaining: resolve lint warnings; full authenticated Admin CRUD and actual media upload tests require an admin session and sample files; rerun full Playwright suite once; clean obsolete local backup files only after confirming they are not needed; production deployment not performed.
