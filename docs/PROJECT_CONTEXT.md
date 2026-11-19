@@ -248,3 +248,27 @@ Most recent code verification after the PostCSS security override:
 - The migration has been applied to the connected database. The original bootstrap migration filenames still differ from live migration history; do not replay bootstrap migrations on the existing database.
 
 **Current verified state:** local production build passes, full Playwright suite 7/7 passes, Supabase role-helper hardening is applied, public website returns HTTP 200. **Not yet production-live:** authenticated Admin workflow sign-off, Auth leaked-password setting, Vercel GitHub integration/project, production environment variables, and domain/live verification.
+
+
+## 12. Production deployment — 2026-11-19 18:47 Asia/Dhaka
+
+- Created Vercel Hobby project `hades-portfolio` (project ID `prj_i0FEfGBdlXVHhiXkgwVnePBQdRi2`) in team `mdzihadss509-1195`.
+- Configured `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` for Production, Preview and Development. No service-role key was added.
+- Deployed the 32 required source/config/icon files directly to Vercel. Production deployment `dpl_5mUDHsBdeaXUHda9A9UTvdAYrMcs` completed with state **READY**. Build output confirms Next.js 15.5.29 and generated routes `/`, `/admin`, `/api/contact`, `/blog/[slug]`.
+- Production URL: https://hades-portfolio-amber.vercel.app (secondary alias: https://hades-portfolio-mdzihadss509-1195.vercel.app).
+- Changed Vercel SSO protection to apply to Preview deployments only; the production portfolio URL is public. Preview deployments remain protected.
+- Post-deploy smoke checks: homepage HTTP **200**, Admin sign-in route HTTP **200**. Admin route correctly shows the protected email/password sign-in screen and no public signup.
+- A clearly synthetic published project row (`title=test`, `slug=new-project44`, URLs/images set to `44`) was found in Supabase and safely unpublished (not deleted). The ISR page revalidated and the production homepage no longer includes that test content or broken `src="44"` image.
+- The GitHub App is still not installed for this Vercel account/repository, so this deployment is a direct source upload rather than Git-connected. GitHub pushes will **not** automatically deploy until the owner installs/authorizes the Vercel GitHub App and links the repository.
+
+### Remaining production sign-off
+
+1. Owner must sign in to production `/admin` and verify real CRUD, logo/social settings, icon preset persistence, and safe sample upload/replace/delete across image/video/audio/PDF/archive. The password was not requested or accessed.
+2. Enable Supabase Auth Leaked Password Protection in the Auth dashboard; the security advisor currently reports only this warning.
+3. Performance advisor still reports 77 multiple-permissive-policy notices and 3 new FK indexes as unused. Do not mass-edit policies without access regression tests.
+4. Replace the contact endpoint's process-local in-memory rate limit with a distributed/edge limiter before high-traffic use.
+5. ESLint still has 18 non-blocking warnings; production build and 7/7 Playwright tests pass.
+6. Add and verify the owner's custom domain; no custom domain has been configured.
+7. Install the Vercel GitHub App and link `mdzihadss509-del/Portfolio` to restore automatic deployments from `main`.
+
+**Status:** Public production deployment is live and smoke-tested. Full production sign-off remains conditional on authenticated Admin workflows, Auth leaked-password protection, durable rate limiting, and custom domain/GitHub deployment integration.
