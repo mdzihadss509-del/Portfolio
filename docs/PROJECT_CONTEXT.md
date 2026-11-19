@@ -232,3 +232,19 @@ Most recent code verification after the PostCSS security override:
 - Before Supabase work, inspect live schema, policies and migration history.
 - Run Next build/type/test commands serially to avoid `.next` races.
 - After meaningful work, update this handover and remaining-work list.
+
+
+## 11. Continuation update — 2026-11-19 18:45 Asia/Dhaka
+
+- Full Playwright regression was rerun after the accessibility contrast correction: **7/7 passed** (homepage/navigation, pure black/white themes and no glow, responsive overflow, 3D motion/reduced-motion, media gallery/filtering, serious/critical axe accessibility, and Admin login gate).
+- The first rerun exposed four low-contrast micro-labels on the dark canvas. Their contrast was corrected while preserving pure black/white backgrounds; the second full suite passed.
+- Production build completed successfully, exit code 0. It still emits 18 non-blocking ESLint warnings (explicit any, raw img and internal anchor usage).
+- Supabase migration `secure_private_role_helper_and_fk_indexes` applied successfully. The role-check SECURITY DEFINER helper now lives in the non-exposed `private` schema with an empty search_path; public and Storage policies were recreated to call the private helper. Read-only verification confirms no `public.has_site_role` remains and the private function is executable by anon/authenticated roles as required by policy evaluation.
+- Security advisor no longer reports the exposed SECURITY DEFINER function. The remaining security notice is Leaked Password Protection disabled in Supabase Auth; this must be enabled in the Auth dashboard.
+- Foreign-key indexes were applied. Performance advisor still reports 77 multiple-permissive-policy findings and 3 new indexes as unused; these are performance notices, not evidence of broken access. Do not mass-edit RLS without role regression tests.
+- Storage policies still require authenticated users with the admin role for upload/update/delete; public read is intentional for portfolio media.
+- Owner-authenticated Admin CRUD and real multi-format upload/delete remain unverified because no admin password or safe sample files were supplied. Do not request or store the owner's password in chat.
+- Vercel account discovery shows a Hobby team but no Git-linked projects. GitHub App authorization for the repository and production environment-variable setup remain deployment blockers.
+- The migration has been applied to the connected database. The original bootstrap migration filenames still differ from live migration history; do not replay bootstrap migrations on the existing database.
+
+**Current verified state:** local production build passes, full Playwright suite 7/7 passes, Supabase role-helper hardening is applied, public website returns HTTP 200. **Not yet production-live:** authenticated Admin workflow sign-off, Auth leaked-password setting, Vercel GitHub integration/project, production environment variables, and domain/live verification.
