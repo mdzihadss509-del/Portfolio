@@ -316,3 +316,16 @@ Most recent code verification after the PostCSS security override:
 
 - Follow-up regression run after removing the hero-art entrance opacity fade: **9/9 Playwright tests passed**, including automated serious/critical accessibility checks.
 pm audit --omit=dev --audit-level=low reports 0 vulnerabilities. git diff --check passed.
+
+
+## 15. CMS delete consistency and live rendering — 2026-11-19
+
+- Root layout, homepage, published article route, and sitemap are now explicitly dynamic with `revalidate = 0`. This removes the previous 60-second homepage ISR window that could keep deleted media/content visible from stale generated HTML.
+- Verified the built homepage response includes `Cache-Control: private, no-cache, no-store, max-age=0, must-revalidate`; the live HTML no longer includes the media gallery when the database has no published media rows.
+- Queried the production `public.media_assets` table: currently **0 rows**. The previously rendered two gallery entries were stale cached HTML; they are not present in the current database. The media gallery now correctly stays hidden when no media records exist.
+- Admin list loading now handles tables with and without a `created_at` column (client-side sort only when values exist); this avoids invalid-column failures across CMS modules.
+- Admin delete now requests the deleted row back with `.select('id').maybeSingle()`. If RLS/session prevents a real deletion, the UI reports an error instead of falsely saying success. On successful deletion it immediately removes the row from the admin list, cleans the Storage object when applicable, then reloads the database list.
+- Published article pages and sitemap also bypass stale caching, so edits/deletes to posts are reflected on the next request.
+- Regression coverage added for no-store homepage response. Media tests now account for the live database state (the media-preview test is skipped when there are no currently published image assets; this avoids assuming demo rows exist).
+- Verification: `npm run build` passed; `npx tsc --noEmit` passed; Playwright **9 passed, 1 skipped** (skip is because production media_assets currently has zero rows); serious/critical accessibility test passed. Lint: 0 errors, 6 existing `no-explicit-any` warnings.
+- Local production response smoke test: HTTP 200, cache-control no-store, no stale media gallery in HTML.

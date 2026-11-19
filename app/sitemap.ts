@@ -1,6 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { getPortfolioData } from '@/lib/public-data';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const siteUrl = 'https://hades-portfolio-amber.vercel.app';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -9,7 +9,8 @@ import MotionSurface from '@/components/MotionSurface';
 import MediaShowcase from '@/components/MediaShowcase';
 import { getPortfolioData, type PortfolioRow } from '@/lib/public-data';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 function videoId(url: string) {
   try {

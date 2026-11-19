@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { getPortfolioData } from '@/lib/public-data';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const siteUrl = 'https://hades-portfolio-amber.vercel.app';
 
 export async function generateMetadata(): Promise<Metadata> {
