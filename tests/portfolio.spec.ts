@@ -69,6 +69,37 @@ test.describe('Portfolio public experience', () => {
     await gallery.locator('[data-media-filter="all"]').click();
     await expect(gallery.locator('[data-media-card]')).toHaveCount(2);
   });
+  test('media image opens a detailed preview and closes from the panel or backdrop', async ({ page }) => {
+    await page.goto('/');
+    const gallery = page.locator('#media-library');
+    const preview = gallery.locator('.media-showcase-image-button').first();
+    await expect(preview).toBeVisible();
+    await preview.click();
+    const dialog = page.getByRole('dialog', { name: /image details/i });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.locator('.media-lightbox-image-wrap img')).toBeVisible();
+    await expect(dialog.getByText(/image \/ media library/i)).toBeVisible();
+    await expect(dialog.getByRole('link', { name: /download image/i })).toHaveAttribute('download');
+    await page.getByRole('button', { name: /close image preview/i }).click();
+    await expect(dialog).toHaveCount(0);
+    await preview.click();
+    await expect(dialog).toBeVisible();
+    await page.locator('.media-lightbox').click({ position: { x: 4, y: 4 } });
+    await expect(dialog).toHaveCount(0);
+  });
+
+  test('favicon and search crawler endpoints are available', async ({ request }) => {
+    const favicon = await request.get('/favicon.svg');
+    expect(favicon.status()).toBe(200);
+    expect(favicon.headers()['content-type']).toContain('image/svg+xml');
+    const robots = await request.get('/robots.txt');
+    expect(robots.status()).toBe(200);
+    expect(await robots.text()).toContain('Sitemap: https://hades-portfolio-amber.vercel.app/sitemap.xml');
+    const sitemap = await request.get('/sitemap.xml');
+    expect(sitemap.status()).toBe(200);
+    expect(await sitemap.text()).toContain('https://hades-portfolio-amber.vercel.app');
+  });
+
   test('homepage has no serious or critical automated accessibility violations', async ({ page }) => {
     await page.goto('/');
     const results = await new AxeBuilder({ page }).exclude('iframe').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();

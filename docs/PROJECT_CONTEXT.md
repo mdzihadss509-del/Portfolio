@@ -272,3 +272,27 @@ Most recent code verification after the PostCSS security override:
 7. Install the Vercel GitHub App and link `mdzihadss509-del/Portfolio` to restore automatic deployments from `main`.
 
 **Status:** Public production deployment is live and smoke-tested. Full production sign-off remains conditional on authenticated Admin workflows, Auth leaked-password protection, durable rate limiting, and custom domain/GitHub deployment integration.
+
+
+## 13. Regression and SEO fixes — 2026-11-19
+
+- Fixed the Playwright configuration so every test run starts an isolated production server on port 3111. This prevents the previous running Next.js server on port 3000 from serving stale in-memory manifests while a new build replaces `.next` assets.
+- Re-ran the full browser regression suite against the isolated production build: **9/9 passed**. Coverage includes homepage/navigation, theme contrast and backgrounds, mobile overflow at 320/390/768/1024/1440px, 3D and reduced-motion, media filtering, image detail modal (image, metadata, download, close button, backdrop close), favicon/robots/sitemap endpoints, serious/critical automated accessibility, and Admin sign-in screen.
+- Fixed the image detail modal being rendered inside the transformed MotionSurface ancestor. It now renders outside the transformed card, occupies the viewport, locks background scrolling, and closes with Escape, close button, or backdrop click.
+- Corrected the image preview button accessible name to include its visible “View Details” wording and fixed the hero secondary label contrast/opacity to pass the automated WCAG AA serious/critical check.
+- Added dynamic Next metadata: canonical URL, favicon with Admin branding override, robots directives, Open Graph and Twitter metadata.
+- Added `/robots.txt` to allow public indexing while disallowing `/admin` and `/api/`, plus a dynamic `/sitemap.xml` containing the homepage and published article URLs.
+- Fresh `npm run build`: **passed**, exit code 0. Routes include `/robots.txt` and `/sitemap.xml`.
+- `npx tsc --noEmit`: **passed**.
+- `npm run lint`: **passed**, 0 errors; 19 non-blocking warnings remain (explicit `any`, raw `img`, internal anchor navigation).
+- `npm audit --omit=dev`: **0 vulnerabilities**.
+- `git diff --check`: **passed**.
+
+### Still outstanding after this regression fix
+
+- Production deployment of this latest local commit and post-deploy HTTP/browser verification.
+- Authenticated Admin CRUD and real upload/replace/delete workflow verification; owner sign-in is needed and no password should be requested in chat.
+- Supabase Auth Leaked Password Protection remains disabled until enabled in the Auth dashboard.
+- Contact API rate limit is still process-local; durable distributed/edge rate limiting needs a provider and credentials.
+- Supabase reports 77 multiple-permissive-policy performance notices; do not mass-edit without role/access regression tests.
+- GitHub/Vercel automatic deployment connection remains unverified; verify after the source commit is pushed.

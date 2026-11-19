@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Archive,
   ArrowDownToLine,
@@ -103,6 +103,20 @@ function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) 
   const label = asset.alt_text?.trim() || name;
   const needsDownload = kind === 'archive' || kind === 'file' || (kind === 'document' && extension !== 'PDF');
 
+  useEffect(() => {
+    if (!imageOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setImageOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [imageOpen]);
+
   return (
     <div className="media-showcase-item" data-media-card data-media-kind={kind}>
       <MotionSurface as="article" className="media-showcase-card" intensity={0.38}>
@@ -112,19 +126,15 @@ function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) 
         </div>
 
         {kind === 'image' && (
-          <>
-          <button className="media-showcase-preview media-showcase-image media-showcase-image-button" type="button" onClick={() => setImageOpen(true)} aria-label={`Preview image: ${name}`}>
+          <button
+            className="media-showcase-preview media-showcase-image media-showcase-image-button"
+            type="button"
+            onClick={() => setImageOpen(true)}
+            aria-label={`View details for image: ${name}`}
+          >
             <img src={url} alt={label} loading="lazy"/>
             <span className="media-showcase-preview-corner">VIEW DETAILS <ArrowUpRight size={14}/></span>
           </button>
-          {imageOpen && <div className="media-lightbox" role="dialog" aria-modal="true" aria-label={`Image details: ${name}`} onClick={() => setImageOpen(false)}>
-            <div className="media-lightbox-panel" onClick={(event) => event.stopPropagation()}>
-              <button type="button" className="media-lightbox-close" onClick={() => setImageOpen(false)} aria-label="Close image preview">×</button>
-              <div className="media-lightbox-image-wrap"><img src={url} alt={label}/></div>
-              <div className="media-lightbox-details"><span className="media-showcase-type"><ImageIcon size={14}/> IMAGE / MEDIA LIBRARY</span><h2>{name}</h2><p>{label === name ? "Added to the HADES media library." : label}</p><div className="media-showcase-meta"><span>{formatBytes(asset.size_bytes)}</span><span>{dateLabel(asset.created_at)}</span><span>{extension.toUpperCase()}</span></div><a className="media-lightbox-download" href={downloadUrl(url,name)} download={name}><ArrowDownToLine size={16}/> DOWNLOAD IMAGE</a></div>
-            </div>
-          </div>}
-          </>
         )}
 
         {kind === 'video' && (
@@ -178,6 +188,35 @@ function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) 
           </div>
         </div>
       </MotionSurface>
+      {kind === 'image' && imageOpen && (
+        <div
+          className="media-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Image details: ${name}`}
+          onClick={() => setImageOpen(false)}
+        >
+          <div className="media-lightbox-panel" onClick={(event) => event.stopPropagation()}>
+            <button type="button" className="media-lightbox-close" onClick={() => setImageOpen(false)} aria-label="Close image preview">×</button>
+            <div className="media-lightbox-image-wrap">
+              <img src={url} alt={label}/>
+            </div>
+            <div className="media-lightbox-details">
+              <span className="media-showcase-type"><ImageIcon size={14}/> IMAGE / MEDIA LIBRARY</span>
+              <h2>{name}</h2>
+              <p>{label === name ? 'Added to the HADES media library.' : label}</p>
+              <div className="media-showcase-meta">
+                <span>{formatBytes(asset.size_bytes)}</span>
+                <span>{dateLabel(asset.created_at)}</span>
+                <span>{extension}</span>
+              </div>
+              <a className="media-lightbox-download" href={downloadUrl(url, name)} download={name}>
+                <ArrowDownToLine size={16}/> DOWNLOAD IMAGE
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
