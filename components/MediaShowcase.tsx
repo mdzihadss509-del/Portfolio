@@ -232,7 +232,7 @@ function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) 
           onClick={() => setImageOpen(false)}
         >
           <div className={`media-lightbox-panel media-lightbox-panel--${kind}`} onClick={(event) => event.stopPropagation()} role="document">
-            <button ref={closeButtonRef} type="button" className="media-lightbox-close" onClick={() => setImageOpen(false)} aria-label="Close image preview">×</button>
+            <button ref={closeButtonRef} type="button" className="media-lightbox-close" onClick={() => setImageOpen(false)} aria-label="Close asset preview">×</button>
             <div className="media-lightbox-image-wrap">
               {kind === 'image' && <Image src={url} alt={label} width={1600} height={1200} unoptimized/>}
               {kind === 'video' && <video src={url} controls playsInline preload="metadata" aria-label={name}/>}
