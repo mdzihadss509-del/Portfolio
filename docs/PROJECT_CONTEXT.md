@@ -578,7 +578,7 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 - Known build-only warnings from vinext/Vite: sourcemap notices, an ineffective dynamic import, and a large client chunk. These need review before any migration is accepted.
 
 ### Free-tier limitation / deployment gate
-- Cloudflare Workers Free currently includes 100,000 requests/day but only **10 ms CPU time per invocation**. Cloudflare documentation warns SSR applications usually need Workers Paid. Local preview wall-clock timings do not prove production CPU time is below that limit.
+- Cloudflare Workers Free currently includes 100,000 requests/day but only **10 ms CPU time per invocation**. Cloudflare docs state that heavier workloads involving authentication and server-side rendering typically use 10–20 ms, so this SSR site may exceed the Free limit. Local preview wall-clock timings do not prove production CPU time is below that limit.
 - Cloudflare account authentication is not configured on the desktop, so no Workers deployment, live CPU measurement, or DNS switch was attempted.
 - Do not move production to Cloudflare until a zero-cost Workers Free deployment is tested on a separate `workers.dev` URL and the homepage, admin sign-in, blog route, contact Edge/API path, storage upload flow, security headers, and actual CPU usage are verified.
 - If Free CPU limits are exceeded, a static-frontend + Supabase client/Edge Function architecture may be investigated, but that is a larger redesign with SEO/cache trade-offs and must be regression-tested before adoption.
