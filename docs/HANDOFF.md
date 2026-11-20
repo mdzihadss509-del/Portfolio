@@ -259,3 +259,15 @@ Do not call the site 100% production-ready until relevant operational gates are 
 
 ---
 **End of canonical handover. Update this file after the next meaningful change.**
+
+
+## 12. 2026-11-20 — Hero identity, copy and responsive composition refresh
+
+- Updated the public Home/Hero content in Supabase `sections` for slug `home`; restored the requested greeting and a fuller owner-authored first-person intro:
+  "Hi, I’m Zihad — founder of Black Flash Hades. I’ve always been curious about how things work and what can be created beyond the familiar. That curiosity leads me to explore technology, build websites and applications, and experiment with creative digital projects. I learn by making things, testing ideas, and refining them through hands-on work. Each project gives me a new way to explore, solve problems, and keep building."
+- Changed the visual hero headline to `ZIHAD / BEYOND THE ORDINARY.` and added `DRIVEN BY CURIOSITY.` as a supporting positioning line.
+- Preserved the existing founder kicker, Explore selected work CTA and `IDEAS / SYSTEMS / EXPERIENCES` micro-label.
+- Refined headline, intro, spacing and type sizing. Mobile/tablet reading order is copy first and HADES signature mark second; desktop retains the split composition. Adjusted tablet breakpoint and headline scale to avoid collision with the signature artwork.
+- Updated `tests/portfolio.spec.ts` with hero copy and responsive-composition assertions.
+- Verification after final CSS refinement: `git diff --check` passed; `npm run lint` passed; `npx tsc --noEmit` passed; `npm run build` passed; full Playwright suite **22/22 passed**. Tests cover 390, 768, 1024 and 1440px hero composition plus existing homepage, themes, motion, media, contact, security and Admin gate.
+- Before code commit/push, these code changes were local to `main`; verify current Git state and Vercel production deployment before claiming they are live. Supabase Hero copy was already saved and verified through the passing homepage tests.

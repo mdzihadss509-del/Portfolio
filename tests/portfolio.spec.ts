@@ -7,6 +7,10 @@ test.describe('Portfolio public experience', () => {
     await page.goto('/');
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('nav')).toBeVisible();
+    await expect(page.locator('.hero-studio-title')).toContainText('ZIHAD');
+    await expect(page.locator('.hero-studio-title')).toContainText('BEYOND THE ORDINARY.');
+    await expect(page.locator('.hero-studio-manifesto')).toHaveText('DRIVEN BY CURIOSITY.');
+    await expect(page.locator('.hero-studio-description')).toContainText('Hi, I’m Zihad — founder of Black Flash Hades.');
     const anchors = await page.locator('nav a[href^="#"]').evaluateAll((items) => items.map((item) => item.getAttribute('href')).filter(Boolean));
     for (const href of anchors) await expect(page.locator(href as string)).toHaveCount(1);
   });
@@ -63,6 +67,38 @@ test.describe('Portfolio public experience', () => {
       await page.setViewportSize({ width, height: 900 });
       const dimensions = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
       expect(dimensions.scroll, `horizontal overflow at ${width}px`).toBeLessThanOrEqual(dimensions.client);
+    }
+  });
+  test('hero hierarchy stays balanced on desktop and mobile', async ({ page }) => {
+    await page.goto('/');
+    const copy = page.locator('.hero-studio-copy');
+    const artwork = page.locator('.hero-art-column');
+    await expect(copy).toBeVisible();
+    await expect(artwork).toBeVisible();
+    for (const width of [390, 768, 1024, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      const geometry = await page.evaluate(() => {
+        const copyRect = document.querySelector('.hero-studio-copy')!.getBoundingClientRect();
+        const artRect = document.querySelector('.hero-art-column')!.getBoundingClientRect();
+        const titleLine = document.querySelector('.hero-studio-title em')!.getBoundingClientRect();
+        return {
+          copyTop: copyRect.top,
+          copyLeft: copyRect.left,
+          copyRight: copyRect.right,
+          artTop: artRect.top,
+          artLeft: artRect.left,
+          titleRight: titleLine.right,
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+        };
+      });
+      expect(geometry.scrollWidth, `hero overflows at ${width}px`).toBeLessThanOrEqual(geometry.clientWidth);
+      if (width <= 900) {
+        expect(geometry.copyTop, 'mobile copy should appear before the signature artwork').toBeLessThan(geometry.artTop);
+      } else {
+        expect(geometry.copyLeft).toBeLessThan(geometry.artLeft);
+        expect(geometry.titleRight, `headline overlaps artwork at ${width}px`).toBeLessThanOrEqual(geometry.artLeft + 8);
+      }
     }
   });
   test('hero 3D tilt responds to pointer and respects reduced motion', async ({ page }) => {

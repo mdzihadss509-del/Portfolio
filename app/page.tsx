@@ -56,8 +56,9 @@ export default async function Home() {
       <div className="hero-studio-grid">
         <div className="hero-studio-copy">
           <p className="hero-studio-kicker"><span className="hero-kicker-line"/> {home.hero_kicker || 'INDEPENDENT CREATIVE / BUILDER'}</p>
-          <h1 className="hero-studio-title"><span>ZIHAD</span><em>BUILDS BEYOND<span className="hero-title-period">.</span></em></h1>
-          <p className="hero-studio-description">{home.intro || 'A multi-disciplinary creator exploring the space between digital experiences, technology and gaming.'}</p>
+          <h1 className="hero-studio-title"><span>ZIHAD</span><em>BEYOND THE ORDINARY<span className="hero-title-period">.</span></em></h1>
+          <p className="hero-studio-manifesto">DRIVEN BY <span>CURIOSITY.</span></p>
+          <p className="hero-studio-description">{home.intro || 'Hi, I’m Zihad — founder of Black Flash Hades. I’ve always been curious about how things work and what can be created beyond the familiar. That curiosity leads me to explore technology, build websites and applications, and experiment with creative digital projects. I learn by making things, testing ideas, and refining them through hands-on work. Each project gives me a new way to explore, solve problems, and keep building.'}</p>
           <div className="hero-studio-actions">
             <a className="hero-explore-link" href="#work"><span>Explore selected work</span><span className="hero-explore-icon"><ArrowUpRight size={17}/></span></a>
             <span className="hero-studio-note">IDEAS / SYSTEMS / EXPERIENCES</span>

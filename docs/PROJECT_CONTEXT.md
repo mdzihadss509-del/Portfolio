@@ -617,3 +617,15 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 6. Run full E2E after the next code change and perform an interactive live-browser modal check.
 
 **Honest status:** application code, build and automated public-site QA are passing; latest production deployment is live and READY. This is not a 100% production/commercial sign-off yet. See `docs/HANDOFF.md` for exact details and the resumption checklist.
+
+
+## 26. 2026-11-20 — Hero intro and layout refinement
+
+- Restored the Hero greeting: "Hi, I’m Zihad — founder of Black Flash Hades."
+- Saved the full curiosity-led introduction in Supabase `sections.home.content.intro`.
+- Hero headline changed to `ZIHAD / BEYOND THE ORDINARY.` with supporting line `DRIVEN BY CURIOSITY.`.
+- Preserved the selected-work CTA, founder kicker and `IDEAS / SYSTEMS / EXPERIENCES` label.
+- Refined type scale, paragraph measure and spacing; mobile/tablet now place the copy before the signature emblem. A 1024px headline/artwork collision found during testing was fixed.
+- Added hero text assertions and responsive geometry coverage for 390/768/1024/1440px.
+- Final local QA: lint, TypeScript, production build and full Playwright suite **22/22 passed**; `git diff --check` passed.
+- Record the resulting exact commit and Vercel production deployment after push/verification. Until that is confirmed, do not describe the new code layout as live.
