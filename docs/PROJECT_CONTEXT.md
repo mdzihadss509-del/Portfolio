@@ -629,3 +629,43 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 - Added hero text assertions and responsive geometry coverage for 390/768/1024/1440px.
 - Final local QA: lint, TypeScript, production build and full Playwright suite **22/22 passed**; `git diff --check` passed.
 - Record the resulting exact commit and Vercel production deployment after push/verification. Until that is confirmed, do not describe the new code layout as live.
+
+
+## 27. Canonical handover refresh — 2026-11-20
+
+The single current operational source of truth is now **[docs/HANDOFF.md](HANDOFF.md)**. It was refreshed after the Hero update was committed, pushed and deployed.
+
+### Current verified state (supersedes older snapshots in this chronological log)
+
+- GitHub: https://github.com/mdzihadss509-del/Portfolio
+- Production branch: main
+- Local checkout: C:\Users\zihad\hades-portfolio
+- Latest commit: 6af897f7f6e019133fbf557561cb0682a523f021 — Refine curiosity-led hero identity and layout
+- Git tree at handover: clean; local main aligned with origin/main.
+- Production site: https://hades-portfolio-amber.vercel.app/
+- Production Admin: https://hades-portfolio-amber.vercel.app/admin
+- Latest Vercel deployment: dpl_J546QTvnEtzJVeW4Rrz5sAe9E7Cv
+- Deployment URL: https://hades-portfolio-bsci36j6l-mdzihadss509-1195.vercel.app
+- Deployment state/target: **READY / Production**, source branch main, exact source commit above.
+- Live alias and deployment URL both returned HTTP 200; live homepage HTML confirmed the latest greeting, BEYOND THE ORDINARY heading and DRIVEN BY CURIOSITY line.
+
+### Latest local QA
+
+After final hero responsive CSS refinement:
+- git diff --check passed.
+- npm run lint passed.
+- npx tsc --noEmit passed.
+- npm run build passed.
+- Full Playwright suite passed **22/22**, including hero geometry at 390/768/1024/1440px and regression checks for homepage, skills, themes, motion, media, accessibility, contact validation/security and Admin sign-in gate.
+
+### Documentation layout
+
+- docs/HANDOFF.md is the single current operational handover and must be read first when resuming work.
+- README.md now points directly to that canonical handover and contains concise setup/security information.
+- This file remains a chronological history only. Earlier sections contain dated snapshots; they must not override the latest values in docs/HANDOFF.md.
+
+The Hero copy/layout update is committed, pushed and deployed. Do not repeat the former notes saying this change was still local or awaiting deployment.
+
+### Remaining operational sign-off
+
+Owner-authenticated Admin CRUD and Storage lifecycle checks, encrypted off-site backup/restore, commercial hosting-plan compliance, genuine content population where needed, optional custom domain, and a live interactive check of the published media modal remain separate tasks. This is not a claim of 100% commercial-production sign-off.

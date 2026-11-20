@@ -1,273 +1,323 @@
-# HADES Portfolio — Canonical Project Handover
+# HADES Portfolio — Start Here / Canonical Handover
 
-**Last updated:** 2026-11-20  
-**Purpose:** This is the first document to read when resuming work in a new chat/session. It is the current operational snapshot. For deeper historical details, read `PROJECT_CONTEXT.md`. If older notes conflict with this handover, prefer this file and verify the live systems before acting.
+**Last verified:** 2026-11-20 (Asia/Dhaka)
+**Purpose:** This is the single operational source of truth for continuing the HADES Portfolio project. Start here in every new session. It contains the current project location, live links, code/deployment identity, setup, architecture, recent changes, test evidence, safety constraints and remaining work. Historical notes elsewhere may contain outdated snapshots; this file takes precedence.
 
-## 1. Project identity and canonical locations
+## 1. Project at a glance
 
-- Project: HADES Portfolio CMS
-- Owner/brand: Zihad / HADES / Black Flash Hades
-- GitHub: https://github.com/mdzihadss509-del/Portfolio
-- Production branch: `main`
-- Local Windows checkout: `C:\Users\zihad\hades-portfolio`
-- Production website: https://hades-portfolio-amber.vercel.app/
-- Production Admin: https://hades-portfolio-amber.vercel.app/admin
-- Local website: http://localhost:3000/
-- Local Admin: http://localhost:3000/admin
-- Git remote: `origin = https://github.com/mdzihadss509-del/Portfolio.git`
-- Current local state at handover: `main` clean and aligned with `origin/main`, HEAD `0be7065`.
+| Item | Current value |
+|---|---|
+| Project | HADES Portfolio CMS |
+| Owner / identity | Zihad / HADES / Black Flash Hades |
+| GitHub repository | https://github.com/mdzihadss509-del/Portfolio |
+| Production branch | **main** |
+| Local Windows checkout | C:\Users\zihad\hades-portfolio |
+| Production website | https://hades-portfolio-amber.vercel.app/ |
+| Production Admin | https://hades-portfolio-amber.vercel.app/admin |
+| Local website | http://localhost:3000/ |
+| Local Admin | http://localhost:3000/admin |
+| Git remote | origin → https://github.com/mdzihadss509-del/Portfolio.git |
+| Supabase project ref | oxwadruhiavxftcglplx |
+| Vercel project | hades-portfolio |
+| Production host | Vercel (Hobby) |
 
-**Do not confuse this repository with the Cloudflare experiment branch.** Production remains on Vercel. The Cloudflare evaluation is a separate, unmerged branch described below.
+**Latest verified Git commit:**
+6af897f7f6e019133fbf557561cb0682a523f021 — Refine curiosity-led hero identity and layout
 
-## 2. Current Git state and latest production code
+**Latest verified production deployment:**
+- Deployment ID: dpl_J546QTvnEtzJVeW4Rrz5sAe9E7Cv
+- Deployment URL: https://hades-portfolio-bsci36j6l-mdzihadss509-1195.vercel.app
+- Target: Production
+- State: **READY**
+- Branch: main
+- Source commit: 6af897f7f6e019133fbf557561cb0682a523f021
+- Vercel Inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/J546QTvnEtzJVeW4Rrz5sAe9E7Cv
 
-Production branch commit history (newest first):
-- `0be7065` — Use generic close label for asset preview
-- `461a8af` — Fix media asset preview modal positioning and scroll
-- `4303d80` — Document production QA and test skills explorer
-- `f3387eb` — Redesign skills expertise explorer
-- `b5bdd9b` — Expand portfolio identity and section navigation
+The production alias and deployment URL both returned HTTP 200 in the latest smoke check. The live homepage contains the latest greeting, headline and curiosity tagline. Re-check deployment state before a future release; this snapshot is dated.
 
-Latest modal fix is already committed and pushed to `main`; it is not an uncommitted local-only change.
+## 2. Resume work immediately
 
-### Latest live production deployment
+Run these commands first. They establish the real current state without searching through old chat history:
 
-- Vercel deployment ID: `dpl_HpJRmNrStnCj3Pfk6btTtqDNiZhv`
-- Source commit: `0be7065e9ddd0c2baeb456aa95c2595d89ff0a8f`
-- Target/state: Production / READY
-- Alias: `hades-portfolio-amber.vercel.app`
-- Alias error: none
-- Live homepage and Admin HTTP checks: 200.
-- Live robots.txt and sitemap.xml: 200.
-- Live CSS and JS chunks: 200; fetched bundle includes the new asset-preview modal code and accessible close label.
-- Vercel runtime error scan at deployment verification: zero errors in the inspected last hour.
+Set-Location 'C:\Users\zihad\hades-portfolio'
+git status --short --branch
+git log -5 --oneline --decorate
+git remote -v
 
-Always re-check Vercel's current deployment state before assuming this historical status is still current.
+Expected state at this handover:
+- Branch: main
+- Working tree: clean
+- Local branch aligned with origin/main
+- HEAD: 6af897f
+- Production source commit: same full hash as HEAD
 
-## 3. Current website contents and behavior
+If the branch, commit or working tree differs, inspect the difference before editing. Preserve uncommitted owner changes. Do not reset, clean, stash, overwrite or force-push unexplained changes.
 
-Public sections:
-- Hero / HADES identity
-- About
-- Selected Work
-- Expertise / Skills Explorer
-- Services
-- Creator Space
-- Experience
-- Education
-- Contact
-- Media Archive when published media exists
+**Quick continuation rule:** Read this document, check Git state, then inspect only the files relevant to the requested task. Do not repeat discovery of the repository, deployment, Supabase project or project structure unless the live state has changed.
 
-Current portfolio content:
-- Projects: 4
-  1. HADES Portfolio
-  2. Black Flash - Hades
-  3. Minecraft Server & Plugin Experiments
-  4. AI-assisted Video Workflow
-- Skills: 29, with category filtering, text search and expand-all interaction; CMS additions should appear without frontend hardcoding.
-- Services: 6
-  - Web & App Development
-  - Gaming & Minecraft Projects
-  - Design & Visual Creation
-  - Video Editing & Content Creation
-  - Digital Project Management
-  - Creative & Technical Collaboration
-- Experience: 1 — Founder & Creator, Black Flash Hades. Do not present this as formal employment.
-- Education: 1 — ongoing college education; institution/qualification has not been supplied. Do not invent them.
-- Social/contact links: YouTube, Discord, Facebook, GitHub, email, Instagram.
-- Blog article records: 0.
-- YouTube video records: 0.
-- Testimonials: 0.
-- Media assets: latest owner test upload recorded 1 image asset titled `test` (229.3 KB JPG); verify current count before changing/deleting anything.
-- Do not fabricate client work, qualifications, testimonials, articles, video records or media.
+## 3. Latest completed work
 
-## 4. Recent UI fix — Media Library asset details modal
+### Hero identity, copy and responsive layout — 2026-11-20
 
-Files changed:
-- `components/MediaShowcase.tsx`
-- `app/globals.css`
-- `tests/portfolio.spec.ts`
-- `docs/PROJECT_CONTEXT.md`
+Changed files:
+- app/page.tsx
+- app/globals.css
+- tests/portfolio.spec.ts
+- docs/HANDOFF.md
+- docs/PROJECT_CONTEXT.md
 
-Behavior:
-- Modal is rendered with React portal under `document.body`, avoiding incorrect fixed positioning inside transformed/animated ancestors.
-- Full-viewport overlay, centered responsive modal, internal content scrolling and background page scroll lock.
-- Scrollbar compensation and restoration of previous root/body styles on close.
-- Initial focus, keyboard Tab/Shift+Tab loop, Escape close, backdrop close, and return focus to the opener.
-- Handles image/video/audio/PDF and other downloadable asset types with fallback/download behavior.
-- Generic accessible close label: `Close asset preview`.
+Updated the public hero:
+- Main heading: **ZIHAD** / **BEYOND THE ORDINARY.**
+- Supporting line: **DRIVEN BY CURIOSITY.**
+- Greeting and intro are saved in Supabase public.sections, row slug=home, under content.intro:
 
-QA evidence:
-- Full Playwright run at the main modal-fix checkpoint: 21/21 passed.
-- After the final tiny accessible-label adjustment, lint, TypeScript, focused modal E2E checks and `git diff --check` were rerun successfully. The full suite was not rerun after that final label-only adjustment; do not state otherwise.
-- Production deployment for the latest commit is READY.
-- Live homepage, modal CSS and JS assets were fetched successfully. **A real interactive browser session against the live published asset modal was not performed**; local Playwright regression coverage is the interaction evidence.
+> Hi, I’m Zihad — founder of Black Flash Hades. I’ve always been curious about how things work and what can be created beyond the familiar. That curiosity leads me to explore technology, build websites and applications, and experiment with creative digital projects. I learn by making things, testing ideas, and refining them through hands-on work. Each project gives me a new way to explore, solve problems, and keep building.
 
-## 5. Technology, architecture and key files
+Preserved:
+- Existing HADES identity/signature artwork
+- Founder kicker
+- “Explore selected work” CTA
+- IDEAS / SYSTEMS / EXPERIENCES micro-label
 
+Layout refinements:
+- Improved heading scale, paragraph width/line height and spacing.
+- Mobile/tablet reading order puts the text before the HADES signature artwork.
+- Desktop retains a split composition.
+- A 1024px headline/artwork collision found during QA was corrected by adjusting the responsive type scale.
+
+### Media Library asset details modal — 2026-11-20
+
+Previously completed and included in production:
+- components/MediaShowcase.tsx renders the modal through a React portal under document.body, avoiding fixed-position errors inside transformed ancestors.
+- Full-viewport overlay, responsive centered panel, internal panel scrolling and background scroll lock.
+- Scrollbar compensation and cleanup/restoration of prior page styles.
+- Initial focus, keyboard focus loop, Escape close, backdrop close and focus restoration.
+- Preview/fallback/download behavior for images, video, audio, PDF and other downloadable assets.
+- Accessible close label: Close asset preview.
+
+Earlier QA for this modal included a 21/21 full Playwright run at the main fix checkpoint. The later close-label-only adjustment had focused modal tests plus lint, TypeScript and diff checks. The newer full 22/22 suite described below covers the subsequent regression baseline.
+
+## 4. Latest verification evidence
+
+After the final hero CSS adjustment, the following were run successfully on the local project:
+
+| Check | Result |
+|---|---|
+| git diff --check | Passed |
+| npm run lint | Passed; 0 lint failures |
+| npx tsc --noEmit | Passed |
+| npm run build | Passed |
+| npm run test:e2e | **22/22 passed** |
+
+The 22-test Playwright suite includes:
+- Homepage and hero content assertions
+- Hero composition at 390, 768, 1024 and 1440px
+- Responsive overflow and layout checks
+- Skills explorer interactions
+- Theme behavior
+- Motion/reveal behavior
+- Media preview behavior
+- Accessibility checks
+- Contact form and API validation/security paths
+- Admin unauthenticated sign-in gate
+
+Production checks:
+- Vercel deployment for the exact latest commit is **READY**.
+- Production alias and unique deployment URL returned HTTP 200.
+- Fresh live HTML confirmed the “Hi,” greeting, BEYOND THE ORDINARY headline and DRIVEN BY tagline.
+- This verifies the deployed response and assets, but it is not the same as a full owner-authenticated interactive browser test of every production Admin/Storage workflow.
+
+Do not claim tests not listed here were re-run in this release. Run the full suite again after any future code change. Run lint, type check, build and E2E serially; they share the .next output.
+
+## 5. Product features and architecture
+
+Technology:
 - Next.js 15.5.29 App Router
 - React 19
 - TypeScript 5.9
 - Supabase Postgres, Auth and Storage
-- Motion 14, Lucide React
+- @supabase/ssr and @supabase/supabase-js
+- Motion 14
+- Lucide React
 - Playwright and axe-core
 
-Important paths:
-- `app/page.tsx` — public homepage composition
-- `app/layout.tsx` — root layout and metadata
-- `app/globals.css` — global design system/styles; large stylesheet with historical overrides, inspect cascade before editing
-- `app/admin/page.tsx` — protected CMS/admin interface and CRUD/upload logic
-- `app/api/contact/route.ts` — hardened contact endpoint
-- `app/blog/[slug]/page.tsx` — published article route
-- `components/MediaShowcase.tsx` — public media archive and detail modal
-- `components/ContactForm.tsx` — public contact form
-- `components/MotionSurface.tsx` — pointer-based 3D tilt
-- `components/Reveal.tsx` — scroll reveal
-- `components/ThemeToggle.tsx` — theme persistence
-- `lib/public-data.ts` — public Supabase data access
-- `lib/admin-form.ts` — Admin form parsing/validation
-- `lib/supabase.ts` — browser Supabase client
-- `tests/portfolio.spec.ts` — Playwright regression suite
-- `supabase/migrations/` — current migration source files
-- `supabase/legacy/README.md` — important warning about legacy migration history
-- `docs/PROJECT_CONTEXT.md` — full detailed chronological project record
+Public website capabilities:
+- Responsive portfolio homepage and section navigation
+- Dark/light theme
+- Hero, About, Selected Work, Expertise/Skills, Services, Creator Space, Experience, Education and Contact sections
+- Media Archive when published media exists
+- CMS-driven content rather than hardcoded owner content
+- Blog route at /blog/[slug]
+- Dynamic SEO metadata, robots.txt and sitemap.xml
+- Contact form routed through a validated server endpoint
 
-## 6. Local setup and safe commands
+Admin/CMS capabilities:
+- Supabase-authenticated Admin with an explicit public.user_roles admin-role check
+- Content management for sections, projects, skills, experience, education, services, articles, videos, social links, testimonials, navigation, messages, media assets, settings and categories
+- Branding/settings controls
+- Supabase Storage media library
 
-Requirements: Node.js 20.9+.
+Key source paths:
 
-PowerShell:
-```powershell
-Set-Location 'C:\Users\zihad\hades-portfolio'
-npm ci
-Copy-Item .env.example .env.local
-# Fill only the required environment values locally, never commit .env.local.
-npm run dev
-```
+| Path | Purpose |
+|---|---|
+| app/page.tsx | Public homepage composition |
+| app/layout.tsx | Root layout and metadata |
+| app/globals.css | Global visual system and responsive styles; inspect final cascade before editing |
+| app/admin/page.tsx | Admin interface and CMS workflows |
+| app/api/contact/route.ts | Contact submission endpoint |
+| app/blog/[slug]/page.tsx | Article page |
+| components/MediaShowcase.tsx | Public media archive and preview modal |
+| components/ContactForm.tsx | Public contact form |
+| components/MotionSurface.tsx | Pointer-based 3D interaction |
+| components/Reveal.tsx | Scroll reveal |
+| components/ThemeToggle.tsx | Theme control/persistence |
+| lib/public-data.ts | Public Supabase data access |
+| lib/admin-form.ts | Admin form parsing and validation |
+| lib/supabase.ts | Browser Supabase client |
+| tests/portfolio.spec.ts | Playwright regression tests |
+| supabase/migrations/ | Local migration source files |
+| supabase/legacy/README.md | Legacy migration warning |
+
+## 6. Local setup and commands
+
+Requirements: Node.js 20.9 or newer.
+
+PowerShell setup:
+1. Set-Location 'C:\Users\zihad\hades-portfolio'
+2. npm ci
+3. Copy-Item .env.example .env.local
+4. Add the required values to .env.local locally.
+5. Run npm run dev.
 
 Environment variable names:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-- Legacy fallback supported by code: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `CONTACT_SUBMISSION_TOKEN` — server-only secret; never prefix with NEXT_PUBLIC and never publish its value.
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+- NEXT_PUBLIC_SUPABASE_ANON_KEY — legacy fallback supported by code
+- CONTACT_SUBMISSION_TOKEN — server-only secret; never expose it to the browser
 
 Useful commands:
-```powershell
-git status --short --branch
-git log -5 --oneline --decorate
-npm run lint
-npx tsc --noEmit
-npm run build
-npm run test:e2e
-npm audit --audit-level=low
-git diff --check
-```
+- npm run dev
+- npm run lint
+- npx tsc --noEmit
+- npm run build
+- npm run test:e2e
+- npm audit --audit-level=low
+- git diff --check
 
-Run build and Playwright serially; do not run multiple Next.js builds/tests simultaneously because they share `.next` output.
+npm run dev is for development. Run the other checks before committing. Do not run multiple builds or Playwright runs concurrently.
 
-## 7. Supabase project and critical security notes
+## 7. Supabase: live project, security and migration cautions
 
-- Supabase project ref: `oxwadruhiavxftcglplx`
-- Organization ID: `svelizeibygdshlcnvcu`
+Identifiers:
+- Project ref: oxwadruhiavxftcglplx
+- Organization ID: svelizeibygdshlcnvcu
 - Plan: Free
-- Status at last check: ACTIVE_HEALTHY
-- 18/18 public tables have RLS enabled.
-- Public Storage bucket: `portfolio-media`, 50 MiB upload limit; public URL access is intentional for portfolio assets. Never upload private/sensitive documents.
-- Admin access requires Supabase Auth plus explicit `public.user_roles` row with `role='admin'`.
-- No public Admin signup/default password is exposed.
-- Contact API uses a server-only `CONTACT_SUBMISSION_TOKEN`; its digest is held in a private RLS-protected table and checked by a SECURITY DEFINER function. Direct client insert using only the public key was verified rejected (401/42501); valid server-routed contact submission was verified 200; QA contact rows were cleaned.
-- Vercel firewall rate limit: POST `/api/contact`, per-IP fixed window, 5 requests / 600 seconds, deny.
-- Never expose service-role key in browser or any `NEXT_PUBLIC_*` variable.
-- Never ask the owner for password or OTP; owner-only tests should be completed by the owner in their own authenticated session.
+- Last recorded project status: ACTIVE_HEALTHY
 
-Migration caution:
-- The original connected Supabase baseline is `20261118154243_initial_portfolio_cms_schema`.
-- `supabase/legacy/001_initial_schema.sql` is a stale earlier schema snapshot and must never be replayed.
-- The canonical SQL for the actual original baseline is not mirrored in the active local migrations directory.
-- Do not run `supabase db push`, `db reset`, migration repair or destructive SQL until remote migration history and canonical baseline are reconciled. No blind schema changes.
+Verified security facts from the latest project audit:
+- All 18/18 public tables had RLS enabled.
+- Admin access requires Supabase Auth and an explicit public.user_roles row with role=admin.
+- Storage bucket portfolio-media is public by design for portfolio media and has a 50 MiB upload limit. Never place private documents or sensitive files in it.
+- Contact submission uses server-only CONTACT_SUBMISSION_TOKEN; a digest is stored in a private RLS-protected table and checked through a SECURITY DEFINER function.
+- Direct public-key REST insert into the contact table was rejected; the server-routed valid contact path was verified in prior QA.
+- Vercel rate limiting for POST /api/contact: 5 requests per IP per 600 seconds, deny after limit.
+- Never expose a service-role key in client code or any NEXT_PUBLIC_* variable.
 
-Supabase plan limitations:
-- Leaked Password Protection is disabled; Supabase Free does not provide this feature (Pro+). This is a known plan-limited warning, not an app-code failure.
-- Performance Advisor has two INFO unused indexes: `admin_audit_logs_actor_id_idx`, `articles_category_id_idx`; retain pending workload evidence.
-- Free projects may pause after a week of low activity and do not include automatic database backups. Encrypted off-site backup and a restore test remain outstanding.
+**Migration safety — critical:**
+- Actual original remote baseline: 20261118154243_initial_portfolio_cms_schema.
+- supabase/legacy/001_initial_schema.sql is an older/stale schema snapshot. Never replay it against production.
+- Canonical SQL for the actual initial remote baseline is not mirrored in the active local migration directory.
+- Do not run supabase db push, db reset, migration repair or destructive SQL until remote history and the canonical baseline have been reconciled. Never guess the production schema from the legacy file.
 
-## 8. Hosting, deployment and separate Cloudflare experiment
+Plan limitations / advisor notes:
+- Leaked Password Protection is disabled. It is plan-limited on the current Supabase Free plan (Pro+ feature); this is a known platform limitation, not a code fix.
+- Two Performance Advisor INFO findings were recorded: admin_audit_logs_actor_id_idx and articles_category_id_idx (unused indexes). Do not remove them without workload evidence.
+- Supabase Free does not include automatic database backups and low-activity projects may pause. An encrypted off-site backup and a successful restore drill remain outstanding.
 
-Production:
-- Vercel project ID: `prj_i0FEfGBdlXVHhiXkgwVnePBQdRi2`
-- Vercel team ID: `team_x9kagW1A3LvB4WCFqrhEMRsW`
-- Current production host: Vercel Hobby.
-- GitHub `main` auto-deploys to Vercel; exact-commit READY verification has been performed.
-- Vercel Hobby terms restrict use to personal/non-commercial projects. This portfolio advertises services and invites client enquiries; resolve plan/provider compliance before commercial/revenue-generating use. Do not upgrade or migrate without explicit owner approval.
-- Current domain is only `hades-portfolio-amber.vercel.app`; no custom domain is attached.
-- Known non-blocking Vercel build warning: npm `Unknown env config "cache-dir"`; observed as platform-injected. Do not add a fragile workaround.
+Always check live table rows and project status before performing content CRUD. Old content counts in historical notes are snapshots, not permission to assume the current database state.
 
-Cloudflare experiment:
-- Branch: `cloudflare-free-evaluation`
-- Last recorded head: `54ef5d3`
-- It is a separate evaluation branch and is **not merged into main or production**.
-- Cloudflare auth was not connected; no Worker deployment, DNS change or production switch was performed.
-- vinext compatibility estimate was 96%, with partial `next/image` compatibility.
-- Cloudflare Workers Free limit noted: 100,000 requests/day and 10 ms CPU per invocation; SSR/auth/admin paths may exceed it and have not been proven on live staging.
-- Local evaluation checks passed 19/19 browser tests; preview had a separate 19-test run (test-only fixture excluded). This is not production migration evidence.
-- Before any migration: deploy a separate staging Worker, configure secrets safely, test SSR/auth/Admin/storage/contact/API and CPU usage, compare behavior, obtain owner approval, and only then plan domain/DNS switch. Never merge or switch based solely on compatibility percentage.
+## 8. Hosting, deployment and Cloudflare experiment
 
-## 9. Current quality status — honest, not a 100% claim
+### Current production: Vercel
 
-Previously verified:
-- ESLint: 0 warnings/errors.
-- TypeScript: passed.
-- Next.js production build: passed.
-- npm audit: 0 vulnerabilities.
-- git diff --check: passed.
-- Playwright: 21/21 at the full modal-fix checkpoint; focused modal tests passed after the final close-label adjustment.
-- Production deployment READY and live HTTP/CSS/JS smoke checks passed.
-- Earlier production QA covered responsive widths 320/390/768/1024/1440, dark/light themes, axe serious/critical scans, navigation, contact validation and Admin unauthenticated gate.
+- Project ID: prj_i0FEfGBdlXVHhiXkgwVnePBQdRi2
+- Team ID: team_x9kagW1A3LvB4WCFqrhEMRsW
+- Vercel Hobby plan
+- GitHub main is connected to production auto-deploy.
+- Exact-commit READY deployment was confirmed for 6af897f7f6e019133fbf557561cb0682a523f021.
+- Only the Vercel subdomain is attached; no custom domain is configured.
+- A non-blocking Vercel build warning has appeared: npm Unknown env config "cache-dir". It appears platform-injected; do not add a brittle project workaround.
 
-Still outstanding / not verified:
-1. Owner-authenticated real Admin create/edit/delete and settings/social persistence.
-2. Real Storage upload/replace/delete lifecycle using the owner account.
-3. Populate only genuine owner-approved blog/video/testimonial/media content where wanted.
-4. Hosting-plan compliance for intended commercial use.
-5. Encrypted off-site Supabase backup and successful restore drill.
-6. Optional custom domain and DNS/HTTPS validation.
-7. Real interactive live-browser check of the latest asset modal on the production site.
-8. Re-run the complete E2E suite after any future code change; latest full suite preceded the final label-only adjustment.
+**Commercial-use restriction:** Vercel Hobby terms restrict use to personal/non-commercial projects. This portfolio advertises services and accepts client enquiries, so resolve hosting-plan compliance before commercial/revenue-generating use. Do not upgrade, purchase or migrate without explicit owner approval.
 
-Do not call the site 100% production-ready until relevant operational gates are closed. A rough earlier estimate was ~90%, not a measured score.
+### Separate Cloudflare evaluation
 
-## 10. First actions when resuming this project
+- Branch: cloudflare-free-evaluation
+- Last recorded evaluation head: 54ef5d3
+- Not merged into main; not production; no production DNS/host switch.
+- Prior compatibility estimate: 96%, with partial next/image compatibility.
+- A local evaluation browser suite passed 19/19 at that checkpoint; this is not live production migration evidence.
+- Cloudflare auth was not connected and no Worker deployment was performed.
 
-1. Read this file and `docs/PROJECT_CONTEXT.md` (especially migration history and latest chronological notes).
-2. Confirm the connected Desktop Commander device is online if local execution is required.
-3. Check `git status --short --branch`, current branch, HEAD, remotes and latest commits.
-4. Confirm whether the task is for production `main` or the isolated `cloudflare-free-evaluation` branch. Never mix them.
-5. Inspect the actual current code and live system before changing anything; historical notes are not proof of current state.
-6. Do not overwrite uncommitted owner changes. Create a feature branch for substantial work, run checks, review diff, commit and push deliberately.
-7. After pushing `main`, verify Vercel deployed the exact commit and is READY, then run live smoke checks.
-8. Update this handover and `PROJECT_CONTEXT.md` after substantial changes, recording exact commit/deployment IDs, tests run, tests not run, known failures and remaining work.
+Do not mix this experimental branch into production. A migration would require a separate staging Worker and end-to-end checks for SSR, Auth, Admin, Storage, contact/API, secrets and CPU limits, followed by explicit owner approval.
 
-## 11. Non-negotiable safety and product rules
+## 9. Remaining work — real sign-off gates
 
-- Free-tier/no-spend preference: never trigger paid upgrades, purchases, or migrations with costs without explicit approval.
-- Never request, store or commit passwords, OTPs, service-role keys or secret values.
-- Never commit `.env.local`, database dumps, private messages or sensitive media.
-- Never fabricate portfolio credentials, work, testimonials or customer stories.
-- Never replay stale/legacy migrations against production.
-- Never report a test as passed unless it was actually run; distinguish local browser tests from live production checks.
-- Preserve existing HADES brand and owner-controlled social account identities/assets unless explicitly asked to change them.
+These tasks are not complete merely because the public site builds or deploys:
+
+1. **Owner-authenticated Admin CRUD:** The owner must use their own session to test real create, edit and delete operations, plus settings/social persistence. Do not ask for their password or OTP.
+2. **Real Storage lifecycle:** The owner must test upload, replace and delete in the production Admin with a harmless test asset, then confirm the public view and cleanup.
+3. **Recovery:** Set up an encrypted off-site Supabase backup and complete a restore test.
+4. **Hosting compliance:** Decide on an appropriate plan/provider before using the portfolio commercially. No upgrade or migration without explicit approval.
+5. **Real content:** Add only owner-approved projects, media, videos, articles or testimonials that genuinely exist. Do not invent credentials, client work, education details or endorsements.
+6. **Optional custom domain:** Attach only after hosting choice; validate DNS and HTTPS.
+7. **Live interaction pass:** Owner or authorized tester should exercise the production Media Archive modal and owner-only flows in a real browser.
+
+The application code, production build, automated regression baseline and deployed public homepage are verified. **Do not describe the entire project as 100% production/commercial signed off** until the remaining operational gates are completed.
+
+## 10. Safe Git and deployment workflow
+
+Before editing:
+- git status --short --branch
+- git log -5 --oneline
+
+After code changes, run serially:
+- npm run lint
+- npx tsc --noEmit
+- npm run build
+- npm run test:e2e
+- git diff --check
+- git status --short
+- git diff --stat
+- git diff
+
+Then:
+1. Review the actual diff and ensure no .env.local, secret, database dump, private media or unrelated user change is included.
+2. Commit with a clear message.
+3. Push to origin main only when production deployment is intended and the change is approved.
+4. Verify Vercel built the exact pushed commit and state is READY.
+5. Smoke-test /, /admin, /robots.txt and /sitemap.xml; exercise changed public flows and inspect browser/runtime errors where available.
+6. Update this file in the same work session with the new commit, deployment ID/URL, tests actually run, results and remaining caveats.
+
+Never force-push, reset production history or merge the Cloudflare evaluation branch without explicit task scope and review.
+
+## 11. Non-negotiable project rules
+
+- Respect the owner's free/no-spend preference. Never trigger paid upgrades, purchases or migrations without explicit approval.
+- Never request or expose passwords, OTPs, service-role keys or secret values.
+- Never commit .env.local, secrets, database dumps, private messages or sensitive media.
+- Never fabricate work history, client projects, qualifications, education details, testimonials, articles or content.
+- Preserve HADES identity, logo/monogram and owner-controlled social identities/assets unless explicitly asked to change them.
+- Preserve existing functionality when editing; inspect the code and final CSS cascade before changing shared behavior.
+- Never claim a check passed unless it was actually executed. Distinguish local tests, live HTTP checks and owner-authenticated production testing.
+- Do not replay stale migrations or run destructive database operations blindly.
+- Keep this file as the current operational truth after every substantial task.
+
+## 12. Other repository documentation
+
+- README.md — short public project overview and setup; points here for the full handover.
+- docs/PROJECT_CONTEXT.md — chronological project history and older QA notes. Useful for historical rationale only. It contains dated snapshots that may be superseded; do not use it instead of this handover for current commit, deployment, data counts or status.
 
 ---
-**End of canonical handover. Update this file after the next meaningful change.**
-
-
-## 12. 2026-11-20 — Hero identity, copy and responsive composition refresh
-
-- Updated the public Home/Hero content in Supabase `sections` for slug `home`; restored the requested greeting and a fuller owner-authored first-person intro:
-  "Hi, I’m Zihad — founder of Black Flash Hades. I’ve always been curious about how things work and what can be created beyond the familiar. That curiosity leads me to explore technology, build websites and applications, and experiment with creative digital projects. I learn by making things, testing ideas, and refining them through hands-on work. Each project gives me a new way to explore, solve problems, and keep building."
-- Changed the visual hero headline to `ZIHAD / BEYOND THE ORDINARY.` and added `DRIVEN BY CURIOSITY.` as a supporting positioning line.
-- Preserved the existing founder kicker, Explore selected work CTA and `IDEAS / SYSTEMS / EXPERIENCES` micro-label.
-- Refined headline, intro, spacing and type sizing. Mobile/tablet reading order is copy first and HADES signature mark second; desktop retains the split composition. Adjusted tablet breakpoint and headline scale to avoid collision with the signature artwork.
-- Updated `tests/portfolio.spec.ts` with hero copy and responsive-composition assertions.
-- Verification after final CSS refinement: `git diff --check` passed; `npm run lint` passed; `npx tsc --noEmit` passed; `npm run build` passed; full Playwright suite **22/22 passed**. Tests cover 390, 768, 1024 and 1440px hero composition plus existing homepage, themes, motion, media, contact, security and Admin gate.
-- Before code commit/push, these code changes were local to `main`; verify current Git state and Vercel production deployment before claiming they are live. Supabase Hero copy was already saved and verified through the passing homepage tests.
+**End of canonical handover. Start every future session with this file and the Git status commands in Section 2.**
