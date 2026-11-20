@@ -22,18 +22,19 @@
 | Production host | Vercel (Hobby) |
 
 **Latest production code commit:**
-6af897f7f6e019133fbf557561cb0682a523f021 — Refine curiosity-led hero identity and layout
+d09339371c9c14b5487bb1de010011a0a3b8a4e3 — Bound supported Node runtime range
+Includes the tested Next.js 16 / Supabase modernization and the bounded Node engine range.
 
 **Latest verified production deployment:**
-- Deployment ID: dpl_J546QTvnEtzJVeW4Rrz5sAe9E7Cv
-- Deployment URL: https://hades-portfolio-bsci36j6l-mdzihadss509-1195.vercel.app
+- Deployment ID: dpl_4ALqoUMdeFbFtFv23TKaefXKe5UE
+- Deployment URL: https://hades-portfolio-1m4mchqui-mdzihadss509-1195.vercel.app
 - Target: Production
 - State: **READY**
 - Branch: main
-- Source commit: 6af897f7f6e019133fbf557561cb0682a523f021
-- Vercel Inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/J546QTvnEtzJVeW4Rrz5sAe9E7Cv
+- Source commit: d09339371c9c14b5487bb1de010011a0a3b8a4e3
+- Vercel Inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/4ALqoUMdeFbFtFv23TKaefXKe5UE
 
-The production alias and deployment URL both returned HTTP 200 in the latest smoke check. The live homepage contains the latest greeting, headline and curiosity tagline. Re-check deployment state before a future release; this snapshot is dated.
+The production alias and unique deployment URL returned HTTP 200. The latest live HTML confirms title “Zihad | Creator & Developer”, current SEO description, the Hero greeting and BEYOND THE ORDINARY headline; the stale H.HADES title text is absent. Live response headers include HSTS, CSP restrictions and X-Frame-Options DENY. /admin, /robots.txt and /sitemap.xml returned 200; GET /api/contact returned the expected 405; /qa-media-fixture returned the expected production 404; a cross-origin contact POST was rejected with 403. The Vercel runtime-error aggregate reported no errors in the last 24 hours and the most recent 30-minute warning/error runtime-log query returned no entries. Re-check before a future release; this snapshot is dated.
 
 ## 2. Resume work immediately
 

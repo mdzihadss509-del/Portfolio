@@ -703,4 +703,4 @@ Owner-authenticated Admin CRUD and Storage lifecycle checks, encrypted off-site 
 - No custom domain is connected.
 - Full interactive live verification of production owner-only flows and the Media Archive modal remains outstanding.
 
-This code and QA checkpoint is fully tested locally after a clean install. Record the exact Git commit, Vercel deployment ID/state and live HTTP/header/SEO smoke results in `docs/HANDOFF.md` after the production push; do not infer deployment success from local tests.
+This maintenance checkpoint is committed to GitHub main at `d09339371c9c14b5487bb1de010011a0a3b8a4e3`, deployed as `dpl_4ALqoUMdeFbFtFv23TKaefXKe5UE` (Production / READY), and live route/header/SEO smoke checks passed. The exact release evidence is summarized at the top of `docs/HANDOFF.md`.
