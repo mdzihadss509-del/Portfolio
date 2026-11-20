@@ -21,7 +21,7 @@
 | Vercel project | hades-portfolio |
 | Production host | Vercel (Hobby) |
 
-**Latest verified Git commit:**
+**Latest production code commit:**
 6af897f7f6e019133fbf557561cb0682a523f021 — Refine curiosity-led hero identity and layout
 
 **Latest verified production deployment:**
@@ -48,7 +48,7 @@ Expected state at this handover:
 - Branch: main
 - Working tree: clean
 - Local branch aligned with origin/main
-- HEAD: 6af897f
+- HEAD must match origin/main; obtain the exact value with git rev-parse HEAD.
 - Production source commit: same full hash as HEAD
 
 If the branch, commit or working tree differs, inspect the difference before editing. Preserve uncommitted owner changes. Do not reset, clean, stash, overwrite or force-push unexplained changes.
