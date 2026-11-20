@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const branding = (data.settings.branding || {}) as Record<string, string>;
   const siteName = branding.site_name || general.display_name || 'HADES';
   const title = seo.title || (general.display_name ? general.display_name + ' — Portfolio' : 'HADES — Portfolio & Creative Work');
-  const description = seo.description || 'Professional portfolio, selected projects, creator work and collaborations.';
+  const description = seo.description || 'Zihad’s portfolio of digital projects, Minecraft experiments, web development and creative technology.';
   const image = branding.og_image_url || undefined;
   const favicon = branding.favicon_url || '/favicon.svg';
 

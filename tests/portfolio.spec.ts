@@ -260,6 +260,10 @@ test.describe('Portfolio public experience', () => {
     expect(headers['x-frame-options']).toBe('DENY');
     expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
     expect(headers['permissions-policy']).toContain('camera=()');
+    expect(headers['strict-transport-security']).toContain('max-age=31536000');
+    expect(headers['content-security-policy']).toContain("base-uri 'self'");
+    expect(headers['content-security-policy']).toContain("form-action 'self'");
+    expect(headers['content-security-policy']).toContain("object-src 'none'");
     expect(headers['content-security-policy']).toContain("frame-ancestors 'none'");
   });
 
@@ -267,6 +271,19 @@ test.describe('Portfolio public experience', () => {
     expect(() => buildAdminPayload('navigation_items', { label: 'Unsafe', href: 'javascript:alert(1)' }))
       .toThrow('href: enter a valid web address.');
     expect(buildAdminPayload('navigation_items', { label: 'About', href: '#about' }).href).toBe('#about');
+  });
+
+  test('SEO metadata matches the current owner identity and portfolio focus', async ({ page }) => {
+    await page.goto('/');
+    const metadata = await page.evaluate(() => ({
+      title: document.title,
+      description: document.querySelector('meta[name="description"]')?.getAttribute('content') || '',
+      openGraphTitle: document.querySelector('meta[property="og:title"]')?.getAttribute('content') || '',
+    }));
+    expect(metadata.title).toBe('Zihad | Creator & Developer');
+    expect(metadata.description).toContain('Zihad’s digital projects');
+    expect(metadata.openGraphTitle).toBe(metadata.title);
+    expect(metadata.title).not.toContain('H.HADES');
   });
 
   test('favicon and search crawler endpoints are available', async ({ request }) => {

@@ -1,16 +1,20 @@
-import { createRequire } from 'node:module';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const require = createRequire(import.meta.url);
-const { FlatCompat } = require('@eslint/eslintrc');
-const compat = new FlatCompat({
-  baseDirectory: path.dirname(fileURLToPath(import.meta.url)),
-});
+import nextVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
 
 const config = [
-  { ignores: ['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'playwright-report/**', 'test-results/**', 'coverage/**'] },
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  {
+    ignores: [
+      '.next/**',
+      'out/**',
+      'build/**',
+      'next-env.d.ts',
+      'playwright-report/**',
+      'test-results/**',
+      'coverage/**',
+    ],
+  },
+  ...nextVitals,
+  ...nextTs,
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',

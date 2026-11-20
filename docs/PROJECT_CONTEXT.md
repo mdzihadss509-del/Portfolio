@@ -1,6 +1,6 @@
 # Project Context — HADES Portfolio CMS
 
-**Last audited:** 2026-11-19 (Asia/Dhaka)
+**Last audited:** 2026-11-20 (Asia/Dhaka)
 **Status:** Live production deployment; code and public-site automated checks pass. Final production sign-off remains conditional on owner-only Admin/storage workflows, content population, recovery planning and hosting-plan compliance.
 **GitHub repository:** https://github.com/mdzihadss509-del/Portfolio
 **Default branch:** main
@@ -25,11 +25,11 @@ A personal portfolio/CMS for personal branding, showcasing projects, creator wor
 
 ## 2. Technology and local setup
 
-- Next.js 15.5.29 App Router, React 19, TypeScript 5.9.
+- Next.js 16.4.6 App Router, React 19, TypeScript 5.9.
 - Supabase Postgres, Auth and Storage via `@supabase/supabase-js` and `@supabase/ssr`.
 - Motion 14, Lucide React.
 - Playwright and axe-core for browser/accessibility tests.
-- Node.js 20.9 or newer.
+- Node.js 22.0 or newer (the current Supabase JS dependency requires Node 22+).
 
 Environment variables:
 - `NEXT_PUBLIC_SUPABASE_URL`
@@ -669,3 +669,38 @@ The Hero copy/layout update is committed, pushed and deployed. Do not repeat the
 ### Remaining operational sign-off
 
 Owner-authenticated Admin CRUD and Storage lifecycle checks, encrypted off-site backup/restore, commercial hosting-plan compliance, genuine content population where needed, optional custom domain, and a live interactive check of the published media modal remain separate tasks. This is not a claim of 100% commercial-production sign-off.
+
+
+## 28. 2026-11-20 — Production readiness audit, Next.js 16 and clean-install QA
+
+### Work completed
+- Upgraded Next.js from 15.5.29 to 16.4.6 and aligned `eslint-config-next` to 16.4.6.
+- Updated Supabase SSR to 0.12.7 and Supabase JS to 2.119.2.
+- Added Node.js engine requirement >=22.0.0; the connected Vercel project currently reports Node 26.x.
+- Migrated the ESLint configuration from legacy FlatCompat to Next 16's native flat-config exports. This removed the circular config error introduced by the major upgrade.
+- Fixed two React effect findings surfaced by the Next 16 lint rules: Admin table requests are now abortable when a CMS module changes/unmounts, and ThemeToggle no longer calls React setState on mount. Theme persistence gracefully handles unavailable browser storage.
+- Added HSTS and tightened CSP with base-uri, form-action and object-src restrictions while preserving existing frame denial.
+- Corrected the saved CMS display name/SEO values from stale H.HADES copy to Zihad; current title is "Zihad | Creator & Developer". HADES remains the brand and social profile links were left unchanged.
+- Updated README and handover runtime guidance, refreshed old Next/Node references in the project-context header, and expanded .gitignore for Vercel/Turbo output while removing its UTF-8 BOM.
+- Added regression assertions for current SEO metadata and new security headers.
+- No Supabase schema or migration changes were performed.
+
+### Fresh clean-install evidence
+- `npm ci --no-audit`: installed 382 packages from package-lock.
+- Direct dependency tree verified at Next 16.4.6, React/DOM 19.3.1, Supabase SSR 0.12.7, Supabase JS 2.119.2, ESLint config Next 16.4.6, ESLint 9.39.5, Lucide React 0.468.0 and TypeScript 5.9.3.
+- `npm run lint`: passed, no findings.
+- `npx tsc --noEmit`: passed.
+- `npm audit --audit-level=low`: 0 vulnerabilities.
+- `npm run build`: passed using Next 16.4.6 Turbopack.
+- `npm run test:e2e`: **23/23 passed** after the clean install.
+- `git diff --check`: passed (Git emitted only its usual CRLF normalization notices).
+
+### Current operational blockers (not fixable through code-only deployment)
+- Production owner must still verify authenticated Admin CRUD/settings/social persistence and actual Storage upload/replace/delete in their own session.
+- Supabase Free cannot enable Leaked Password Protection; a plan change would require owner approval.
+- Supabase Free does not provide automatic backups; encrypted off-site backup and restore drill remain open.
+- Vercel Hobby's commercial-use terms need owner review before commercial/revenue-generating use. No spending or migration was authorized.
+- No custom domain is connected.
+- Full interactive live verification of production owner-only flows and the Media Archive modal remains outstanding.
+
+This code and QA checkpoint is fully tested locally after a clean install. Record the exact Git commit, Vercel deployment ID/state and live HTTP/header/SEO smoke results in `docs/HANDOFF.md` after the production push; do not infer deployment success from local tests.

@@ -1,6 +1,6 @@
 # HADES Portfolio CMS
 
-A personal portfolio and content-management system built with **Next.js 15, React 19, TypeScript and Supabase**.
+A personal portfolio and content-management system built with **Next.js 16, React 19, TypeScript and Supabase**.
 
 **Live website:** https://hades-portfolio-amber.vercel.app/
 **Admin:** https://hades-portfolio-amber.vercel.app/admin
@@ -25,7 +25,7 @@ docs/PROJECT_CONTEXT.md is retained as a chronological historical record. Its ol
 
 ## Local setup
 
-Requirements: Node.js 20.9 or newer and access to the configured Supabase project.
+Requirements: Node.js 22.0 or newer and access to the configured Supabase project.
 
 PowerShell:
 1. npm ci
