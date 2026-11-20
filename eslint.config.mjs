@@ -9,7 +9,7 @@ const compat = new FlatCompat({
 });
 
 const config = [
-  { ignores: ['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'playwright-report/**', 'test-results/**', 'coverage/**'] },
+  { ignores: ['.next/**', '.cloudflare/**', '.vinext/**', 'dist/**', 'out/**', 'build/**', 'next-env.d.ts', 'playwright-report/**', 'test-results/**', 'coverage/**'] },
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     rules: {

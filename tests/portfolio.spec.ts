@@ -94,8 +94,8 @@ test.describe('Portfolio public experience', () => {
       form.className = 'contact-form';
       const button = document.createElement('button');
       button.disabled = true;
-      form.append(button);
-      document.body.append(form);
+      form.appendChild(button);
+      document.body.appendChild(form);
       const style = getComputedStyle(button, '::after');
       const result = { animation: style.animationName, width: style.width };
       form.remove();

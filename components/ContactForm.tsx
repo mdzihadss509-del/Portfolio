@@ -13,8 +13,8 @@ export default function ContactForm() {
     const payload={name:String(form.get('name')||''),email:String(form.get('email')||''),subject:String(form.get('subject')||''),message:String(form.get('message')||''),website:String(form.get('website')||'')};
     try {
       const response=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      const result=await response.json();
-      if(!response.ok)throw new Error(result.error||'Unable to send your message.');
+      const result = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(typeof result.error === 'string' ? result.error : 'Unable to send your message.');
       setState('sent');setMessage('Your message has been sent. Thank you for reaching out.');formElement.reset();
     } catch(error) {setState('error');setMessage(error instanceof Error?error.message:'Something went wrong. Please try again.');}
   }

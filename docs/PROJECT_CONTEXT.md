@@ -557,3 +557,34 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 6. Custom domain is optional but not configured; only the Vercel subdomain is attached.
 
 **Honest sign-off:** Code/build/automated public QA are passing and the live deployment is healthy. Full commercial-production sign-off remains blocked by owner-only Admin/Storage verification, missing real content/media, hosting-plan compliance, and backup/restore operations.
+
+
+## 25. Zero-cost hosting evaluation — 2026-11-20
+
+### Owner constraint
+- Owner explicitly requires $0 spend. No paid plan, upgrade, domain purchase, add-on, or billing action is authorized.
+- Current production remains on Vercel Hobby and is still READY. No production alias, DNS, environment secret, or Supabase data was changed during this evaluation.
+- Vercel's current Terms restrict Hobby use to personal/non-commercial purposes. This site currently advertises services and invites client enquiries, so do not claim commercial-hosting compliance on Hobby.
+
+### Cloudflare Workers Free migration spike (separate branch)
+- Created local branch `cloudflare-free-evaluation`; production `main` was not modified.
+- Cloudflare's official vinext compatibility check: **96% compatible**, 0 critical incompatibilities; only partial area is `next/image` behavior. Existing image components use `unoptimized`, so they render source URLs without an optimizer.
+- Added Cloudflare/Vite/vinext configuration on this branch. `npm run build:vinext` completes successfully and generates the Worker bundle.
+- Local Cloudflare preview: homepage, admin gate, robots, sitemap and contact API route responded correctly; cross-origin contact POST was rejected with 403.
+- Local browser regression against the Cloudflare preview: **19/19 selected tests passed**. The image-preview fixture test was excluded because the isolated preview runtime does not expose the test-only `PORTFOLIO_QA_FIXTURES` flag; this is not a published-media failure (the live CMS currently has 0 media assets).
+- Original Next.js/Vercel path remains intact: **20/20 Playwright E2E passed** after the migration changes.
+- Next.js production build, vinext production build, TypeScript, ESLint, `npm audit --audit-level=low` (0 vulnerabilities), and `git diff --check` all pass on this evaluation branch.
+- Added a compatible `fflate@0.8.3` override to eliminate the transitive moderate advisory introduced by vinext's `@vercel/og` dependency. Vite was patched to a non-vulnerable 8.3.8 through `npm audit fix`.
+- Known build-only warnings from vinext/Vite: sourcemap notices, an ineffective dynamic import, and a large client chunk. These need review before any migration is accepted.
+
+### Free-tier limitation / deployment gate
+- Cloudflare Workers Free currently includes 100,000 requests/day but only **10 ms CPU time per invocation**. Cloudflare documentation warns SSR applications usually need Workers Paid. Local preview wall-clock timings do not prove production CPU time is below that limit.
+- Cloudflare account authentication is not configured on the desktop, so no Workers deployment, live CPU measurement, or DNS switch was attempted.
+- Do not move production to Cloudflare until a zero-cost Workers Free deployment is tested on a separate `workers.dev` URL and the homepage, admin sign-in, blog route, contact Edge/API path, storage upload flow, security headers, and actual CPU usage are verified.
+- If Free CPU limits are exceeded, a static-frontend + Supabase client/Edge Function architecture may be investigated, but that is a larger redesign with SEO/cache trade-offs and must be regression-tested before adoption.
+- Keep this branch isolated until the owner approves the tested hosting route. Do not merge its Cloudflare dependencies into `main` or change production DNS as part of the evaluation.
+
+### Updated honest status
+- Current Vercel production is still live and technically healthy.
+- Zero-cost Cloudflare migration is **promising but not production-approved**. No spend was incurred.
+- Owner-only Admin/Storage verification, real content/media, off-site backup/restore, and hosting-plan compliance remain separate sign-off gates.
