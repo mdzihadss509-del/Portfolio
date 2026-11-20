@@ -1,7 +1,7 @@
 # HADES Portfolio — Production Readiness Report
-**Report date:** 2026-11-20 (Asia/Dhaka)  
-**Repository:** https://github.com/mdzihadss509-del/Portfolio  
-**Production:** https://hades-portfolio-amber.vercel.app/  
+**Report date:** 2026-11-20 (Asia/Dhaka)
+**Repository:** https://github.com/mdzihadss509-del/Portfolio
+**Production:** https://hades-portfolio-amber.vercel.app/
 **Admin:** https://hades-portfolio-amber.vercel.app/admin
 
 > This is the current operational report for continuing work. It supersedes older dated status snapshots in this repository. Read this report together with `docs/HANDOFF.md`; use the Git status and live platform state before making changes.
