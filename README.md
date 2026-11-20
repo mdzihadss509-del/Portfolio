@@ -102,3 +102,10 @@ GitHub `main` is linked to the current Vercel project and push-to-production aut
 5. `npm audit --audit-level=low`
 
 After deployment, verify the exact commit is READY, then smoke-test `/`, `/admin`, `/robots.txt`, `/sitemap.xml`, contact validation and the public browser console. Never mark owner-only Admin flows complete without a real owner-authenticated test.
+
+
+## Current handover (read this first)
+
+For future development sessions, start with **[docs/HANDOFF.md](docs/HANDOFF.md)**. It is the current canonical handover: exact Git branch/commit, live Vercel deployment, current website content, recent modal fix, QA evidence, architecture, Supabase security/migration warnings, Cloudflare evaluation branch separation, remaining sign-off tasks and safe restart checklist. Then consult [docs/PROJECT_CONTEXT.md](docs/PROJECT_CONTEXT.md) for the detailed chronological history.
+
+The latest `main` commit at the 2026-11-20 handover is `0be7065`; production deployment `dpl_HpJRmNrStnCj3Pfk6btTtqDNiZhv` was READY. The asset-preview modal fix is deployed. See the handover for the exact scope and testing caveats; do not treat this as 100% commercial-production sign-off.

@@ -567,3 +567,53 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 - Regression coverage includes desktop centering/viewport bounds, page scroll lock, keyboard focus loop, Escape close, focus restoration, backdrop close, and mobile viewport bounds.
 - Verification on local production build: `npm run lint` passed; `npx tsc --noEmit` passed; `npm run build` passed; `npm run test:e2e` passed 21/21; `npm audit --audit-level=low` reported 0 vulnerabilities; `git diff --check` passed.
 - Pending before release: commit/push to `main`, then verify the Vercel production deployment and live asset detail behavior. This local QA result does not by itself mean the production site has been updated.
+
+
+## 25. Canonical handover and latest production state — 2026-11-20
+
+**Read first when resuming:** [docs/HANDOFF.md](HANDOFF.md). This is the concise, current source of truth for project identity, branch separation, exact production commit/deployment, website contents, architecture, Supabase security/migration cautions, hosting limitations, QA evidence and next steps. This section supersedes older statements in this chronological log where they conflict.
+
+### Current canonical Git / deployment snapshot
+- Repository: https://github.com/mdzihadss509-del/Portfolio
+- Local checkout: `C:\Users\zihad\hades-portfolio`
+- Production branch: `main`; local tree clean and aligned with `origin/main` at handover.
+- Latest main commit: `0be7065` — Use generic close label for asset preview.
+- Previous commit: `461a8af` — Fix media asset preview modal positioning and scroll.
+- Production deployment: `dpl_HpJRmNrStnCj3Pfk6btTtqDNiZhv`, source commit `0be7065e9ddd0c2baeb456aa95c2595d89ff0a8f`, state READY, alias `hades-portfolio-amber.vercel.app`, aliasError null.
+- Live homepage and Admin HTTP checks returned 200. Live robots/sitemap, modal CSS and JavaScript assets returned 200. The shipped JS chunk includes the portal modal and accessible close label.
+- Vercel runtime error scan at the time of verification: zero errors in the inspected last hour.
+- The Cloudflare experiment remains isolated on `cloudflare-free-evaluation` at `54ef5d3`; it is not merged or deployed to production.
+
+### Latest Media Library detail modal correction
+- Updated `components/MediaShowcase.tsx`, `app/globals.css`, `tests/portfolio.spec.ts`.
+- Modal renders via React portal under `document.body`; fixed viewport centering is no longer affected by transformed card ancestors.
+- Background scroll is locked; modal content scrolls internally; prior styles and focus are restored on close.
+- Added initial focus, keyboard focus loop, Escape/backdrop close, mobile sizing, and image/video/audio/PDF/download fallback handling.
+- Full Playwright run at the main fix checkpoint: 21/21 passed. After the final close-label-only adjustment, lint, TypeScript, focused modal E2E and diff checks passed; the full suite was not rerun after that final tiny adjustment.
+- Production deploy is READY and the new CSS/JS is live. A real interactive browser session against the live published modal was not run; do not claim it was.
+
+### Current website content snapshot
+- Projects 4; Skills 29; Services 6; Experience 1 (Founder & Creator, Black Flash Hades); Education 1 (ongoing college education, institution unspecified); social/contact links 6; navigation 8.
+- Blog articles 0; YouTube video records 0; Testimonials 0.
+- Latest owner test media upload recorded one image titled `test` (229.3 KB JPG); verify current live count before any change.
+- Never invent qualifications, formal employment, client work, testimonials, posts, video records or assets.
+
+### Operational/security facts to retain
+- Supabase project `oxwadruhiavxftcglplx`, organization `svelizeibygdshlcnvcu`, Free plan, last checked ACTIVE_HEALTHY; all 18/18 public tables have RLS.
+- Contact submissions are routed through the server-only `CONTACT_SUBMISSION_TOKEN`; direct public-key REST insert is blocked. Never expose or print the token.
+- Public bucket `portfolio-media` is intentionally public, 50 MiB limit; do not upload private documents.
+- The actual original DB baseline is `20261118154243_initial_portfolio_cms_schema`. `supabase/legacy/001_initial_schema.sql` is stale and must never be replayed. Do not run db push/reset/repair until canonical baseline and remote migration history are reconciled.
+- Supabase Free cannot enable Leaked Password Protection; two unused-index INFO findings are non-blocking; Free has no automatic DB backups and may pause after low activity.
+- Vercel Hobby has personal/non-commercial restrictions; commercial use compliance is unresolved. No plan upgrade or host migration without owner approval.
+- No custom domain is attached.
+- Owner-authenticated Admin CRUD and real Storage upload/replace/delete remain pending; never request owner password/OTP.
+
+### Next production sign-off gates
+1. Owner verifies Admin CRUD, settings/social persistence and Storage upload/replace/delete in their own session.
+2. Add genuine owner-approved content where required.
+3. Resolve hosting-plan compliance before commercial use, without spending unless explicitly approved.
+4. Create encrypted off-site Supabase backup and perform a restore drill.
+5. Optionally attach a custom domain after hosting choice.
+6. Run full E2E after the next code change and perform an interactive live-browser modal check.
+
+**Honest status:** application code, build and automated public-site QA are passing; latest production deployment is live and READY. This is not a 100% production/commercial sign-off yet. See `docs/HANDOFF.md` for exact details and the resumption checklist.
