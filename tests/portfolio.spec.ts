@@ -10,6 +10,26 @@ test.describe('Portfolio public experience', () => {
     const anchors = await page.locator('nav a[href^="#"]').evaluateAll((items) => items.map((item) => item.getAttribute('href')).filter(Boolean));
     for (const href of anchors) await expect(page.locator(href as string)).toHaveCount(1);
   });
+  test('skills explorer filters categories, searches, and expands the complete toolkit', async ({ page }) => {
+    await page.goto('/');
+    const explorer = page.locator('.skills-explorer');
+    await expect(explorer).toBeVisible();
+    await expect(explorer.locator('.skill-card')).toHaveCount(8);
+
+    await explorer.getByRole('button', { name: /Creator Skills/ }).click();
+    await expect(explorer.locator('.skills-results-head h3')).toHaveText('Creator Skills');
+    await expect(explorer.locator('.skill-card')).toHaveCount(7);
+
+    await explorer.getByRole('textbox', { name: 'Search skills' }).fill('Video Editing');
+    await expect(explorer.locator('.skill-card')).toHaveCount(1);
+    await expect(explorer.locator('.skill-card h4')).toHaveText('Video Editing');
+
+    await explorer.getByRole('button', { name: /All disciplines/ }).click();
+    await explorer.getByRole('textbox', { name: 'Search skills' }).fill('');
+    await expect(explorer.locator('.skill-card')).toHaveCount(8);
+    await explorer.getByRole('button', { name: 'Show all 29 skills' }).click();
+    await expect(explorer.locator('.skill-card')).toHaveCount(29);
+  });
   test('both themes use solid black or white with no neon glow', async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.removeItem('hades-theme'));

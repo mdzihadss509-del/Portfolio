@@ -513,3 +513,47 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 5. No owner-controlled custom domain is attached; only the Vercel subdomain is live.
 
 **Honest status:** The code, public-site automated tests, live contact form write path, direct-write protection and deploy are verified. The website is live and technically hardened, but it is not honestly 100% production-ready for commercial operation until hosting-plan compliance, owner-only Admin/media verification, real approved content and recovery arrangements are completed.
+
+
+## 24. Full production QA — 2026-11-20
+
+### Fresh local verification
+- Fresh `npm run build`: passed (Next.js 15.5.29; production optimized build).
+- `npm run lint`: passed with no ESLint warnings/errors.
+- `tsc --noEmit`: passed.
+- `npm audit --audit-level=low`: 0 vulnerabilities.
+- `git diff --check`: passed.
+- Playwright production-server regression: **20/20 passed**. Added direct coverage for the Skills Explorer category filter, text search, and expand-all behavior; all 29 CMS skills are rendered when expanded.
+- Existing browser coverage includes navigation targets, dark/light themes, no neon glow, responsive widths 320/390/768/1024/1440px, 3D/reduced-motion, reveal/hero/CTA motion, media gallery/preview, no-store, security headers, SEO endpoints, contact success/reset, contact API rejection paths, both-theme serious/critical axe scans, and Admin sign-in gate.
+
+### Live production checks
+- Production deployment `dpl_9ueNf3M7vRWcSmh9hVnBtPqspGwj`, commit `f3387ebddc13534938eee8cf7d22e80a32953a56`, state **READY**; alias `hades-portfolio-amber.vercel.app`.
+- Fresh live scrape of homepage returned HTTP 200 and confirmed current hero, sections, 4 projects, 29 skills, 6 services, experience, education, all 6 social/contact links, and skills explorer content.
+- Fresh live scrape of `/admin` returned HTTP 200 and confirmed the unauthenticated secure sign-in gate; no public signup is exposed.
+- Direct live HTTP checks: `/` 200, `/admin` 200, `/robots.txt` 200, `/sitemap.xml` 200, `/qa-media-fixture` 404 (expected in production), `GET /api/contact` 405 (expected), invalid cross-origin `POST /api/contact` 403 (expected).
+- Vercel runtime error clusters over 7 days: none. Current runtime logs show only an informational TLS profile line.
+- Build logs show one non-blocking platform warning: npm `Unknown env config "cache-dir"`. Confirmed no project or user `.npmrc` and no corresponding local npm environment config; prior investigation identified this as Vercel build-environment injection. Do not add a fragile project workaround.
+- Automated external live-browser runner could not start because its separate wallet balance was negative. The live site was still independently checked via fresh scrape, direct HTTP, and local Playwright production-browser suite.
+
+### Current Supabase state
+- Project is ACTIVE_HEALTHY on the Free organization.
+- All **18/18** public tables have RLS enabled.
+- Health Advisor: no findings.
+- Security Advisor: one WARN, `auth_leaked_password_protection`; Supabase organization is Free and the feature is plan-limited. Requires an eligible paid plan to enable.
+- Performance Advisor: two INFO unused indexes (`admin_audit_logs_actor_id_idx`, `articles_category_id_idx`); retain pending workload evidence.
+- Public media bucket `portfolio-media` is configured public with a 50 MiB upload limit; public files can be accessed by URL. Current media_assets count is 0.
+
+### Current CMS content counts
+- Projects 4; Skills 29; Education 1; Experience 1; Services 6; Social links 6; Navigation items 8; Sections 6.
+- Blog articles 0; YouTube video records 0; Testimonials 0; Media assets 0.
+- Do not invent articles, video records, testimonials, client history, or media to make the CMS appear full.
+
+### Remaining production sign-off gates
+1. Owner must sign in and verify real Admin create/edit/delete, settings/social persistence, and Storage upload/replace/delete using their own account. Do not request credentials or OTP in chat.
+2. Add real approved blog articles, selected video URLs, actual portfolio media/logo, and testimonials only when genuine; current public page correctly omits empty CMS collections.
+3. Supabase Leaked Password Protection is still disabled on Free; paid-plan upgrade is owner decision.
+4. Vercel team is Hobby. Vercel Terms restrict Hobby to personal/non-commercial use. Because this portfolio advertises services and invites client enquiries, resolve commercial-hosting compliance before monetized/commercial use. Use an eligible plan or owner-approved alternative host; do not upgrade or migrate without approval.
+5. Configure encrypted off-site database backups and complete a restore test. Free plan does not provide automatic backups; low-activity projects can pause.
+6. Custom domain is optional but not configured; only the Vercel subdomain is attached.
+
+**Honest sign-off:** Code/build/automated public QA are passing and the live deployment is healthy. Full commercial-production sign-off remains blocked by owner-only Admin/Storage verification, missing real content/media, hosting-plan compliance, and backup/restore operations.
