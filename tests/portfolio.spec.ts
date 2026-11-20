@@ -155,12 +155,59 @@ test.describe('Portfolio public experience', () => {
     await expect(dialog.locator('.media-lightbox-image-wrap img')).toBeVisible();
     await expect(dialog.getByText(/image \/ media library/i)).toBeVisible();
     await expect(dialog.getByRole('link', { name: /download image/i })).toHaveAttribute('download');
-    await page.getByRole('button', { name: /close image preview/i }).click();
+    await expect(page.locator('html')).toHaveCSS('overflow', 'hidden');
+    await expect(dialog.locator('.media-lightbox-close')).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    await expect(dialog.getByRole('link', { name: /download image/i })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(dialog.locator('.media-lightbox-close')).toBeFocused();
+    const desktopGeometry = await dialog.evaluate((element) => {
+      const overlay = element.getBoundingClientRect();
+      const panel = element.querySelector('.media-lightbox-panel')!.getBoundingClientRect();
+      return { position: getComputedStyle(element).position, overlayWidth: overlay.width, overlayHeight: overlay.height, panelCenterX: panel.left + panel.width / 2, panelCenterY: panel.top + panel.height / 2, panelWidth: panel.width, panelHeight: panel.height };
+    });
+    const viewport = page.viewportSize()!;
+    expect(desktopGeometry.position).toBe('fixed');
+    expect(Math.abs(desktopGeometry.panelCenterX - viewport.width / 2)).toBeLessThan(4);
+    expect(Math.abs(desktopGeometry.panelCenterY - viewport.height / 2)).toBeLessThan(4);
+    expect(desktopGeometry.panelWidth).toBeLessThanOrEqual(viewport.width);
+    expect(desktopGeometry.panelHeight).toBeLessThanOrEqual(viewport.height);
+    const pageScrollBeforeWheel = await page.evaluate(() => window.scrollY);
+    await page.mouse.wheel(0, 700);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(pageScrollBeforeWheel);
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+    await expect(page.locator('html')).not.toHaveCSS('overflow', 'hidden');
+    await expect(preview).toBeFocused();
     await expect(dialog).toHaveCount(0);
     await preview.click();
     await expect(dialog).toBeVisible();
     await page.locator('.media-lightbox').click({ position: { x: 4, y: 4 } });
     await expect(dialog).toHaveCount(0);
+  });
+
+  test('media preview stays inside the mobile viewport and locks background scrolling', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/qa-media-fixture');
+    const preview = page.locator('.media-showcase-image-button').first();
+    await expect(preview).toBeVisible();
+    await preview.click();
+    const dialog = page.getByRole('dialog', { name: /image details/i });
+    await expect(dialog).toBeVisible();
+    const geometry = await dialog.locator('.media-lightbox-panel').evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height, scrollHeight: element.scrollHeight, clientHeight: element.clientHeight };
+    });
+    expect(geometry.left).toBeGreaterThanOrEqual(0);
+    expect(geometry.top).toBeGreaterThanOrEqual(0);
+    expect(geometry.right).toBeLessThanOrEqual(390);
+    expect(geometry.bottom).toBeLessThanOrEqual(844);
+    expect(geometry.width).toBeLessThanOrEqual(390);
+    expect(geometry.height).toBeLessThanOrEqual(844);
+    await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+    await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
   });
 
   test('homepage is never served from stale ISR cache after CMS changes', async ({ request }) => {

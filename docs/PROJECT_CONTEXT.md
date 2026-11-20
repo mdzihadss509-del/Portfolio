@@ -557,3 +557,13 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 6. Custom domain is optional but not configured; only the Vercel subdomain is attached.
 
 **Honest sign-off:** Code/build/automated public QA are passing and the live deployment is healthy. Full commercial-production sign-off remains blocked by owner-only Admin/Storage verification, missing real content/media, hosting-plan compliance, and backup/restore operations.
+
+
+## 2026-11-20 — Media asset detail overlay fix
+- Fixed public Media Library detail overlay being positioned relative to transformed/animated card ancestors: render the overlay through a React portal directly under `document.body`.
+- Modal now has viewport-level positioning and responsive desktop/mobile sizing; the panel scrolls internally where required, while the page behind it is locked against scroll.
+- Added focus management (initial focus, Tab/Shift+Tab loop, restore trigger focus), Escape-to-close, backdrop-to-close, scrollbar compensation, and cleanup that restores previous document styles.
+- Added a shared details panel for image, video, audio, PDF, and other downloadable files; non-previewable formats show a clear fallback with a download action.
+- Regression coverage includes desktop centering/viewport bounds, page scroll lock, keyboard focus loop, Escape close, focus restoration, backdrop close, and mobile viewport bounds.
+- Verification on local production build: `npm run lint` passed; `npx tsc --noEmit` passed; `npm run build` passed; `npm run test:e2e` passed 21/21; `npm audit --audit-level=low` reported 0 vulnerabilities; `git diff --check` passed.
+- Pending before release: commit/push to `main`, then verify the Vercel production deployment and live asset detail behavior. This local QA result does not by itself mean the production site has been updated.

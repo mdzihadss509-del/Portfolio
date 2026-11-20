@@ -3202,3 +3202,139 @@ html[data-theme="light"] body main .hero-art-heading > span:nth-child(2) { color
 @media(max-width:900px){.skills-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.skills-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.skills-explorer-top{align-items:stretch;flex-direction:column}.skills-search{width:100%}.skills-category-grid{grid-template-columns:1fr}.skills-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.skill-card{min-height:158px;padding:13px}.skill-card h4{font-size:13px}.skills-results-head{margin-top:28px}}
 @media(prefers-reduced-motion:reduce){.skills-category,.skill-card,.skills-show-more svg{transition:none!important}}
+
+/* Accessible, viewport-level media preview: rendered through a body portal to escape transformed cards. */
+.media-showcase-view-details {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .07em;
+  white-space: nowrap;
+  transition: border-color .2s, background .2s, color .2s;
+}
+.media-showcase-view-details:hover,
+.media-showcase-view-details:focus-visible {
+  border-color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 10%, transparent);
+  color: var(--text);
+}
+.media-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  min-height: 0;
+  padding: clamp(12px, 3vw, 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+.media-lightbox-panel {
+  width: min(100%, 1120px);
+  max-width: 1120px;
+  max-height: min(90vh, 900px);
+  max-height: min(90dvh, 900px);
+  min-height: 0;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+  overflow: hidden;
+}
+.media-lightbox-image-wrap {
+  min-width: 0;
+  min-height: 0;
+  max-height: min(90vh, 900px);
+  max-height: min(90dvh, 900px);
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.media-lightbox-image-wrap img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(90dvh - 64px);
+  object-fit: contain;
+}
+.media-lightbox-image-wrap video,
+.media-lightbox-image-wrap iframe {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: min(68dvh, 680px);
+  border: 0;
+  background: #08090d;
+}
+.media-lightbox-file-preview {
+  width: 100%;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  color: #c4b5fd;
+  text-align: center;
+}
+.media-lightbox-file-preview strong {
+  color: #fff;
+  font: 800 30px Manrope, sans-serif;
+}
+.media-lightbox-file-preview span {
+  color: #9ca3af;
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .12em;
+}
+.media-lightbox-file-preview audio { width: min(100%, 420px); }
+.media-lightbox-details {
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.media-lightbox-close:focus-visible,
+.media-lightbox-download:focus-visible,
+.media-showcase-view-details:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+@media (max-width: 720px) {
+  .media-lightbox { padding: 10px; place-items: center; }
+  .media-lightbox-panel {
+    width: min(100%, 560px);
+    max-height: calc(100dvh - 20px);
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .media-lightbox-image-wrap {
+    min-height: 180px;
+    max-height: 48dvh;
+    padding: 16px;
+  }
+  .media-lightbox-image-wrap img { max-height: 44dvh; }
+  .media-lightbox-image-wrap video,
+  .media-lightbox-image-wrap iframe { height: 42dvh; }
+  .media-lightbox-details {
+    overflow: visible;
+    padding: 22px 20px;
+    border-left: 0;
+    border-top: 1px solid #ffffff12;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .media-lightbox { animation: none !important; }
+  .media-showcase-view-details { transition: none !important; }
+}

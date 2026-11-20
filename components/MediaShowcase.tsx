@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import {
   Archive,
@@ -97,6 +98,7 @@ function dateLabel(value: string | null) {
 
 function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) {
   const [imageOpen, setImageOpen] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const kind = assetKind(asset);
   const Icon = KIND_ICONS[kind];
   const extension = extensionOf(asset.filename || '').toUpperCase();
@@ -107,15 +109,45 @@ function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) 
 
   useEffect(() => {
     if (!imageOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setImageOpen(false);
+    const body = document.body;
+    const root = document.documentElement;
+    const previousBodyOverflow = body.style.overflow;
+    const previousRootOverflow = root.style.overflow;
+    const previousPaddingRight = body.style.paddingRight;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const scrollbarWidth = Math.max(0, window.innerWidth - root.clientWidth);
+    body.style.overflow = 'hidden';
+    root.style.overflow = 'hidden';
+    if (scrollbarWidth) body.style.paddingRight = `${scrollbarWidth}px`;
+    closeButtonRef.current?.focus();
+
+    const closeOnKeyboard = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setImageOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const dialog = document.querySelector<HTMLElement>('.media-lightbox-panel');
+      const focusable = dialog?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), video[controls], audio[controls], iframe, [tabindex]:not([tabindex="-1"])');
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
-    window.addEventListener('keydown', closeOnEscape);
+    window.addEventListener('keydown', closeOnKeyboard);
     return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', closeOnEscape);
+      body.style.overflow = previousBodyOverflow;
+      root.style.overflow = previousRootOverflow;
+      body.style.paddingRight = previousPaddingRight;
+      window.removeEventListener('keydown', closeOnKeyboard);
+      previousFocus?.focus();
     };
   }, [imageOpen]);
 
@@ -185,26 +217,31 @@ function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) 
           </div>
           <div className="media-showcase-actions">
             <span><i/>AVAILABLE IN THE STUDIO</span>
+            {kind !== 'image' && <button type="button" className="media-showcase-view-details" onClick={() => setImageOpen(true)}>VIEW DETAILS <ArrowUpRight size={14}/></button>}
             {needsDownload && <a href={downloadUrl(url, name)} download={name} aria-label={`Download ${name}`}><ArrowDownToLine size={15}/></a>}
             {!needsDownload && <a href={url} target="_blank" rel="noreferrer" aria-label={`Open ${name}`}><ArrowUpRight size={15}/></a>}
           </div>
         </div>
       </MotionSurface>
-      {kind === 'image' && imageOpen && (
+      {imageOpen && typeof document !== 'undefined' && createPortal(
         <div
           className="media-lightbox"
           role="dialog"
           aria-modal="true"
-          aria-label={`Image details: ${name}`}
+          aria-label={`${kind === 'image' ? 'Image' : 'Asset'} details: ${name}`}
           onClick={() => setImageOpen(false)}
         >
-          <div className="media-lightbox-panel" onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="media-lightbox-close" onClick={() => setImageOpen(false)} aria-label="Close image preview">×</button>
+          <div className={`media-lightbox-panel media-lightbox-panel--${kind}`} onClick={(event) => event.stopPropagation()} role="document">
+            <button ref={closeButtonRef} type="button" className="media-lightbox-close" onClick={() => setImageOpen(false)} aria-label="Close image preview">×</button>
             <div className="media-lightbox-image-wrap">
-              <Image src={url} alt={label} width={1600} height={1200} unoptimized/>
+              {kind === 'image' && <Image src={url} alt={label} width={1600} height={1200} unoptimized/>}
+              {kind === 'video' && <video src={url} controls playsInline preload="metadata" aria-label={name}/>}
+              {kind === 'audio' && <div className="media-lightbox-file-preview"><Music2 size={48}/><strong>{extension}</strong><audio src={url} controls preload="metadata" aria-label={name}/></div>}
+              {kind === 'document' && extension === 'PDF' && <iframe src={url} title={`Preview ${name}`} />}
+              {(kind === 'archive' || kind === 'file' || (kind === 'document' && extension !== 'PDF')) && <div className="media-lightbox-file-preview"><Icon size={48}/><strong>{extension}</strong><span>PREVIEW NOT AVAILABLE FOR THIS FILE TYPE</span></div>}
             </div>
             <div className="media-lightbox-details">
-              <span className="media-showcase-type"><ImageIcon size={14}/> IMAGE / MEDIA LIBRARY</span>
+              <span className="media-showcase-type"><Icon size={14}/> {kind.toUpperCase()} / MEDIA LIBRARY</span>
               <h2>{name}</h2>
               <p>{label === name ? 'Added to the HADES media library.' : label}</p>
               <div className="media-showcase-meta">
@@ -213,11 +250,12 @@ function MediaAssetCard({ asset, index }: { asset: MediaAsset; index: number }) 
                 <span>{extension}</span>
               </div>
               <a className="media-lightbox-download" href={downloadUrl(url, name)} download={name}>
-                <ArrowDownToLine size={16}/> DOWNLOAD IMAGE
+                <ArrowDownToLine size={16}/> DOWNLOAD {kind === 'image' ? 'IMAGE' : kind.toUpperCase()}
               </a>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );
