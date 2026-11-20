@@ -388,3 +388,13 @@ Do not label these owner/platform/operational gates as fixed by code tests. The 
 
 ---
 **End of canonical handover. Start every future session with this file and the Git status commands in Section 2.**
+
+
+## 2026-11-20 — Latest production readiness report and continuation checkpoint
+
+**Read this first for the most recent test evidence and remaining sign-off gates:**
+- [Production Readiness Report — 2026-11-20](./PRODUCTION_READINESS_REPORT_2026-11-20.md)
+
+The report supersedes older dated status snapshots where they conflict. It records a fresh local run of lint, TypeScript, npm audit (0 vulnerabilities), Next.js production build and Playwright (23/23 passed), plus fresh production HTTP smoke checks. It also records current Supabase Advisor findings, backup/recovery status, the exact previous verified production deployment and the work that still requires the owner's authenticated browser session.
+
+**Critical:** Do not claim owner-authenticated Admin CRUD or real Storage API upload/replace/delete as complete. Do not replay the stale legacy migration or run production reset/push/repair. Do not mark the project 100% production/commercial signed off until the report's owner-session, recovery and hosting gates are closed.
