@@ -588,3 +588,9 @@ Netlify currently states its Free plan permits commercial use and supports Next.
 - Current Vercel production is still live and technically healthy.
 - Zero-cost Cloudflare migration is **promising but not production-approved**. No spend was incurred.
 - Owner-only Admin/Storage verification, real content/media, off-site backup/restore, and hosting-plan compliance remain separate sign-off gates.
+
+
+### Branch preview deployment check
+- Pushed the evaluation branch to `origin/cloudflare-free-evaluation` at commit `ea3a2b5`.
+- Vercel automatically created preview deployment `dpl_9xNYnhtmYxbrBtfJ6KP1NbvNzdM1` at `https://hades-portfolio-b43g4zbr1-mdzihadss509-1195.vercel.app`; Vercel reports **READY**.
+- Direct unauthenticated HTTP requests return the Vercel Authentication page (`Login - Vercel`), not the app. Deployment Protection was left enabled; do not disable it. The local Next.js and Cloudflare preview tests remain the available verification for this branch until authenticated preview access is used.
