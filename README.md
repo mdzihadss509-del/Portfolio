@@ -25,7 +25,7 @@ docs/PROJECT_CONTEXT.md is retained as a chronological historical record. Its ol
 
 ## Local setup
 
-Requirements: Node.js 22.0 or newer and access to the configured Supabase project.
+Requirements: Node.js 22 through 26 (package engine range >=22.0.0 <27.0.0) and access to the configured Supabase project.
 
 PowerShell:
 1. npm ci

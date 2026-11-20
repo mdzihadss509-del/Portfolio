@@ -29,7 +29,7 @@ A personal portfolio/CMS for personal branding, showcasing projects, creator wor
 - Supabase Postgres, Auth and Storage via `@supabase/supabase-js` and `@supabase/ssr`.
 - Motion 14, Lucide React.
 - Playwright and axe-core for browser/accessibility tests.
-- Node.js 22.0 or newer (the current Supabase JS dependency requires Node 22+).
+- Node.js 22 through 26 (package engine range >=22.0.0 <27.0.0; the current Supabase JS dependency requires Node 22+).
 
 Environment variables:
 - `NEXT_PUBLIC_SUPABASE_URL`
