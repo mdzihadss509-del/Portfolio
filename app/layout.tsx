@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const siteUrl = 'https://hades-portfolio-amber.vercel.app';
+const themeBootstrapScript = `(function(){try{var saved=localStorage.getItem('hades-theme');var systemLight=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches;var theme=saved==='light'||saved==='dark'?saved:(systemLight?'light':'dark');var root=document.documentElement;root.dataset.theme=theme;root.style.colorScheme=theme;}catch(_){document.documentElement.dataset.theme='dark';}})();`;
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getPortfolioData();
@@ -51,5 +52,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
 }
