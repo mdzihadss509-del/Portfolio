@@ -4439,6 +4439,10 @@ html[data-theme="light"] .contact-form .button-primary {
 .brand > span:last-child {
   text-shadow: 0 0 14px color-mix(in srgb, var(--brand-accent) 18%, transparent);
 }
+/* Keep the glow token subtle and visible; reserve it for brand, type and icons only. */
+:root { --glow: rgba(169, 130, 255, .18); }
+html[data-theme="light"] { --glow: rgba(37, 99, 235, .14); }
+
 /* Re-enable a restrained glow only on the brand mark, logo type and accent icons. */
 .brand-mark {
   box-shadow: 0 0 14px var(--glow) !important;

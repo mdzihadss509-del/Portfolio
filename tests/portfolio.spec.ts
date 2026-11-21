@@ -132,8 +132,8 @@ test.describe('Portfolio public experience', () => {
           getComputedStyle(document.querySelector('.media-showcase-preview')!).backgroundImage,
         ];
         const backgroundGlow = backgrounds.some((background) => background.includes('radial-gradient'));
-        const brandGlow = getComputedStyle(document.querySelector('.brand-mark')!).boxShadow !== 'none';
-        const textGlow = getComputedStyle(document.querySelector('.hero-studio-title em')!).filter !== 'none';
+        const brandGlow = getComputedStyle(document.querySelector('.brand-mark')!).boxShadow;
+        const textGlow = getComputedStyle(document.querySelector('.hero-studio-title em')!).filter;
         return {
           body: get('body'),
           main: get('main'),
@@ -152,8 +152,10 @@ test.describe('Portfolio public experience', () => {
       expect(result.main).toBe(expected);
       expect(result.pageOverlay).toBe('none');
       expect(result.backgroundGlow).toBe(false);
-      expect(result.brandGlow).toBe(true);
-      expect(result.textGlow).toBe(true);
+      expect(result.brandGlow).not.toBe('none');
+      expect(result.brandGlow).not.toContain('rgba(0, 0, 0, 0)');
+      expect(result.textGlow).not.toBe('none');
+      expect(result.textGlow).not.toContain('rgba(0, 0, 0, 0)');
       if (theme === 'dark') {
         expect(result.redAccent).toBe('#e65c68');
       }
@@ -670,8 +672,11 @@ test.describe('Clean canvas and identity accents', () => {
     expect(styles.heroBackdrop).not.toContain('radial-gradient');
     expect(styles.mediaBackdrop).toBe('none');
     expect(styles.brandGlow).not.toBe('none');
+    expect(styles.brandGlow).not.toContain('rgba(0, 0, 0, 0)');
     expect(styles.brandTextGlow).not.toBe('none');
+    expect(styles.brandTextGlow).not.toContain('rgba(0, 0, 0, 0)');
     expect(styles.titleGlow).not.toBe('none');
+    expect(styles.titleGlow).not.toContain('rgba(0, 0, 0, 0)');
 
     await page.emulateMedia({ colorScheme: 'light' });
     await page.reload();
