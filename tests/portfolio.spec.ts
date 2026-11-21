@@ -138,7 +138,9 @@ test.describe('Portfolio public experience', () => {
           body: get('body'),
           main: get('main'),
           creator: get('.creator-band'),
+          creatorBackgroundImage: getComputedStyle(document.querySelector('.creator-band')!).backgroundImage,
           ticker: get('.ticker'),
+          tickerBackgroundImage: getComputedStyle(document.querySelector('.ticker')!).backgroundImage,
           panel: get('.project-card'),
           accent,
           redAccent: getComputedStyle(document.documentElement).getPropertyValue('--red').trim(),
@@ -150,6 +152,9 @@ test.describe('Portfolio public experience', () => {
       });
       expect(result.body).toBe(expected);
       expect(result.main).toBe(expected);
+      expect(result.creator).toBe(expected);
+      expect(result.creatorBackgroundImage).toBe('none');
+      expect(result.tickerBackgroundImage).toBe('none');
       expect(result.pageOverlay).toBe('none');
       expect(result.backgroundGlow).toBe(false);
       expect(result.brandGlow).not.toBe('none');
@@ -157,12 +162,14 @@ test.describe('Portfolio public experience', () => {
       expect(result.textGlow).not.toBe('none');
       expect(result.textGlow).not.toContain('rgba(0, 0, 0, 0)');
       if (theme === 'dark') {
+        expect(result.accent).toBe('rgb(167, 139, 250)');
         expect(result.redAccent).toBe('#e65c68');
+        expect(result.ticker).toBe(expected);
       }
       if (theme === 'light') {
-        expect(result.accent).toBe('rgb(33, 91, 216)');
-        expect(result.creator).not.toBe(expected);
-        expect(result.ticker).not.toBe(expected);
+        expect(result.accent).toBe('rgb(37, 99, 235)');
+        expect(result.redAccent).toBe('#b83d55');
+        expect(result.ticker).toBe(expected);
         expect(result.panel).toBe('rgb(255, 255, 255)');
       }
     };

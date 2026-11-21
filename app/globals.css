@@ -4475,3 +4475,198 @@ html[data-theme="light"] { --glow: rgba(37, 99, 235, .14); }
     transition: none !important;
   }
 }
+
+
+/* HADES premium visual lock — keep the original identity and exact theme canvases. */
+:root {
+  --bg: #000000;
+  --surface: #08070d;
+  --surface2: #111019;
+  --text: #f7f4ff;
+  --muted: #a49caf;
+  --line: #2b2537;
+  --blue: #a78bfa;
+  --purple: #a78bfa;
+  --red: #e65c68;
+  --brand-accent: #a78bfa;
+  --brand-secondary: #e65c68;
+  --glow: transparent;
+  --identity-glow: rgba(167, 139, 250, .20);
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f4f7ff;
+  --text: #101b31;
+  --muted: #52617a;
+  --line: #d9e3f3;
+  --blue: #2563eb;
+  --purple: #2563eb;
+  --red: #b83d55;
+  --brand-accent: #2563eb;
+  --brand-secondary: #b83d55;
+  --glow: transparent;
+  --identity-glow: rgba(37, 99, 235, .17);
+  color-scheme: light;
+}
+
+/* The page canvas stays pitch black or pure white in every section and theme. */
+html,
+body,
+body > div,
+#__next {
+  background-color: var(--bg) !important;
+  background-image: none !important;
+  color: var(--text);
+}
+
+main:not(.admin-shell):not(.admin-login),
+.admin-shell,
+.admin-main,
+.admin-sidebar,
+.admin-content,
+.admin-login {
+  background-color: var(--bg) !important;
+  background-image: none !important;
+}
+
+main:not(.admin-shell):not(.admin-login)::before,
+main:not(.admin-shell):not(.admin-login)::after,
+.admin-login::before,
+.admin-login::after,
+.media-showcase::before,
+.media-showcase::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+/* These full-width bands are part of the page canvas, not coloured backdrops. */
+.work-section,
+.creator-band,
+.ticker {
+  background-color: var(--bg) !important;
+  background-image: none !important;
+  color: var(--text);
+}
+
+.creator-band::before,
+.creator-band::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+.creator-visual {
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.media-showcase-preview {
+  background-color: var(--surface2) !important;
+  background-image: none !important;
+}
+
+/* General glow tokens are disabled. Only the HADES identity may glow. */
+.brand-mark {
+  border-color: var(--brand-accent) !important;
+  color: var(--brand-accent) !important;
+  box-shadow: 0 0 14px var(--identity-glow) !important;
+  transition: transform .38s var(--ease-out), box-shadow .38s var(--ease-out), border-color .28s ease;
+}
+
+.brand:hover .brand-mark {
+  box-shadow: 0 0 19px var(--identity-glow) !important;
+}
+
+.brand > span:last-child {
+  text-shadow: 0 0 12px var(--identity-glow) !important;
+}
+
+.hero-studio-title em,
+.hero-title-period,
+.site-endcap-top h2 em {
+  text-shadow: 0 0 14px var(--identity-glow) !important;
+  filter: drop-shadow(0 0 7px var(--identity-glow)) !important;
+}
+
+.section-custom-icon,
+.skill-row > svg,
+.social-custom-icon,
+.creator-custom-icon {
+  filter: drop-shadow(0 0 6px var(--identity-glow)) !important;
+}
+
+/* Keep animation cinematic, but preserve the reduced-motion accessibility contract. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .project-card,
+  .media-showcase-card,
+  .article-glass-card,
+  .career-group,
+  .skill-card {
+    transition:
+      transform .42s var(--ease-out),
+      border-color .32s ease,
+      background-color .32s ease,
+      box-shadow .32s ease;
+  }
+
+  .project-card:hover,
+  .media-showcase-card:hover,
+  .article-glass-card:hover,
+  .skill-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .nav-cta,
+  .button-primary,
+  .button-ghost,
+  .site-endcap-cta,
+  .admin-action {
+    transition:
+      transform .28s var(--ease-out),
+      background-color .25s ease,
+      color .25s ease,
+      border-color .25s ease,
+      box-shadow .25s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-mark,
+  .project-card,
+  .media-showcase-card,
+  .article-glass-card,
+  .career-group,
+  .skill-card,
+  .nav-cta,
+  .button-primary,
+  .button-ghost,
+  .site-endcap-cta,
+  .admin-action {
+    transition: none !important;
+  }
+}
+
+
+/* Higher-specificity light-mode band guard: no legacy light gradient can override the canvas. */
+html[data-theme="light"] .work-section,
+html[data-theme="light"] .creator-band,
+html[data-theme="light"] .ticker {
+  background: #ffffff !important;
+  color: var(--text) !important;
+}
+.work-section,
+.creator-band,
+.ticker {
+  background: #000000 !important;
+  color: var(--text) !important;
+}
