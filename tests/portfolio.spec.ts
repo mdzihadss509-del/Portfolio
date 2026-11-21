@@ -14,6 +14,33 @@ test.describe('Portfolio public experience', () => {
     const anchors = await page.locator('nav a[href^="#"]').evaluateAll((items) => items.map((item) => item.getAttribute('href')).filter(Boolean));
     for (const href of anchors) await expect(page.locator(href as string)).toHaveCount(1);
   });
+  test('experience and education stay compact until a pathway is expanded', async ({ page }) => {
+    await page.goto('/');
+    const experienceGroups = page.locator('#experience .career-group');
+    const educationGroups = page.locator('#education .career-group');
+    await expect(experienceGroups).toHaveCount(4);
+    await expect(educationGroups).toHaveCount(4);
+    await expect(page.locator('#experience .career-feature')).toContainText('Founder & Creator');
+    await expect(page.locator('#education .education-current')).toContainText('Ongoing College Education');
+
+    for (const width of [390, 768, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      const dimensions = await page.evaluate(() => ({
+        scroll: document.documentElement.scrollWidth,
+        client: document.documentElement.clientWidth,
+      }));
+      expect(dimensions.scroll, `career sections overflow at ${width}px`).toBeLessThanOrEqual(dimensions.client);
+    }
+
+    for (let index = 0; index < 4; index += 1) {
+      await experienceGroups.nth(index).locator('summary').click();
+      await educationGroups.nth(index).locator('summary').click();
+    }
+    await expect(page.locator('#experience .career-item')).toHaveCount(15);
+    await expect(page.locator('#education .career-item')).toHaveCount(7);
+    await expect(page.locator('#experience .career-item').filter({ hasText: 'Minecraft Plugin Development' })).toBeVisible();
+    await expect(page.locator('#education .career-item').filter({ hasText: 'Bachelor\'s in Computer Science' })).toBeVisible();
+  });
   test('skills explorer filters categories, searches, and expands the complete toolkit', async ({ page }) => {
     await page.goto('/');
     const explorer = page.locator('.skills-explorer');

@@ -3429,3 +3429,154 @@ html[data-theme="light"] body main .hero-art-heading > span:nth-child(2) { color
 .icon-button .theme-toggle-moon { display: none; }
 html[data-theme="light"] .icon-button .theme-toggle-sun { display: none; }
 html[data-theme="light"] .icon-button .theme-toggle-moon { display: block; }
+
+/* Compact, grouped career and education pathways */
+.career-section { padding-block: 76px; }
+.career-feature {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin: 22px 0 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.career-feature-label {
+  padding-top: 4px;
+  color: var(--blue);
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .13em;
+}
+.career-feature h3 {
+  margin: 0 0 5px;
+  font: 650 16px/1.3 Manrope, sans-serif;
+}
+.career-feature p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+.career-feature p + p { margin-top: 7px; }
+.career-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.career-group {
+  min-width: 0;
+  align-self: start;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: clip;
+}
+.career-group summary {
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 17px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background .2s, border-color .2s;
+}
+.career-group summary::-webkit-details-marker { display: none; }
+.career-group summary:hover { background: var(--surface2); }
+.career-group summary:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: -3px;
+  border-radius: 11px;
+}
+.career-group-main {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex: 1;
+  min-width: 0;
+}
+.career-group-index {
+  flex: 0 0 30px;
+  color: var(--blue);
+  font: 11px 'DM Mono', monospace;
+}
+.career-group-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.career-group-copy strong {
+  font: 650 13px/1.35 Manrope, sans-serif;
+  color: var(--text);
+}
+.career-group-copy small {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+.career-group-count {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font: 9px 'DM Mono', monospace;
+  white-space: nowrap;
+}
+.career-group-chevron {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--blue);
+  font: 16px/1 'DM Sans', sans-serif;
+  transition: transform .2s;
+}
+.career-group[open] .career-group-chevron { transform: rotate(45deg); }
+.career-items { padding: 0 19px 8px 60px; }
+.career-item {
+  padding: 13px 0 14px;
+  border-top: 1px solid var(--line);
+}
+.career-item-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.career-item h3 {
+  margin: 0;
+  font: 600 12px/1.45 Manrope, sans-serif;
+}
+.career-item-heading span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.45;
+  text-align: right;
+}
+.career-item > p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.65;
+}
+.education-current { margin-bottom: 15px; }
+.education-pathways { margin-top: 0; }
+@media (max-width: 760px) {
+  .career-section { padding-block: 58px; }
+  .career-grid { grid-template-columns: 1fr; gap: 9px; }
+  .career-feature { grid-template-columns: 1fr; gap: 8px; padding: 16px; }
+  .career-feature-label { padding: 0; }
+  .career-group summary { min-height: 74px; padding: 13px 14px; gap: 9px; }
+  .career-group-count { font-size: 8px; }
+  .career-items { padding-left: 48px; padding-right: 15px; }
+  .career-item-heading { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .career-item-heading span { text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .career-group summary, .career-group-chevron { transition: none; }
+}
