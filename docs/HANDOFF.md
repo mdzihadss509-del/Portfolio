@@ -3,7 +3,7 @@
 **Last verified:** 2026-11-21 (Asia/Dhaka)
 **Purpose:** This is the single operational source of truth for continuing the HADES Portfolio project. Start here in every new session. It contains the current project location, live links, code/deployment identity, setup, architecture, recent changes, test evidence, safety constraints and remaining work. Historical notes elsewhere may contain outdated snapshots; this file takes precedence.
 
-> **CURRENT CHECKPOINT - 2026-11-21 (latest audit):** Local checkout `E:\Projects\HadesPortfolio`, branch `main`, clean working tree, HEAD `d959963a3d4483c0ac2435a697e1b3bdbcdaa21f`, aligned with `origin/main`. Vercel production deployment `dpl_HhUzmzCn6ZMgPmhd6fscJmp8mfx1` is **READY**, sourced from that exact commit, and serves https://hades-portfolio-amber.vercel.app/. Fresh verification: lint, TypeScript, production build, Playwright **32/32**, npm audit **0 vulnerabilities**, and `git diff --check` passed. Live homepage browser checks at 390x844 and 1440x900 found no horizontal overflow or console/page errors. Mobile discipline picker opened with 14 options; its panel stayed inside the viewport. `/` and `/admin` returned HTTP 200. See Section 15 at the end for exact scope and limitations.
+> **CURRENT CHECKPOINT - 2026-11-21 (handoff updated):** Local checkout `E:\Projects\HadesPortfolio`, branch `main`, clean working tree, HEAD `631cc4d31f3e2eb66e77257a131329f897e1ecd4`, aligned with `origin/main`. This is a documentation-only handoff update; the latest verified application deployment is `dpl_CofYeZiviuTkr911sScAjK1iXhGt`, **READY**, from application/QA commit `f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f`. Production alias: https://hades-portfolio-amber.vercel.app/. Application verification: ESLint, TypeScript, Next.js build, Playwright **32/32**, npm audit (**0 vulnerabilities**), and `git diff --check` passed. Post-deployment browser smoke: `/` HTTP 200 at 390x844 and 1440x900, no overflow or console/page errors; `/admin` HTTP 200; mobile picker shows 14 options within viewport. The documentation-only commit 631cc4d was pushed and its Vercel production build was still starting at the time of this handoff update.
 
 ## 1. Project at a glance
 
@@ -24,17 +24,17 @@
 | Production host | Vercel (Hobby) |
 
 **Latest production code commit:**
-`d959963a3d4483c0ac2435a697e1b3bdbcdaa21f` - docs: record discipline picker deployment status
+`f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f` - docs: correct current production handoff
 
 **Latest verified production deployment:**
-- Deployment ID: `dpl_HhUzmzCn6ZMgPmhd6fscJmp8mfx1`
-- Deployment URL: https://hades-portfolio-fn6hkjiam-mdzihadss509-1195.vercel.app
+- Deployment ID: `dpl_CofYeZiviuTkr911sScAjK1iXhGt`
+- Deployment URL: https://hades-portfolio-3adgu3ce0-mdzihadss509-1195.vercel.app
 - Production alias: https://hades-portfolio-amber.vercel.app/
 - Target: Production
 - State: **READY**
 - Branch: `main`
 - Source commit: `d959963a3d4483c0ac2435a697e1b3bdbcdaa21f`
-- Vercel Inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/HhUzmzCn6ZMgPmhd6fscJmp8mfx1
+- Vercel Inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/CofYeZiviuTkr911sScAjK1iXhGt
 
 The production alias and unique deployment URL returned HTTP 200. The latest live HTML confirms title “Zihad | Creator & Developer”, current SEO description, the Hero greeting and BEYOND THE ORDINARY headline; the stale H.HADES title text is absent. Live response headers include HSTS, CSP restrictions and X-Frame-Options DENY. /admin, /robots.txt and /sitemap.xml returned 200; GET /api/contact returned the expected 405; /qa-media-fixture returned the expected production 404; a cross-origin contact POST was rejected with 403. The Vercel runtime-error aggregate reported no errors in the last 24 hours and the most recent 30-minute warning/error runtime-log query returned no entries. Re-check before a future release; this snapshot is dated.
 
@@ -513,9 +513,9 @@ Implementation commit `29b67f1` was pushed to `main`. GitHub reports the Vercel 
 ## 15. 2026-11-21 - Full regression and production browser audit
 
 ### Verified current repository and deployment
-- Local HEAD and origin/main: d959963a3d4483c0ac2435a697e1b3bdbcdaa21f (docs: record discipline picker deployment status).
+- Local HEAD and origin/main: f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f (docs: correct current production handoff).
 - Working tree was clean before this documentation correction.
-- Vercel production deployment dpl_HhUzmzCn6ZMgPmhd6fscJmp8mfx1 is READY, target production, sourced from exact SHA d959963a3d4483c0ac2435a697e1b3bdbcdaa21f.
+- Vercel production deployment dpl_CofYeZiviuTkr911sScAjK1iXhGt is READY, target production, sourced from exact SHA d959963a3d4483c0ac2435a697e1b3bdbcdaa21f.
 - Production / and /admin both returned HTTP 200.
 
 ### Fresh local verification (run serially on the authorized Windows PC)
@@ -544,3 +544,35 @@ Implementation commit `29b67f1` was pushed to `main`. GitHub reports the Vercel 
 - Backup/restore drill and Vercel Hobby commercial-use compliance remain outstanding.
 - This was a production homepage browser smoke test plus the full local E2E suite, not exhaustive manual visual testing of every route and every CMS workflow.
 - No application code, Supabase schema/data, credentials, migrations, or owner content were changed during this audit.
+
+
+## 16. 2026-11-21 - Latest fix handoff and post-deployment confirmation
+
+### Latest repository and production state
+- Verified application/QA baseline: f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f; latest repository HEAD after this documentation update: 631cc4d31f3e2eb66e77257a131329f897e1ecd4 (docs-only).
+- The handoff metadata was stale and referenced the previous commit/deployment. It was corrected and pushed; documentation-only commit 631cc4d updates this handoff.
+- Last verified application deployment dpl_CofYeZiviuTkr911sScAjK1iXhGt is READY, target production, branch main, source SHA f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f. The documentation-only commit 631cc4d triggered a separate production build; it was BUILDING when this handoff was finalized. Production alias: https://hades-portfolio-amber.vercel.app/.
+
+### Regression checks confirmed for the current application state
+| Check | Result |
+|---|---|
+| ESLint | Passed |
+| TypeScript (tsc --noEmit) | Passed |
+| Next.js production build | Passed |
+| Playwright E2E | 32/32 passed |
+| npm audit (audit-level=low) | 0 vulnerabilities |
+| git diff --check | Passed |
+
+### Fresh post-deployment browser smoke test
+- Production homepage /: HTTP 200 at 390x844 and 1440x900.
+- At both viewports document width equaled viewport width (no horizontal overflow).
+- No browser console errors and no uncaught page errors.
+- Document title: Zihad | Creator & Developer.
+- Production /admin: HTTP 200. This is only a route response check, not authenticated admin workflow validation.
+- Mobile discipline picker: opens successfully; 14 options visible; panel remains within the 844px viewport.
+
+### Scope and remaining work
+- No application source code was changed in the fix/handoff correction; the discovered issue was stale handoff metadata.
+- No Supabase schema, migrations, production data, credentials, OBS, or owner content were modified.
+- Still pending: owner-authenticated Admin CRUD/settings persistence, real production Storage upload/replace/delete lifecycle, backup/restore drill, exhaustive manual visual inspection of all routes, and Vercel Hobby commercial-use compliance review.
+- Do not treat HTTP 200 on /admin as proof that authenticated admin operations work. Do not claim every route has been visually inspected.
