@@ -3868,3 +3868,497 @@ html[data-theme="light"] .icon-button .theme-toggle-moon { display: block; }
     animation: none !important;
   }
 }
+
+
+/* HADES interaction system — refined motion, layered light theme and accessible feedback. */
+:root {
+  --motion-fast: 150ms;
+  --motion-ui: 250ms;
+  --motion-slow: 420ms;
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+  --motion-spring: cubic-bezier(.2, .8, .2, 1);
+}
+:root {
+  --bg: #000000;
+  --surface: #080808;
+  --surface2: #111111;
+  --text: #f5f5f5;
+  --muted: #a3a3a3;
+  --line: #292929;
+  --blue: #a78bfa;
+  --purple: #a78bfa;
+  --red: #e05260;
+  --brand-accent: #a78bfa;
+  --brand-secondary: #e05260;
+  color-scheme: dark;
+}
+html[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f1f5fd;
+  --text: #101b31;
+  --muted: #4d5e79;
+  --line: #d5e1f3;
+  --blue: #215bd8;
+  --purple: #215bd8;
+  --red: #b83d55;
+  --brand-accent: #215bd8;
+  --brand-secondary: #b83d55;
+  color-scheme: light;
+}
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: color-mix(in srgb, var(--brand-accent) 42%, var(--line)) var(--bg);
+}
+html, body {
+  background-color: var(--bg) !important;
+  color: var(--text);
+  transition: background-color .36s var(--motion-ease), color .3s ease;
+}
+body { overflow-x: clip; }
+::selection {
+  background: color-mix(in srgb, var(--brand-accent) 24%, transparent);
+  color: var(--text);
+}
+a, button, input, textarea, select, summary { -webkit-tap-highlight-color: transparent; }
+a:focus-visible, button:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible, summary:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 3px;
+}
+button:disabled, button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: .56;
+  transform: none !important;
+}
+
+/* Light theme: white canvas with blue-tinted content layers and readable slate text. */
+html[data-theme="light"] body,
+html[data-theme="light"] main,
+html[data-theme="light"] .admin-login,
+html[data-theme="light"] .admin-shell,
+html[data-theme="light"] .admin-main,
+html[data-theme="light"] .admin-sidebar,
+html[data-theme="light"] .admin-content,
+html[data-theme="light"] .article-page {
+  background: #ffffff !important;
+  color: #101b31 !important;
+}
+html[data-theme="light"] .work-section {
+  background: #f6f9ff !important;
+  border-color: #d5e1f3 !important;
+}
+html[data-theme="light"] .ticker {
+  background: #edf3ff !important;
+  border-color: #d5e1f3 !important;
+}
+html[data-theme="light"] .creator-band {
+  background: #f0f5ff !important;
+  border-color: #cbdcf5 !important;
+  color: #101b31 !important;
+}
+html[data-theme="light"] .creator-inner h2,
+html[data-theme="light"] .creator-inner > div > p,
+html[data-theme="light"] .creator-stamp span {
+  color: #17345f !important;
+}
+html[data-theme="light"] .creator-inner .section-no,
+html[data-theme="light"] .creator-caption {
+  color: #4d5e79 !important;
+}
+html[data-theme="light"] .creator-visual {
+  background: #eaf1ff !important;
+  border-color: #b9cdef !important;
+}
+html[data-theme="light"] .creator-stamp { border-color: #9db9e8 !important; }
+html[data-theme="light"] .project-card,
+html[data-theme="light"] .career-group,
+html[data-theme="light"] .career-feature,
+html[data-theme="light"] .media-showcase-card,
+html[data-theme="light"] .article-glass-card,
+html[data-theme="light"] .admin-editor,
+html[data-theme="light"] .admin-table-wrap,
+html[data-theme="light"] .admin-notice,
+html[data-theme="light"] .admin-stats > div,
+html[data-theme="light"] .admin-overview-grid > *,
+html[data-theme="light"] .login-card,
+html[data-theme="light"] .admin-confirm-modal {
+  background: #ffffff !important;
+  color: #101b31 !important;
+  border-color: #d5e1f3 !important;
+}
+html[data-theme="light"] .project-art,
+html[data-theme="light"] .media-showcase-preview,
+html[data-theme="light"] .article-glass-media,
+html[data-theme="light"] .article-glass-placeholder,
+html[data-theme="light"] .media-showcase-file-icon,
+html[data-theme="light"] .admin-media-upload-card,
+html[data-theme="light"] .admin-empty {
+  background: #f1f5fd !important;
+  color: #17345f !important;
+  border-color: #d5e1f3 !important;
+}
+html[data-theme="light"] .project-info h3,
+html[data-theme="light"] .article-glass-info h3,
+html[data-theme="light"] .media-showcase-info h3,
+html[data-theme="light"] .career-item h3,
+html[data-theme="light"] .career-group-copy strong,
+html[data-theme="light"] .skill-card h4,
+html[data-theme="light"] .admin-stats b,
+html[data-theme="light"] .admin-welcome h2,
+html[data-theme="light"] .admin-editor-head b,
+html[data-theme="light"] .admin-field > span,
+html[data-theme="light"] .login-card h1,
+html[data-theme="light"] .login-card label {
+  color: #101b31 !important;
+}
+html[data-theme="light"] .project-info p,
+html[data-theme="light"] .about-copy > p:not(.lead),
+html[data-theme="light"] .career-group-copy small,
+html[data-theme="light"] .career-group-count,
+html[data-theme="light"] .career-item > p,
+html[data-theme="light"] .article-glass-info p,
+html[data-theme="light"] .media-showcase-info p,
+html[data-theme="light"] .media-showcase-intro p,
+html[data-theme="light"] .media-showcase-meta,
+html[data-theme="light"] .media-showcase-index,
+html[data-theme="light"] .media-showcase-actions > span,
+html[data-theme="light"] .admin-welcome p,
+html[data-theme="light"] .admin-notice p,
+html[data-theme="light"] .admin-stats small,
+html[data-theme="light"] .admin-table td small,
+html[data-theme="light"] .login-card > p,
+html[data-theme="light"] .login-card small,
+html[data-theme="light"] .section-note,
+html[data-theme="light"] .nav-links {
+  color: #4d5e79 !important;
+}
+html[data-theme="light"] .hero-art-heading > span,
+html[data-theme="light"] .hero-art-footer > span,
+html[data-theme="light"] .emblem-coordinate,
+html[data-theme="light"] .emblem-stage-caption {
+  color: #4c5d79 !important;
+  opacity: 1 !important;
+}
+html[data-theme="light"] .hero-studio-title em,
+html[data-theme="light"] .hero-title-period,
+html[data-theme="light"] .section-no,
+html[data-theme="light"] .hero-studio-bottom i,
+html[data-theme="light"] .site-endcap-top h2 em,
+html[data-theme="light"] .media-showcase-heading h2 em,
+html[data-theme="light"] .project-symbol,
+html[data-theme="light"] .skill-row > svg,
+html[data-theme="light"] .email-link svg,
+html[data-theme="light"] .media-showcase-type,
+html[data-theme="light"] .media-showcase-total b {
+  color: var(--brand-accent) !important;
+}
+html[data-theme="light"] .nav-cta,
+html[data-theme="light"] .button-primary,
+html[data-theme="light"] .login-submit,
+html[data-theme="light"] .admin-action.primary,
+html[data-theme="light"] .site-endcap-cta,
+html[data-theme="light"] .creator-inner .button-primary {
+  background: var(--brand-accent) !important;
+  border-color: var(--brand-accent) !important;
+  color: #ffffff !important;
+}
+html[data-theme="light"] .button-ghost,
+html[data-theme="light"] .admin-action,
+html[data-theme="light"] .collection-grid-toggle,
+html[data-theme="light"] .media-showcase-view-details,
+html[data-theme="light"] .admin-back-link,
+html[data-theme="light"] .admin-back-overview,
+html[data-theme="light"] .admin-row-actions button,
+html[data-theme="light"] .admin-file-picker {
+  background: #ffffff !important;
+  border-color: #b9cbed !important;
+  color: #174baf !important;
+}
+html[data-theme="light"] .media-showcase-filters button.active {
+  color: #174baf !important;
+  background: #e8f0ff !important;
+  border-color: #a9c2ef !important;
+}
+html[data-theme="light"] .media-showcase-filters button span { color: #a63850 !important; }
+html[data-theme="light"] .tag-row span {
+  background: #edf3ff;
+  color: #405573 !important;
+  border-color: #d2def1;
+}
+html[data-theme="light"] .emblem-core,
+html[data-theme="light"] .orb {
+  background: #eaf1ff !important;
+  border-color: #a9c1e9 !important;
+}
+html[data-theme="light"] .emblem-letter { color: #17366b !important; }
+html[data-theme="light"] .emblem-orbit,
+html[data-theme="light"] .orbit { border-color: #9eb9e8 !important; }
+html[data-theme="light"] .emblem-satellite { background: var(--brand-accent) !important; }
+
+/* Micro-interactions for buttons, navigation and icon controls. */
+button, [role="button"], a, summary,
+.admin-action, .admin-file-picker, .nav-cta, .button-primary,
+.button-ghost, .site-endcap-cta, .collection-grid-toggle,
+.media-showcase-filters button, .media-showcase-view-details,
+.icon-button, .socials a, .site-endcap-socials a,
+.admin-row-actions button, .admin-platform-option {
+  transition:
+    transform var(--motion-ui) var(--motion-ease),
+    color var(--motion-ui) ease,
+    background-color var(--motion-ui) ease,
+    border-color var(--motion-ui) ease,
+    opacity var(--motion-ui) ease;
+}
+button:active:not(:disabled), [role="button"]:active,
+a:active:not([aria-disabled="true"]) {
+  transform: translateY(1px) scale(.975) !important;
+  transition-duration: 85ms !important;
+}
+.nav-cta:hover, .button-primary:hover, .button-ghost:hover,
+.site-endcap-cta:hover, .login-submit:hover:not(:disabled),
+.admin-action.primary:hover:not(:disabled) {
+  transform: translateY(-3px);
+}
+html[data-theme="light"] .nav-cta:hover,
+html[data-theme="light"] .button-primary:hover,
+html[data-theme="light"] .login-submit:hover,
+html[data-theme="light"] .admin-action.primary:hover,
+html[data-theme="light"] .site-endcap-cta:hover {
+  background: #174bb8 !important;
+  border-color: #174bb8 !important;
+  color: #ffffff !important;
+}
+.icon-button {
+  position: relative;
+  overflow: hidden;
+  border-color: var(--line);
+  background: var(--surface);
+  transition: transform .28s var(--motion-spring), background-color var(--motion-ui), color var(--motion-ui), border-color var(--motion-ui);
+}
+.icon-button:hover {
+  transform: rotate(-7deg) scale(1.07);
+  border-color: var(--brand-accent);
+  color: var(--brand-accent);
+  background: color-mix(in srgb, var(--brand-accent) 9%, var(--surface));
+}
+.theme-toggle-sun, .theme-toggle-moon {
+  opacity: 1 !important;
+  transition: transform .38s var(--motion-ease), opacity .24s ease;
+}
+html[data-theme="dark"] .icon-button .theme-toggle-sun { transform: rotate(-28deg) scale(1); }
+html[data-theme="light"] .icon-button .theme-toggle-moon { transform: rotate(28deg) scale(1); }
+
+.nav-links a, .footer a, .site-endcap-links a,
+.article-back-link, .text-link, .email-link {
+  position: relative;
+  transition: color var(--motion-ui) ease, transform var(--motion-ui) var(--motion-ease);
+}
+.nav-links a::after, .site-endcap-links a::after, .footer a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -5px;
+  left: 0;
+  height: 1px;
+  background: var(--brand-accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .32s var(--motion-ease);
+}
+.nav-links a:hover::after, .nav-links a:focus-visible::after,
+.site-endcap-links a:hover::after, .footer a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.nav-links a:hover, .footer a:hover, .site-endcap-links a:hover,
+.article-back-link:hover, .text-link:hover, .email-link:hover {
+  color: var(--brand-accent) !important;
+}
+.text-link:hover, .email-link:hover { transform: translateX(4px); }
+.socials a:hover, .site-endcap-socials a:hover {
+  transform: translateY(-4px) rotate(-5deg) scale(1.055);
+  color: var(--brand-accent);
+  border-color: var(--brand-accent);
+  background: color-mix(in srgb, var(--brand-accent) 9%, var(--surface));
+}
+
+/* Cards and panels share one interaction language. */
+.project-card, .career-group, .career-feature,
+.media-showcase-card, .article-glass-card,
+.admin-overview-grid > *, .admin-stats > div,
+.skill-card, .admin-editor, .admin-table-wrap,
+.login-card, .admin-confirm-modal, .admin-media-upload-card {
+  transition:
+    transform .34s var(--motion-ease),
+    background-color var(--motion-ui) ease,
+    border-color var(--motion-ui) ease,
+    color var(--motion-ui) ease;
+}
+.project-card:hover, .career-group:hover, .career-feature:hover,
+.media-showcase-card:hover, .article-glass-card:hover,
+.admin-overview-grid > *:hover, .admin-stats > div:hover,
+.skill-card:hover {
+  border-color: color-mix(in srgb, var(--brand-accent) 58%, var(--line)) !important;
+}
+.project-card:hover, .media-showcase-card:hover,
+.article-glass-card:hover, .admin-overview-grid > *:hover,
+.admin-stats > div:hover, .skill-card:hover {
+  transform: translateY(-4px);
+}
+.project-card:hover .project-info h3,
+.article-glass-card:hover .article-glass-info h3,
+.media-showcase-card:hover .media-showcase-info h3 {
+  color: var(--brand-accent);
+  transform: translateX(2px);
+}
+.project-art .art-corner, .project-symbol,
+.article-glass-read svg, .hero-explore-icon svg,
+.site-endcap-cta svg, .media-showcase-actions svg,
+.collection-grid-toggle svg, .career-group-chevron {
+  transition: transform .3s var(--motion-ease), color var(--motion-ui) ease;
+}
+.project-card:hover .art-corner,
+.article-glass-card:hover .article-glass-read svg {
+  transform: translate(3px, -3px);
+}
+.career-group summary:hover .career-group-chevron {
+  transform: translateX(2px);
+  border-color: var(--brand-accent);
+}
+.career-group[open] summary .career-group-chevron {
+  transform: rotate(45deg);
+  background: color-mix(in srgb, var(--brand-accent) 9%, transparent);
+}
+.media-showcase-filters button[aria-pressed="true"] { transform: translateY(-1px); }
+.media-showcase-filters button:active { transform: scale(.96); }
+.media-showcase-image-button img { transition: transform .75s var(--motion-ease); }
+.media-showcase-image-button:hover img { transform: scale(1.055); }
+.media-showcase-file-icon { transition: transform .4s var(--motion-ease), border-color var(--motion-ui) ease; }
+.media-showcase-file:hover .media-showcase-file-icon {
+  transform: translateY(-4px) rotate(-4deg);
+  border-color: var(--brand-accent);
+}
+
+/* Form surfaces: explicit labels, visible edges and confident keyboard focus. */
+.contact-form input, .contact-form textarea,
+.admin-field input, .admin-field textarea, .admin-field select,
+.admin-nested-fields input, .admin-nested-fields textarea,
+.admin-search input, .admin-json-add-row input, .login-card input,
+.skills-search, .skills-category-select-control select {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface2);
+  color: var(--text);
+  transition: background-color var(--motion-ui), color var(--motion-ui),
+    border-color var(--motion-fast), transform var(--motion-fast) var(--motion-ease);
+}
+html[data-theme="light"] .contact-form input,
+html[data-theme="light"] .contact-form textarea,
+html[data-theme="light"] .admin-field input,
+html[data-theme="light"] .admin-field textarea,
+html[data-theme="light"] .admin-field select,
+html[data-theme="light"] .admin-nested-fields input,
+html[data-theme="light"] .admin-nested-fields textarea,
+html[data-theme="light"] .admin-search input,
+html[data-theme="light"] .admin-json-add-row input,
+html[data-theme="light"] .login-card input,
+html[data-theme="light"] .skills-search,
+html[data-theme="light"] .skills-category-select-control select {
+  background: #f7faff !important;
+  border-color: #cad9f0 !important;
+  color: #14223d !important;
+}
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder {
+  color: #5a6c89 !important;
+  opacity: 1;
+}
+.contact-form input:hover, .contact-form textarea:hover,
+.admin-field input:hover, .admin-field textarea:hover,
+.admin-field select:hover, .login-card input:hover {
+  border-color: color-mix(in srgb, var(--brand-accent) 58%, var(--line));
+}
+.contact-form input:focus, .contact-form textarea:focus,
+.admin-field input:focus, .admin-field textarea:focus,
+.admin-field select:focus, .admin-nested-fields input:focus,
+.admin-nested-fields textarea:focus, .login-card input:focus,
+.skills-search:focus, .skills-category-select-control select:focus {
+  border-color: var(--brand-accent) !important;
+  outline: 3px solid color-mix(in srgb, var(--brand-accent) 19%, transparent) !important;
+  outline-offset: 1px;
+  background: var(--surface);
+}
+html[data-theme="light"] .contact-form input:focus,
+html[data-theme="light"] .contact-form textarea:focus,
+html[data-theme="light"] .admin-field input:focus,
+html[data-theme="light"] .admin-field textarea:focus,
+html[data-theme="light"] .admin-field select:focus,
+html[data-theme="light"] .admin-nested-fields input:focus,
+html[data-theme="light"] .admin-nested-fields textarea:focus,
+html[data-theme="light"] .login-card input:focus,
+html[data-theme="light"] .skills-search:focus,
+html[data-theme="light"] .skills-category-select-control select:focus {
+  border-color: #215bd8 !important;
+  outline-color: rgba(33,91,216,.2) !important;
+  background: #ffffff !important;
+}
+
+/* Admin panels, row actions, menus and modals get precise feedback too. */
+.admin-nav-item:hover, .admin-row-actions button:hover,
+.admin-platform-option:hover, .admin-file-picker:hover,
+.admin-back-overview:hover, .admin-back-link:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand-accent);
+}
+.admin-nav-item.active {
+  background: color-mix(in srgb, var(--brand-accent) 9%, var(--surface)) !important;
+  color: var(--brand-accent) !important;
+  border-left: 2px solid var(--brand-accent);
+}
+.admin-nav-item.active svg { color: var(--brand-accent) !important; }
+.admin-row-actions button:hover {
+  background: color-mix(in srgb, var(--brand-accent) 8%, var(--surface));
+  color: var(--brand-accent);
+}
+.admin-platform-option.selected {
+  border-color: var(--brand-accent) !important;
+  background: color-mix(in srgb, var(--brand-accent) 9%, var(--surface)) !important;
+  color: var(--brand-accent) !important;
+}
+.admin-modal-backdrop, .media-lightbox { animation: hades-backdrop-in .24s ease both; }
+.admin-confirm-modal, .admin-editor, .admin-table-wrap,
+.login-card, .media-lightbox-panel {
+  animation: hades-panel-in .42s var(--motion-ease) both;
+}
+.admin-table tbody tr:hover { background: color-mix(in srgb, var(--brand-accent) 6%, var(--surface)); }
+.admin-success, .admin-error, .admin-notice { animation: hades-panel-in .36s var(--motion-ease) both; }
+.media-lightbox-close:hover { transform: rotate(90deg); border-color: var(--brand-accent); }
+.media-lightbox-download:hover { transform: translateY(-2px); }
+
+@keyframes hades-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hades-panel-in {
+  from { opacity: 0; transform: translateY(12px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (max-width: 760px) {
+  .project-card:hover, .media-showcase-card:hover,
+  .article-glass-card:hover, .admin-overview-grid > *:hover,
+  .admin-stats > div:hover, .skill-card:hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  button:active:not(:disabled), a:active:not([aria-disabled="true"]),
+  .project-card:hover, .career-group:hover, .career-feature:hover,
+  .media-showcase-card:hover, .article-glass-card:hover,
+  .admin-overview-grid > *:hover, .admin-stats > div:hover,
+  .skill-card:hover, .socials a:hover, .site-endcap-socials a:hover {
+    transform: none !important;
+  }
+}
