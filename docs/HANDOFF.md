@@ -1,7 +1,9 @@
 # HADES Portfolio — Start Here / Canonical Handover
 
-**Last verified:** 2026-11-20 (Asia/Dhaka)
+**Last verified:** 2026-11-21 (Asia/Dhaka)
 **Purpose:** This is the single operational source of truth for continuing the HADES Portfolio project. Start here in every new session. It contains the current project location, live links, code/deployment identity, setup, architecture, recent changes, test evidence, safety constraints and remaining work. Historical notes elsewhere may contain outdated snapshots; this file takes precedence.
+
+> **CURRENT CHECKPOINT — 2026-11-21:** The newest production state and the latest QA evidence are recorded in the first section below. This checkpoint supersedes older dated snapshots further down this document wherever they conflict. Local checkout: `E:\Projects\HadesPortfolio`; branch `main`; commit `2d849af5c0deffd69e028566df22591f9d10a82f`; production deployment `dpl_DPSPdbhxxyHvYJs2D75NQ1GBqXWV` is **READY** and serves https://hades-portfolio-amber.vercel.app/. The post-deploy smoke test returned HTTP 200 for `/` and `/admin`, with no browser console errors and no horizontal overflow at 390px. See **Latest session handoff — 2026-11-21** below for the full verified checklist and remaining owner-only tasks.
 
 ## 1. Project at a glance
 
@@ -11,7 +13,7 @@
 | Owner / identity | Zihad / HADES / Black Flash Hades |
 | GitHub repository | https://github.com/mdzihadss509-del/Portfolio |
 | Production branch | **main** |
-| Local Windows checkout | C:\Users\zihad\hades-portfolio |
+| Local Windows checkout | E:\Projects\HadesPortfolio |
 | Production website | https://hades-portfolio-amber.vercel.app/ |
 | Production Admin | https://hades-portfolio-amber.vercel.app/admin |
 | Local website | http://localhost:3000/ |
@@ -22,17 +24,17 @@
 | Production host | Vercel (Hobby) |
 
 **Latest production code commit:**
-d09339371c9c14b5487bb1de010011a0a3b8a4e3 — Bound supported Node runtime range
-Includes the tested Next.js 16 / Supabase modernization and the bounded Node engine range.
+`2d849af5c0deffd69e028566df22591f9d10a82f` — Stabilize admin accessibility checks
 
 **Latest verified production deployment:**
-- Deployment ID: dpl_4ALqoUMdeFbFtFv23TKaefXKe5UE
-- Deployment URL: https://hades-portfolio-1m4mchqui-mdzihadss509-1195.vercel.app
+- Deployment ID: `dpl_DPSPdbhxxyHvYJs2D75NQ1GBqXWV`
+- Deployment URL: https://hades-portfolio-aoddyt4z1-mdzihadss509-1195.vercel.app
+- Production alias: https://hades-portfolio-amber.vercel.app/
 - Target: Production
 - State: **READY**
-- Branch: main
-- Source commit: d09339371c9c14b5487bb1de010011a0a3b8a4e3
-- Vercel Inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/4ALqoUMdeFbFtFv23TKaefXKe5UE
+- Branch: `main`
+- Source commit: `2d849af5c0deffd69e028566df22591f9d10a82f`
+- Vercel Inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/DPSPdbhxxyHvYJs2D75NQ1GBqXWV
 
 The production alias and unique deployment URL returned HTTP 200. The latest live HTML confirms title “Zihad | Creator & Developer”, current SEO description, the Hero greeting and BEYOND THE ORDINARY headline; the stale H.HADES title text is absent. Live response headers include HSTS, CSP restrictions and X-Frame-Options DENY. /admin, /robots.txt and /sitemap.xml returned 200; GET /api/contact returned the expected 405; /qa-media-fixture returned the expected production 404; a cross-origin contact POST was rejected with 403. The Vercel runtime-error aggregate reported no errors in the last 24 hours and the most recent 30-minute warning/error runtime-log query returned no entries. Re-check before a future release; this snapshot is dated.
 
@@ -40,7 +42,7 @@ The production alias and unique deployment URL returned HTTP 200. The latest liv
 
 Run these commands first. They establish the real current state without searching through old chat history:
 
-Set-Location 'C:\Users\zihad\hades-portfolio'
+Set-Location 'E:\Projects\HadesPortfolio'
 git status --short --branch
 git log -5 --oneline --decorate
 git remote -v
@@ -185,7 +187,7 @@ Key source paths:
 Requirements: Node.js 22 through 26 (package engine range >=22.0.0 <27.0.0). Supabase JS 2.119.2 requires Node 22+; the connected Vercel project is configured for Node 26.x.
 
 PowerShell setup:
-1. Set-Location 'C:\Users\zihad\hades-portfolio'
+1. Set-Location 'E:\Projects\HadesPortfolio'
 2. npm ci
 3. Copy-Item .env.example .env.local
 4. Add the required values to .env.local locally.
@@ -398,3 +400,87 @@ Do not label these owner/platform/operational gates as fixed by code tests. The 
 The report supersedes older dated status snapshots where they conflict. It records a fresh local run of lint, TypeScript, npm audit (0 vulnerabilities), Next.js production build and Playwright (23/23 passed), plus fresh production HTTP smoke checks. It also records current Supabase Advisor findings, backup/recovery status, the exact previous verified production deployment and the work that still requires the owner's authenticated browser session.
 
 **Critical:** Do not claim owner-authenticated Admin CRUD or real Storage API upload/replace/delete as complete. Do not replay the stale legacy migration or run production reset/push/repair. Do not mark the project 100% production/commercial signed off until the report's owner-session, recovery and hosting gates are closed.
+
+## 14. Latest session handoff — 2026-11-21
+
+**This is the newest continuation record. It supersedes older test counts, commit IDs, deployment IDs, and local paths elsewhere in this file.**
+
+### Exact repository and release state
+
+- Local checkout: `E:\Projects\HadesPortfolio` (keep all project work and downloads on E:, not C:).
+- GitHub: https://github.com/mdzihadss509-del/Portfolio
+- Branch: `main`
+- Latest commit: `2d849af5c0deffd69e028566df22591f9d10a82f`
+- Commit message: `Stabilize admin accessibility checks`
+- Remote: `origin` → `https://github.com/mdzihadss509-del/Portfolio.git`
+- Working tree at handoff: clean; local `main` aligned with `origin/main`.
+- Vercel project: `hades-portfolio` (Hobby).
+- Production deployment: `dpl_DPSPdbhxxyHvYJs2D75NQ1GBqXWV`, state **READY**, target **production**, source commit matches the exact GitHub commit above.
+- Production URL: https://hades-portfolio-amber.vercel.app/
+- Admin URL: https://hades-portfolio-amber.vercel.app/admin
+- Deployment inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/DPSPdbhxxyHvYJs2D75NQ1GBqXWV
+
+### Work completed in this session
+
+- Reviewed and stabilized the Admin sign-in accessibility regression test across light and dark system themes. The test now waits for the login card's active animations to finish before axe scans the page, avoiding a timing-dependent contrast result.
+- Committed the test change to `main` and pushed it to GitHub. Vercel automatically deployed that exact commit to production.
+- Removed two extraneous, undeclared local `node_modules` packages (`@emnapi/runtime` and `@img/sharp-wasm32`). They were not application dependencies; no package manifest or lockfile change was needed.
+- Removed temporary QA scripts, generated Playwright report/test-results artifacts and the temporary TypeScript build-info file.
+- Preserved the existing README entry point; it already directs future sessions to this canonical handoff.
+- No Supabase schema, migration, production data, credentials, or owner content was changed.
+
+### Verification evidence
+
+| Check | Result |
+|---|---|
+| ESLint (`npm run lint`) | Passed |
+| TypeScript (`npx tsc --noEmit`) | Passed |
+| Next.js production build (`npm run build`) | Passed |
+| Playwright E2E | **32/32 passed** |
+| Accessibility checks | Passed, including Admin sign-in theme coverage |
+| npm security audit | **0 vulnerabilities** |
+| Dependency tree | Extraneous packages removed |
+| Git diff whitespace check | Passed |
+| Git working tree after push | Clean; `main...origin/main` |
+| Vercel exact-commit deployment | **READY** |
+
+Post-deployment browser smoke test (run from the connected Windows PC with Playwright):
+- Homepage returned HTTP 200; title: `Zihad | Creator & Developer`.
+- `/admin` returned HTTP 200 and displayed the Admin access gate.
+- Mobile viewport 390 × 844: document width remained 390px; no horizontal overflow.
+- Browser console/page errors: none.
+
+These checks verify the deployed public pages and automated application behavior. They do **not** prove that the owner's authenticated production Admin CRUD or real Storage lifecycle has been completed.
+
+### Known warning / limitation
+
+- Vercel may still print `npm warn Unknown env config "cache-dir"`. This is a non-blocking build-environment warning previously observed to be injected by Vercel; do not add a brittle project workaround unless its source changes.
+- TinyFish visual-browser QA was not run in this session because its wallet had insufficient balance. The post-deploy browser smoke test was instead performed with Playwright on the authorized PC.
+- Do not describe the entire project as 100% operational/commercially signed off until the owner-only and platform-level gates below are completed.
+
+### Remaining sign-off gates
+
+1. Owner-authenticated production Admin: verify real create/edit/delete and settings/social persistence using the owner's own session. Never request the password or OTP.
+2. Production Supabase Storage: owner verifies upload, replace, public display and delete with a harmless test asset.
+3. Recovery: encrypted off-site Supabase backup plus a successful restore drill.
+4. Hosting compliance: Vercel Hobby is restricted to personal/non-commercial use; resolve plan/provider suitability before commercial or revenue-generating use. No paid upgrade or migration without explicit approval.
+5. Optional custom domain: only after the hosting decision; validate DNS and HTTPS.
+6. Continue to protect Supabase migration history: do not run `supabase db push`, reset, migration repair or destructive SQL until the remote baseline is reconciled. The legacy SQL warning in Section 7 still applies.
+
+### Resume next time
+
+Run these commands first in PowerShell:
+
+```powershell
+Set-Location 'E:\Projects\HadesPortfolio'
+git status --short --branch
+git log -5 --oneline --decorate
+git remote -v
+git rev-parse HEAD
+```
+
+Expected HEAD: `2d849af5c0deffd69e028566df22591f9d10a82f`. If Git has advanced since this handoff, trust the actual remote/deployment state after checking it; do not reset or overwrite unexplained changes.
+
+For code changes, run the checks serially (the build and Playwright share generated Next.js output): `npm run lint`, `npx tsc --noEmit`, `npm run build`, `npm run test:e2e`, `npm audit --audit-level=low`, and `git diff --check`. Review the diff before committing. Push only the approved intended changes, then verify Vercel's deployment uses the exact pushed SHA and is READY.
+
+---
