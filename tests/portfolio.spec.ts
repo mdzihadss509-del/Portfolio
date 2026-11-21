@@ -106,7 +106,7 @@ test.describe('Portfolio public experience', () => {
       expect(geometry.controlsWidth).toBeGreaterThan(0);
     }
   });
-  test('both themes keep strong contrast, clear panel hierarchy and no neon glow', async ({ page }) => {
+  test('both themes keep strong contrast, clear panel hierarchy and glow only on identity accents', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto('/');
     await page.evaluate(() => localStorage.removeItem('hades-theme'));
@@ -121,10 +121,19 @@ test.describe('Portfolio public experience', () => {
           return element ? getComputedStyle(element).backgroundColor : '';
         };
         const accent = getComputedStyle(document.querySelector('.section-no')!).color;
-        const glow = Array.from(document.querySelectorAll('body *')).some((element) => {
-          const style = getComputedStyle(element);
-          return style.boxShadow !== 'none' || style.textShadow !== 'none' || style.filter !== 'none';
-        });
+        const main = document.querySelector('main')!;
+        const backgrounds = [
+          getComputedStyle(main).backgroundImage,
+          getComputedStyle(main, '::before').backgroundImage,
+          getComputedStyle(document.querySelector('.hero-studio')!, '::before').backgroundImage,
+          getComputedStyle(document.querySelector('.media-showcase')!, '::before').backgroundImage,
+          getComputedStyle(document.querySelector('.creator-band')!).backgroundImage,
+          getComputedStyle(document.querySelector('.creator-visual')!).backgroundImage,
+          getComputedStyle(document.querySelector('.media-showcase-preview')!).backgroundImage,
+        ];
+        const backgroundGlow = backgrounds.some((background) => background.includes('radial-gradient'));
+        const brandGlow = getComputedStyle(document.querySelector('.brand-mark')!).boxShadow !== 'none';
+        const textGlow = getComputedStyle(document.querySelector('.hero-studio-title em')!).filter !== 'none';
         return {
           body: get('body'),
           main: get('main'),
@@ -133,14 +142,18 @@ test.describe('Portfolio public experience', () => {
           panel: get('.project-card'),
           accent,
           redAccent: getComputedStyle(document.documentElement).getPropertyValue('--red').trim(),
-          pageOverlay: getComputedStyle(document.querySelector('main')!, '::before').display,
-          glow,
+          pageOverlay: getComputedStyle(main, '::before').display,
+          backgroundGlow,
+          brandGlow,
+          textGlow,
         };
       });
       expect(result.body).toBe(expected);
       expect(result.main).toBe(expected);
       expect(result.pageOverlay).toBe('none');
-      expect(result.glow).toBe(false);
+      expect(result.backgroundGlow).toBe(false);
+      expect(result.brandGlow).toBe(true);
+      expect(result.textGlow).toBe(true);
       if (theme === 'dark') {
         expect(result.redAccent).toBe('#e65c68');
       }
@@ -541,6 +554,64 @@ test.describe('Admin entry', () => {
     await expect(page.getByRole('button', { name: /sign in securely/i })).toBeVisible();
     await expect(page.getByText(/no default password or public signup/i)).toBeVisible();
   });
+
+  test('admin sign-in remains accessible in both system themes', async ({ page }) => {
+    for (const theme of ['dark', 'light'] as const) {
+      await page.emulateMedia({ colorScheme: theme });
+      await page.goto('/admin');
+      const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+      const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact || ''));
+      expect(serious, `${theme} admin sign-in: ${JSON.stringify(serious.map((item) => ({ id: item.id, help: item.help, nodes: item.nodes.length })), null, 2)}`).toEqual([]);
+    }
+  });
+
+  test('delete confirmation traps focus, closes with Escape and restores focus', async ({ page }) => {
+    const mockUserId = '00000000-0000-4000-8000-000000000001';
+    await page.route('**/auth/v1/token*', (route) => route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        access_token: 'mock-access-token',
+        token_type: 'bearer',
+        expires_in: 3600,
+        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        refresh_token: 'mock-refresh-token',
+        user: { id: mockUserId, aud: 'authenticated', role: 'authenticated', email: 'qa@example.test', app_metadata: { provider: 'email', providers: ['email'] }, user_metadata: {}, created_at: '2026-01-01T00:00:00.000Z' },
+      }),
+    }));
+    await page.route('**/rest/v1/**', async (route) => {
+      const url = new URL(route.request().url());
+      if (url.pathname.endsWith('/user_roles')) {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ role: 'admin' }]) });
+      } else if (url.pathname.endsWith('/projects')) {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ id: 'qa-project-1', title: 'QA only project', summary: 'Mock row for interface testing', published: true }]) });
+      } else {
+        await route.continue();
+      }
+    });
+
+    await page.goto('/admin');
+    await page.getByLabel(/email address/i).fill('qa@example.test');
+    await page.getByLabel(/password/i).fill('mock-password');
+    await page.getByRole('button', { name: /sign in securely/i }).click();
+    await page.getByRole('button', { name: 'Projects', exact: true }).click();
+    await expect(page.getByText('QA only project')).toBeVisible();
+
+    const deleteTrigger = page.getByRole('button', { name: 'Delete' });
+    await deleteTrigger.click();
+    const dialog = page.getByRole('dialog', { name: 'Delete permanently?' });
+    await expect(dialog).toBeVisible();
+    const cancel = dialog.getByRole('button', { name: 'Cancel' });
+    const confirm = dialog.getByRole('button', { name: 'Delete permanently' });
+    await expect(cancel).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(confirm).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(cancel).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(deleteTrigger).toBeFocused();
+  });
 });
 
 test.describe('Jitter-inspired motion system', () => {
@@ -571,5 +642,44 @@ test.describe('Jitter-inspired motion system', () => {
     expect(reduced.clipPath).toBe('none');
     expect(reduced.transform).toBe('none');
     expect(reduced.transitionDuration).toBe('0s');
+  });
+});
+
+test.describe('Clean canvas and identity accents', () => {
+  test('keeps ambient glow off page backdrops while preserving restrained logo and type accents', async ({ page }) => {
+    await page.goto('/');
+    const styles = await page.evaluate(() => {
+      const main = document.querySelector('main')!;
+      const brand = document.querySelector('.brand-mark')!;
+      const brandText = document.querySelector('.brand > span:last-child')!;
+      const titleAccent = document.querySelector('.hero-studio-title em')!;
+      const hero = document.querySelector('.hero-studio')!;
+      const media = document.querySelector('.media-showcase');
+      return {
+        pageBackground: getComputedStyle(main).backgroundImage,
+        pageBackdrop: getComputedStyle(main, '::before').backgroundImage,
+        heroBackdrop: getComputedStyle(hero, '::before').backgroundImage,
+        mediaBackdrop: media ? getComputedStyle(media, '::before').content : 'none',
+        brandGlow: getComputedStyle(brand).boxShadow,
+        brandTextGlow: getComputedStyle(brandText).textShadow,
+        titleGlow: getComputedStyle(titleAccent).filter,
+      };
+    });
+    expect(styles.pageBackground).toBe('none');
+    expect(styles.pageBackdrop).toBe('none');
+    expect(styles.heroBackdrop).not.toContain('radial-gradient');
+    expect(styles.mediaBackdrop).toBe('none');
+    expect(styles.brandGlow).not.toBe('none');
+    expect(styles.brandTextGlow).not.toBe('none');
+    expect(styles.titleGlow).not.toBe('none');
+
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(page.locator('main')).toHaveCSS('background-image', 'none');
+
+    await page.goto('/admin');
+    await expect(page.locator('.admin-login')).toBeVisible();
+    await expect(page.locator('.admin-login')).toHaveCSS('background-image', 'none');
   });
 });
