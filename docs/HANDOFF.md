@@ -484,3 +484,27 @@ Expected HEAD: `2d849af5c0deffd69e028566df22591f9d10a82f`. If Git has advanced s
 For code changes, run the checks serially (the build and Playwright share generated Next.js output): `npm run lint`, `npx tsc --noEmit`, `npm run build`, `npm run test:e2e`, `npm audit --audit-level=low`, and `git diff --check`. Review the diff before committing. Push only the approved intended changes, then verify Vercel's deployment uses the exact pushed SHA and is READY.
 
 ---
+
+
+## 2026-11-21 — Skills / discipline picker mobile UX fix
+
+### Issue and implementation
+- Mobile users opening **All disciplines** were seeing the browser/OS native `<select>` options rather than a designed site panel.
+- Replaced the native select with a custom accessible discipline picker in `components/SkillsExplorer.tsx`: selected category, skill count, grouped category options, selected-state indicator, and a clear panel hierarchy.
+- Selecting a discipline filters the existing toolkit cards and their descriptions; search and show-all behavior remain intact.
+- Added responsive panel styling and motion/reduced-motion handling in `app/globals.css`. On mobile the panel opens above the trigger to remain within the viewport.
+- Updated the Playwright coverage in `tests/portfolio.spec.ts` for the custom picker, category selection, and 390 × 844 mobile panel bounds.
+- No Supabase schema, migrations, production data, credentials, or owner content changed.
+
+### Verification
+| Check | Result |
+|---|---|
+| ESLint | Passed |
+| TypeScript | Passed |
+| Next.js production build | Passed |
+| Full Playwright E2E | **32/32 passed** |
+| Mobile picker test (390 × 844) | Passed; panel remains within viewport |
+| Responsive overflow suite | Passed as part of full E2E |
+| `git diff --check` | Passed |
+
+Production deployment is pending the push of this change. After pushing, verify the exact commit's Vercel deployment reaches READY and smoke-test the live homepage before describing this fix as live.

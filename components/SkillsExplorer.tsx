@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, Layers3, ChevronDown } from "lucide-react";
+import { Search, Layers3, ChevronDown, Check, ArrowUpRight } from "lucide-react";
 import ContentIcon from "@/components/ContentIcon";
 
 type Skill = {
@@ -33,6 +33,7 @@ export default function SkillsExplorer({ skills }: { skills: Skill[] }) {
   const [active, setActive] = useState("All");
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState(false);
+  const [disciplinePanelOpen, setDisciplinePanelOpen] = useState(false);
 
   const visibleSkills = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -44,6 +45,13 @@ export default function SkillsExplorer({ skills }: { skills: Skill[] }) {
   }, [active, query, skills]);
 
   const shownSkills = expanded || query ? visibleSkills : visibleSkills.slice(0, 8);
+  const activeCount = active === "All" ? skills.length : groups.find((group) => group.name === active)?.items.length || 0;
+
+  function chooseDiscipline(name: string) {
+    setActive(name);
+    setExpanded(false);
+    setDisciplinePanelOpen(false);
+  }
 
   return (
     <div className="skills-explorer">
@@ -53,22 +61,62 @@ export default function SkillsExplorer({ skills }: { skills: Skill[] }) {
           <p>Explore the disciplines, technologies and creative tools I work with.</p>
         </div>
         <div className="skills-explorer-controls">
-          <label className="skills-category-select">
-            <span>FILTER BY DISCIPLINE</span>
-            <div className="skills-category-select-control">
-              <select
-                aria-label="Filter skills by discipline"
-                value={active}
-                onChange={(event) => { setActive(event.target.value); setExpanded(false); }}
+          <div className="skills-category-select">
+            <span>EXPLORE BY DISCIPLINE</span>
+            <div className="skills-discipline-picker">
+              <button
+                type="button"
+                className={`skills-discipline-trigger${disciplinePanelOpen ? " is-open" : ""}`}
+                aria-haspopup="listbox"
+                aria-expanded={disciplinePanelOpen}
+                onClick={() => setDisciplinePanelOpen((open) => !open)}
               >
-                <option value="All">All disciplines ({skills.length})</option>
-                {groups.map((group) => (
-                  <option key={group.name} value={group.name}>{group.name} ({group.items.length})</option>
-                ))}
-              </select>
-              <ChevronDown size={16} aria-hidden="true" />
+                <span className="skills-discipline-trigger-copy">
+                  <span className="skills-discipline-trigger-name">{active === "All" ? "All disciplines" : active}</span>
+                  <span className="skills-discipline-trigger-meta">{activeCount} {activeCount === 1 ? "skill" : "skills"} available</span>
+                </span>
+                <ChevronDown size={17} aria-hidden="true" />
+              </button>
+              {disciplinePanelOpen && (
+                <div className="skills-discipline-panel" role="listbox" aria-label="Choose a discipline">
+                  <div className="skills-discipline-panel-head">
+                    <span>SELECT A DISCIPLINE</span>
+                    <span>{groups.length} CATEGORIES</span>
+                  </div>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={active === "All"}
+                    className={`skills-discipline-option skills-discipline-all${active === "All" ? " is-selected" : ""}`}
+                    onClick={() => chooseDiscipline("All")}
+                  >
+                    <span className="skills-discipline-option-icon"><Layers3 size={17} /></span>
+                    <span className="skills-discipline-option-copy"><strong>All disciplines</strong><small>Explore the complete toolkit</small></span>
+                    <span className="skills-discipline-option-count">{skills.length}</span>
+                    {active === "All" ? <Check size={16} className="skills-discipline-check" /> : <ArrowUpRight size={15} className="skills-discipline-arrow" />}
+                  </button>
+                  <div className="skills-discipline-list">
+                    {groups.map((group, index) => (
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={active === group.name}
+                        className={`skills-discipline-option${active === group.name ? " is-selected" : ""}`}
+                        key={group.name}
+                        onClick={() => chooseDiscipline(group.name)}
+                      >
+                        <span className="skills-discipline-option-index">{String(index + 1).padStart(2, "0")}</span>
+                        <span className="skills-discipline-option-copy"><strong>{group.name}</strong><small>{group.items.length} {group.items.length === 1 ? "skill" : "skills"} in this discipline</small></span>
+                        <span className="skills-discipline-option-count">{group.items.length}</span>
+                        {active === group.name ? <Check size={16} className="skills-discipline-check" /> : <ArrowUpRight size={15} className="skills-discipline-arrow" />}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="skills-discipline-panel-foot">CHOOSE A CATEGORY TO VIEW ITS SKILLS</div>
+                </div>
+              )}
             </div>
-          </label>
+          </div>
           <label className="skills-search">
             <Search size={16} aria-hidden="true" />
             <input value={query} onChange={(event) => { setQuery(event.target.value); setExpanded(false); }} placeholder="Search skills..." aria-label="Search skills" />

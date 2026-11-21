@@ -96,10 +96,13 @@ test.describe('Portfolio public experience', () => {
     await expect(explorer).toBeVisible();
     await expect(explorer.locator('.skill-card')).toHaveCount(8);
 
-    const categoryFilter = explorer.getByLabel('Filter skills by discipline');
+    const categoryFilter = explorer.locator('.skills-discipline-trigger');
     await expect(categoryFilter).toBeVisible();
     await expect(explorer.locator('.skills-category-grid')).toHaveCount(0);
-    await categoryFilter.selectOption('Creator Skills');
+    await categoryFilter.click();
+    await expect(explorer.getByRole('listbox', { name: 'Choose a discipline' })).toBeVisible();
+    await explorer.getByRole('option', { name: /Creator Skills/ }).click();
+    await expect(explorer.locator('.skills-discipline-panel')).toHaveCount(0);
     await expect(explorer.locator('.skills-results-head h3')).toHaveText('Creator Skills');
     await expect(explorer.locator('.skill-card')).toHaveCount(7);
 
@@ -107,11 +110,25 @@ test.describe('Portfolio public experience', () => {
     await expect(explorer.locator('.skill-card')).toHaveCount(1);
     await expect(explorer.locator('.skill-card h4')).toHaveText('Video Editing');
 
-    await categoryFilter.selectOption('All');
+    await categoryFilter.click();
+    await explorer.getByRole('option', { name: /All disciplines/ }).click();
     await explorer.getByRole('textbox', { name: 'Search skills' }).fill('');
     await expect(explorer.locator('.skill-card')).toHaveCount(8);
     await explorer.getByRole('button', { name: 'Show all 29 skills' }).click();
     await expect(explorer.locator('.skill-card')).toHaveCount(29);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await categoryFilter.click();
+    const mobilePanel = explorer.locator('.skills-discipline-panel');
+    await expect(mobilePanel).toBeVisible();
+    const panelBounds = await mobilePanel.boundingBox();
+    expect(panelBounds).not.toBeNull();
+    expect(panelBounds!.x).toBeGreaterThanOrEqual(0);
+    expect(panelBounds!.y).toBeGreaterThanOrEqual(0);
+    expect(panelBounds!.x + panelBounds!.width).toBeLessThanOrEqual(390);
+    expect(panelBounds!.y + panelBounds!.height).toBeLessThanOrEqual(844);
+    await explorer.getByRole('option', { name: /Creator Skills/ }).click();
+    await expect(explorer.locator('.skills-results-head h3')).toHaveText('Creator Skills');
   });
   test('public CMS collections stay compact and can reveal every published entry', async ({ page }) => {
     await page.goto('/');
@@ -139,7 +156,7 @@ test.describe('Portfolio public experience', () => {
       await page.setViewportSize({ width, height: 900 });
       const geometry = await page.evaluate(() => {
         const controls = document.querySelector('.skills-explorer-controls')!.getBoundingClientRect();
-        const filter = document.querySelector('.skills-category-select-control select')!.getBoundingClientRect();
+        const filter = document.querySelector('.skills-discipline-trigger')!.getBoundingClientRect();
         const search = document.querySelector('.skills-search')!.getBoundingClientRect();
         return {
           scrollWidth: document.documentElement.scrollWidth,

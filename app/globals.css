@@ -4670,3 +4670,61 @@ html[data-theme="light"] .ticker {
   background: #000000 !important;
   color: var(--text) !important;
 }
+
+
+/* Discipline picker: custom responsive panel instead of the platform-native select menu. */
+.skills-discipline-picker { position: relative; min-width: 0; }
+.skills-discipline-trigger {
+  width: 100%; min-height: 54px; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 9px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+  color: var(--text); text-align: left; transition: border-color .2s, background .2s, box-shadow .2s;
+}
+.skills-discipline-trigger:hover, .skills-discipline-trigger.is-open {
+  border-color: var(--blue); background: var(--surface2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 12%, transparent);
+}
+.skills-discipline-trigger > svg { flex: 0 0 auto; color: var(--muted); transition: transform .2s; }
+.skills-discipline-trigger.is-open > svg { transform: rotate(180deg); color: var(--blue); }
+.skills-discipline-trigger-copy, .skills-discipline-option-copy { display: grid; min-width: 0; gap: 4px; }
+.skills-discipline-trigger-name { overflow: hidden; color: var(--text); font: 700 13px Manrope, sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.skills-discipline-trigger-meta { color: var(--muted); font: 10px 'DM Mono', monospace; letter-spacing: .04em; }
+.skills-discipline-panel {
+  position: absolute; z-index: 60; top: calc(100% + 9px); left: 0; width: min(100%, 440px); min-width: min(340px, calc(100vw - 40px));
+  max-height: min(470px, 65vh); overflow: hidden; display: flex; flex-direction: column;
+  border: 1px solid var(--line); border-radius: 15px; background: var(--surface);
+  box-shadow: 0 24px 70px #0008; animation: skills-panel-in .18s ease-out;
+}
+.skills-discipline-panel-head, .skills-discipline-panel-foot {
+  display: flex; justify-content: space-between; gap: 12px; padding: 13px 15px;
+  color: var(--muted); background: var(--surface2); font: 9px 'DM Mono', monospace; letter-spacing: .11em;
+}
+.skills-discipline-panel-head { border-bottom: 1px solid var(--line); }
+.skills-discipline-panel-foot { justify-content: flex-start; border-top: 1px solid var(--line); font-size: 8px; }
+.skills-discipline-list { overflow-y: auto; overscroll-behavior: contain; padding: 5px; }
+.skills-discipline-option {
+  width: 100%; min-height: 58px; display: flex; align-items: center; gap: 11px; padding: 9px 10px;
+  border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--text); text-align: left;
+  transition: background .18s, border-color .18s, transform .18s;
+}
+.skills-discipline-option + .skills-discipline-option { margin-top: 2px; }
+.skills-discipline-option:hover { background: var(--surface2); border-color: var(--line); }
+.skills-discipline-option:active { transform: scale(.99); }
+.skills-discipline-option.is-selected { background: color-mix(in srgb, var(--blue) 10%, var(--surface)); border-color: color-mix(in srgb, var(--blue) 40%, var(--line)); }
+.skills-discipline-option-icon { width: 34px; height: 34px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 9px; color: var(--blue); }
+.skills-discipline-option-index { width: 34px; flex: 0 0 auto; color: var(--muted); font: 10px 'DM Mono', monospace; text-align: center; }
+.skills-discipline-option-copy { flex: 1; }
+.skills-discipline-option-copy strong { overflow: hidden; color: var(--text); font: 650 12px Manrope, sans-serif; text-overflow: ellipsis; white-space: nowrap; }
+.skills-discipline-option-copy small { color: var(--muted); font: 10px 'DM Sans', sans-serif; }
+.skills-discipline-option-count { min-width: 25px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); font: 10px 'DM Mono', monospace; text-align: center; }
+.skills-discipline-check { flex: 0 0 auto; color: var(--blue); }
+.skills-discipline-arrow { flex: 0 0 auto; color: var(--muted); opacity: .65; transition: color .18s, transform .18s; }
+.skills-discipline-option:hover .skills-discipline-arrow { color: var(--blue); transform: translate(2px, -2px); opacity: 1; }
+.skills-discipline-option.is-selected .skills-discipline-option-count { border-color: color-mix(in srgb, var(--blue) 45%, var(--line)); color: var(--blue); }
+@keyframes skills-panel-in { from { opacity: 0; transform: translateY(-6px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 600px) {
+  .skills-discipline-panel { position: absolute; top: auto; bottom: calc(100% + 8px); left: 0; width: 100%; min-width: 0; max-height: min(56vh, 420px); border-radius: 14px; }
+  .skills-discipline-trigger { min-height: 56px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skills-discipline-panel { animation: none; }
+  .skills-discipline-trigger, .skills-discipline-trigger > svg, .skills-discipline-option, .skills-discipline-arrow { transition: none; }
+}
