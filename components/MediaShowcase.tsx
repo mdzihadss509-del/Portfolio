@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import MotionSurface from '@/components/MotionSurface';
+import ExpandableGrid from '@/components/ExpandableGrid';
 import Reveal from '@/components/Reveal';
 import type { MediaAsset } from '@/lib/public-data';
 
@@ -332,13 +333,13 @@ export default function MediaShowcase({ assets }: { assets: MediaAsset[] }) {
       </div>
 
       {filteredAssets.length ? (
-        <div className="media-showcase-grid">
+        <ExpandableGrid className="media-showcase-grid" initialCount={6} itemLabel="media assets">
           {filteredAssets.map((asset, index) => (
             <Reveal key={asset.id} className="media-card-reveal">
               <MediaAssetCard asset={asset} index={index}/>
             </Reveal>
           ))}
-        </div>
+        </ExpandableGrid>
       ) : (
         <div className="media-showcase-empty">
           <Package size={25}/>

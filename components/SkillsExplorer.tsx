@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowUpRight, Search, Layers3, ChevronDown } from "lucide-react";
+import { Search, Layers3, ChevronDown } from "lucide-react";
 import ContentIcon from "@/components/ContentIcon";
 
 type Skill = {
@@ -52,28 +52,29 @@ export default function SkillsExplorer({ skills }: { skills: Skill[] }) {
           <span className="skills-eyebrow"><Layers3 size={14} /> CAPABILITIES / TOOLKIT</span>
           <p>Explore the disciplines, technologies and creative tools I work with.</p>
         </div>
-        <label className="skills-search">
-          <Search size={16} aria-hidden="true" />
-          <input value={query} onChange={(event) => { setQuery(event.target.value); setExpanded(false); }} placeholder="Search skills..." aria-label="Search skills" />
-          {query && <button type="button" onClick={() => setQuery("")} aria-label="Clear search">×</button>}
-        </label>
-      </div>
-
-      <div className="skills-category-grid" aria-label="Skill categories">
-        <button type="button" className={active === "All" ? "skills-category is-active" : "skills-category"} onClick={() => { setActive("All"); setExpanded(false); }}>
-          <span className="skills-category-index">00</span>
-          <span className="skills-category-name">All disciplines</span>
-          <span className="skills-category-count">{skills.length}</span>
-          <ArrowUpRight size={16} />
-        </button>
-        {groups.map((group, index) => (
-          <button type="button" key={group.name} className={active === group.name ? "skills-category is-active" : "skills-category"} onClick={() => { setActive(group.name); setExpanded(false); }}>
-            <span className="skills-category-index">{String(index + 1).padStart(2, "0")}</span>
-            <span className="skills-category-name">{group.name}</span>
-            <span className="skills-category-count">{group.items.length}</span>
-            <ArrowUpRight size={16} />
-          </button>
-        ))}
+        <div className="skills-explorer-controls">
+          <label className="skills-category-select">
+            <span>FILTER BY DISCIPLINE</span>
+            <div className="skills-category-select-control">
+              <select
+                aria-label="Filter skills by discipline"
+                value={active}
+                onChange={(event) => { setActive(event.target.value); setExpanded(false); }}
+              >
+                <option value="All">All disciplines ({skills.length})</option>
+                {groups.map((group) => (
+                  <option key={group.name} value={group.name}>{group.name} ({group.items.length})</option>
+                ))}
+              </select>
+              <ChevronDown size={16} aria-hidden="true" />
+            </div>
+          </label>
+          <label className="skills-search">
+            <Search size={16} aria-hidden="true" />
+            <input value={query} onChange={(event) => { setQuery(event.target.value); setExpanded(false); }} placeholder="Search skills..." aria-label="Search skills" />
+            {query && <button type="button" onClick={() => setQuery("")} aria-label="Clear search">×</button>}
+          </label>
+        </div>
       </div>
 
       <div className="skills-results-head">

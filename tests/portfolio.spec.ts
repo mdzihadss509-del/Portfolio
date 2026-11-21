@@ -47,7 +47,10 @@ test.describe('Portfolio public experience', () => {
     await expect(explorer).toBeVisible();
     await expect(explorer.locator('.skill-card')).toHaveCount(8);
 
-    await explorer.getByRole('button', { name: /Creator Skills/ }).click();
+    const categoryFilter = explorer.getByLabel('Filter skills by discipline');
+    await expect(categoryFilter).toBeVisible();
+    await expect(explorer.locator('.skills-category-grid')).toHaveCount(0);
+    await categoryFilter.selectOption('Creator Skills');
     await expect(explorer.locator('.skills-results-head h3')).toHaveText('Creator Skills');
     await expect(explorer.locator('.skill-card')).toHaveCount(7);
 
@@ -55,11 +58,53 @@ test.describe('Portfolio public experience', () => {
     await expect(explorer.locator('.skill-card')).toHaveCount(1);
     await expect(explorer.locator('.skill-card h4')).toHaveText('Video Editing');
 
-    await explorer.getByRole('button', { name: /All disciplines/ }).click();
+    await categoryFilter.selectOption('All');
     await explorer.getByRole('textbox', { name: 'Search skills' }).fill('');
     await expect(explorer.locator('.skill-card')).toHaveCount(8);
     await explorer.getByRole('button', { name: 'Show all 29 skills' }).click();
     await expect(explorer.locator('.skill-card')).toHaveCount(29);
+  });
+  test('public CMS collections stay compact and can reveal every published entry', async ({ page }) => {
+    await page.goto('/');
+
+    const projects = page.locator('#work [data-expandable-grid]');
+    await expect(projects.locator('.project-reveal')).toHaveCount(4);
+    await expect(projects.locator('.collection-grid-toggle')).toHaveCount(0);
+
+    const services = page.locator('#services [data-expandable-grid]');
+    await expect(services.locator('article')).toHaveCount(4);
+    const showAllServices = page.locator('#services .collection-grid-toggle');
+    await expect(showAllServices).toHaveText(/View all 6 services/);
+    await showAllServices.click();
+    await expect(services.locator('article')).toHaveCount(6);
+    await expect(page.locator('#services .collection-grid-toggle')).toHaveAttribute('aria-expanded', 'true');
+    await page.locator('#services .collection-grid-toggle').click();
+    await expect(services.locator('article')).toHaveCount(4);
+
+    await expect(page.locator('#media-library [data-media-card]')).toHaveCount(1);
+    await expect(page.locator('#media-library .collection-grid-toggle')).toHaveCount(0);
+    await expect(page.locator('#experience .career-group')).toHaveCount(4);
+    await expect(page.locator('#education .career-group')).toHaveCount(4);
+
+    for (const width of [320, 390, 600, 768, 1024, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      const geometry = await page.evaluate(() => {
+        const controls = document.querySelector('.skills-explorer-controls')!.getBoundingClientRect();
+        const filter = document.querySelector('.skills-category-select-control select')!.getBoundingClientRect();
+        const search = document.querySelector('.skills-search')!.getBoundingClientRect();
+        return {
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+          controlsWidth: controls.width,
+          filterRight: filter.right,
+          searchRight: search.right,
+        };
+      });
+      expect(geometry.scrollWidth, `page overflow at ${width}px`).toBeLessThanOrEqual(geometry.clientWidth);
+      expect(geometry.filterRight).toBeLessThanOrEqual(geometry.clientWidth + 1);
+      expect(geometry.searchRight).toBeLessThanOrEqual(geometry.clientWidth + 1);
+      expect(geometry.controlsWidth).toBeGreaterThan(0);
+    }
   });
   test('both themes use solid black or white with no neon glow', async ({ page }) => {
     await page.goto('/');
