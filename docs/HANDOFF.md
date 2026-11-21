@@ -3,7 +3,7 @@
 **Last verified:** 2026-11-21 (Asia/Dhaka)
 **Purpose:** This is the single operational source of truth for continuing the HADES Portfolio project. Start here in every new session. It contains the current project location, live links, code/deployment identity, setup, architecture, recent changes, test evidence, safety constraints and remaining work. Historical notes elsewhere may contain outdated snapshots; this file takes precedence.
 
-> **CURRENT CHECKPOINT — 2026-11-21:** The newest production state and the latest QA evidence are recorded in the first section below. This checkpoint supersedes older dated snapshots further down this document wherever they conflict. Local checkout: `E:\Projects\HadesPortfolio`; branch `main`; commit `2d849af5c0deffd69e028566df22591f9d10a82f`; production deployment `dpl_DPSPdbhxxyHvYJs2D75NQ1GBqXWV` is **READY** and serves https://hades-portfolio-amber.vercel.app/. The post-deploy smoke test returned HTTP 200 for `/` and `/admin`, with no browser console errors and no horizontal overflow at 390px. See **Latest session handoff — 2026-11-21** below for the full verified checklist and remaining owner-only tasks.
+> **CURRENT CHECKPOINT - 2026-11-21 (latest audit):** Local checkout `E:\Projects\HadesPortfolio`, branch `main`, clean working tree, HEAD `d959963a3d4483c0ac2435a697e1b3bdbcdaa21f`, aligned with `origin/main`. Vercel production deployment `dpl_HhUzmzCn6ZMgPmhd6fscJmp8mfx1` is **READY**, sourced from that exact commit, and serves https://hades-portfolio-amber.vercel.app/. Fresh verification: lint, TypeScript, production build, Playwright **32/32**, npm audit **0 vulnerabilities**, and `git diff --check` passed. Live homepage browser checks at 390x844 and 1440x900 found no horizontal overflow or console/page errors. Mobile discipline picker opened with 14 options; its panel stayed inside the viewport. `/` and `/admin` returned HTTP 200. See Section 15 at the end for exact scope and limitations.
 
 ## 1. Project at a glance
 
@@ -24,17 +24,17 @@
 | Production host | Vercel (Hobby) |
 
 **Latest production code commit:**
-`2d849af5c0deffd69e028566df22591f9d10a82f` — Stabilize admin accessibility checks
+`d959963a3d4483c0ac2435a697e1b3bdbcdaa21f` - docs: record discipline picker deployment status
 
 **Latest verified production deployment:**
-- Deployment ID: `dpl_DPSPdbhxxyHvYJs2D75NQ1GBqXWV`
-- Deployment URL: https://hades-portfolio-aoddyt4z1-mdzihadss509-1195.vercel.app
+- Deployment ID: `dpl_HhUzmzCn6ZMgPmhd6fscJmp8mfx1`
+- Deployment URL: https://hades-portfolio-fn6hkjiam-mdzihadss509-1195.vercel.app
 - Production alias: https://hades-portfolio-amber.vercel.app/
 - Target: Production
 - State: **READY**
 - Branch: `main`
-- Source commit: `2d849af5c0deffd69e028566df22591f9d10a82f`
-- Vercel Inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/DPSPdbhxxyHvYJs2D75NQ1GBqXWV
+- Source commit: `d959963a3d4483c0ac2435a697e1b3bdbcdaa21f`
+- Vercel Inspector: https://vercel.com/mdzihadss509-1195/hades-portfolio/HhUzmzCn6ZMgPmhd6fscJmp8mfx1
 
 The production alias and unique deployment URL returned HTTP 200. The latest live HTML confirms title “Zihad | Creator & Developer”, current SEO description, the Hero greeting and BEYOND THE ORDINARY headline; the stale H.HADES title text is absent. Live response headers include HSTS, CSP restrictions and X-Frame-Options DENY. /admin, /robots.txt and /sitemap.xml returned 200; GET /api/contact returned the expected 405; /qa-media-fixture returned the expected production 404; a cross-origin contact POST was rejected with 403. The Vercel runtime-error aggregate reported no errors in the last 24 hours and the most recent 30-minute warning/error runtime-log query returned no entries. Re-check before a future release; this snapshot is dated.
 
@@ -508,3 +508,39 @@ For code changes, run the checks serially (the build and Playwright share genera
 | `git diff --check` | Passed |
 
 Implementation commit `29b67f1` was pushed to `main`. GitHub reports the Vercel commit status as `success` for that SHA. The Vercel account deployment-details API returned 403 in this session, and direct public-page fetch was unavailable; therefore do not claim a fresh post-deploy visual/browser smoke test. The existing production alias remains `https://hades-portfolio-amber.vercel.app/`.
+
+
+## 15. 2026-11-21 - Full regression and production browser audit
+
+### Verified current repository and deployment
+- Local HEAD and origin/main: d959963a3d4483c0ac2435a697e1b3bdbcdaa21f (docs: record discipline picker deployment status).
+- Working tree was clean before this documentation correction.
+- Vercel production deployment dpl_HhUzmzCn6ZMgPmhd6fscJmp8mfx1 is READY, target production, sourced from exact SHA d959963a3d4483c0ac2435a697e1b3bdbcdaa21f.
+- Production / and /admin both returned HTTP 200.
+
+### Fresh local verification (run serially on the authorized Windows PC)
+| Check | Result |
+|---|---|
+| npm run lint | Passed |
+| npx tsc --noEmit | Passed |
+| npm run build | Passed - Next.js 16.4.6 |
+| npm run test:e2e | 32/32 passed |
+| npm audit --audit-level=low | 0 vulnerabilities |
+| git diff --check | Passed |
+
+### Live production browser smoke test (Playwright)
+- Homepage tested at 390x844 and 1440x900; both returned HTTP 200.
+- No horizontal overflow at either viewport; no console errors or uncaught page errors.
+- Mobile discipline picker opened successfully; 14 options were visible. Panel bounds were top 359.8px and bottom 779.8px inside the 844px viewport.
+- Homepage title observed: Zihad | Creator & Developer.
+- /admin HTTP response was 200; this does not constitute authenticated Admin CRUD testing.
+- Full-page mobile screenshot and picker screenshot were saved temporarily under E:\Temp for inspection; they are not project assets.
+
+### Documentation correction
+- This audit found stale top-level handoff metadata still naming commit 2d849af and an older Vercel deployment, despite the later discipline-picker commits. The top checkpoint and current deployment identity have been corrected. Older dated sections remain historical records and are superseded by this section.
+
+### Remaining limitations (not fixed by this audit)
+- Owner-authenticated production Admin CRUD/settings and real Storage upload/replace/delete still require the owner's own authenticated session. Never request password or OTP.
+- Backup/restore drill and Vercel Hobby commercial-use compliance remain outstanding.
+- This was a production homepage browser smoke test plus the full local E2E suite, not exhaustive manual visual testing of every route and every CMS workflow.
+- No application code, Supabase schema/data, credentials, migrations, or owner content were changed during this audit.
