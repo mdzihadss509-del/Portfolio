@@ -106,32 +106,98 @@ test.describe('Portfolio public experience', () => {
       expect(geometry.controlsWidth).toBeGreaterThan(0);
     }
   });
-  test('both themes use solid black or white with no neon glow', async ({ page }) => {
+  test('both themes keep strong contrast, clear panel hierarchy and no neon glow', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto('/');
     await page.evaluate(() => localStorage.removeItem('hades-theme'));
     await page.reload();
+
     const inspectTheme = async (theme: 'dark' | 'light', expected: string) => {
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await expect.poll(() => page.evaluate(() => getComputedStyle(document.body).backgroundColor), { timeout: 5_000 }).toBe(expected);
       const result = await page.evaluate(() => {
-        const elements = Array.from(document.querySelectorAll('html, body, main, .creator-band, .work-section, .media-showcase-card'));
+        const get = (selector: string) => {
+          const element = document.querySelector(selector);
+          return element ? getComputedStyle(element).backgroundColor : '';
+        };
+        const accent = getComputedStyle(document.querySelector('.section-no')!).color;
         const glow = Array.from(document.querySelectorAll('body *')).some((element) => {
           const style = getComputedStyle(element);
           return style.boxShadow !== 'none' || style.textShadow !== 'none' || style.filter !== 'none';
         });
         return {
-          backgrounds: elements.map((element) => getComputedStyle(element).backgroundColor),
+          body: get('body'),
+          main: get('main'),
+          creator: get('.creator-band'),
+          ticker: get('.ticker'),
+          panel: get('.project-card'),
+          accent,
           pageOverlay: getComputedStyle(document.querySelector('main')!, '::before').display,
           glow,
         };
       });
-      expect(result.backgrounds.every((color) => color === expected || color === 'rgba(0, 0, 0, 0)' || color === 'rgb(7, 7, 7)'), JSON.stringify({ theme, expected, backgrounds: result.backgrounds })).toBe(true);
+      expect(result.body).toBe(expected);
+      expect(result.main).toBe(expected);
       expect(result.pageOverlay).toBe('none');
       expect(result.glow).toBe(false);
+      if (theme === 'light') {
+        expect(result.accent).toBe('rgb(33, 91, 216)');
+        expect(result.creator).not.toBe(expected);
+        expect(result.ticker).not.toBe(expected);
+        expect(result.panel).toBe('rgb(255, 255, 255)');
+      }
     };
+
     await inspectTheme('dark', 'rgb(0, 0, 0)');
     await page.getByRole('button', { name: /toggle color theme/i }).click();
     await inspectTheme('light', 'rgb(255, 255, 255)');
+  });
+
+  test('uses the operating system theme by default and preserves a manual theme choice', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    await page.getByRole('button', { name: /toggle color theme/i }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await page.evaluate(() => localStorage.removeItem('hades-theme'));
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  });
+
+  test('buttons provide hover and press feedback, while inputs show clear focus states in both themes', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.goto('/');
+    const cta = page.locator('.nav-cta');
+    await expect(cta).toBeVisible();
+    const transition = await cta.evaluate((element) => getComputedStyle(element).transitionDuration);
+    expect(transition.split(',').some((value) => Number.parseFloat(value) > 0)).toBe(true);
+
+    await cta.hover();
+    const hoverTransform = await cta.evaluate((element) => getComputedStyle(element).transform);
+    expect(hoverTransform).not.toBe('none');
+    const bounds = await cta.boundingBox();
+    expect(bounds).not.toBeNull();
+    await page.mouse.move(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
+    await page.mouse.down();
+    await expect.poll(() => cta.evaluate((element) => getComputedStyle(element).transform)).not.toBe(hoverTransform);
+    await page.mouse.up();
+
+    const field = page.locator('.contact-form input').first();
+    await field.focus();
+    await expect.poll(() => field.evaluate((element) => getComputedStyle(element).borderColor)).toBe('rgb(33, 91, 216)');
+    await expect.poll(() => field.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('solid');
+    await page.getByRole('button', { name: /toggle color theme/i }).click();
+    await field.blur();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   });
   test('responsive layouts have no horizontal page overflow', async ({ page }) => {
     await page.goto('/');
@@ -371,6 +437,7 @@ test.describe('Portfolio public experience', () => {
   });
 
   test('homepage has no serious or critical automated accessibility violations in either theme', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto('/');
     const scanTheme = async (theme: 'dark' | 'light') => {
       const results = await new AxeBuilder({ page }).exclude('iframe').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
