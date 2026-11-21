@@ -1122,7 +1122,7 @@ html[data-theme=light] .orbit-four:before{background:conic-gradient(from 220deg,
   text-transform:uppercase;
 }
 .hero-kicker-line{width:28px;height:1px;background:var(--purple);box-shadow:0 0 12px #9b6cff88}
-.hero-studio-title{
+.hero .hero-studio-title{
   display:flex;
   flex-direction:column;
   align-items:flex-start;
@@ -1130,10 +1130,10 @@ html[data-theme=light] .orbit-four:before{background:conic-gradient(from 220deg,
   margin:0;
   color:var(--text);
   font:800 clamp(57px,7.3vw,104px)/.88 Manrope,sans-serif;
-  letter-spacing:-.092em;
+  letter-spacing:-.055em;
   text-transform:uppercase;
 }
-.hero-studio-title>span{display:block}
+.hero-studio-title>span{display:block;padding-inline-end:.08em}
 .hero-studio-title em{
   display:block;
   margin:12px 0 0 3px;

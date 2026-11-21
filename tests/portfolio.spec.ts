@@ -14,6 +14,55 @@ test.describe('Portfolio public experience', () => {
     const anchors = await page.locator('nav a[href^="#"]').evaluateAll((items) => items.map((item) => item.getAttribute('href')).filter(Boolean));
     for (const href of anchors) await expect(page.locator(href as string)).toHaveCount(1);
   });
+  test('the full ZIHAD headline keeps its final D visible across breakpoints and themes', async ({ page }) => {
+    await page.goto('/');
+    const viewports = [320, 390, 768, 1024, 1440];
+
+    for (const theme of ['dark', 'light'] as const) {
+      await page.evaluate((value) => {
+        document.documentElement.dataset.theme = value;
+        document.documentElement.style.colorScheme = value;
+      }, theme);
+
+      for (const width of viewports) {
+        await page.setViewportSize({ width, height: 900 });
+        const geometry = await page.locator('.hero-studio-title > span').evaluate((element) => {
+          const title = element as HTMLElement;
+          const copy = title.closest('.hero-studio-copy') as HTMLElement | null;
+          const textNode = title.firstChild;
+          const lastGlyph = document.createRange();
+
+          if (!copy || !textNode) throw new Error('The ZIHAD name or its copy container is missing.');
+
+          lastGlyph.setStart(textNode, Math.max(0, textNode.textContent!.length - 1));
+          lastGlyph.setEnd(textNode, textNode.textContent!.length);
+
+          const spanRect = title.getBoundingClientRect();
+          const copyRect = copy.getBoundingClientRect();
+          const glyphRect = lastGlyph.getBoundingClientRect();
+          const style = getComputedStyle(title);
+          const fontSize = Number.parseFloat(style.fontSize);
+
+          return {
+            spanRight: spanRect.right,
+            copyRight: copyRect.right,
+            glyphWidth: glyphRect.width,
+            glyphRight: glyphRect.right,
+            letterSpacingRatio: Number.parseFloat(style.letterSpacing) / fontSize,
+            rightPaddingRatio: Number.parseFloat(style.paddingRight) / fontSize,
+            overflow: style.overflowX,
+          };
+        });
+
+        expect(geometry.glyphWidth, `final D is missing at ${width}px in ${theme} mode`).toBeGreaterThan(0);
+        expect(geometry.glyphRight, `final D exceeds its name box at ${width}px in ${theme} mode`).toBeLessThanOrEqual(geometry.spanRight + 1);
+        expect(geometry.spanRight, `name box exceeds its copy column at ${width}px in ${theme} mode`).toBeLessThan(geometry.copyRight);
+        expect(geometry.letterSpacingRatio).toBeGreaterThanOrEqual(-0.06);
+        expect(geometry.rightPaddingRatio).toBeGreaterThanOrEqual(0.07);
+        expect(geometry.overflow).toBe('visible');
+      }
+    }
+  });
   test('experience and education stay compact until a pathway is expanded', async ({ page }) => {
     await page.goto('/');
     const experienceGroups = page.locator('#experience .career-group');
