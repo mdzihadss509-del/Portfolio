@@ -5,9 +5,10 @@ import { useEffect, useRef } from 'react';
 type RevealProps = {
   children: React.ReactNode;
   className?: string;
+  variant?: 'rise' | 'mask' | 'grid';
 };
 
-export default function Reveal({ children, className = '' }: RevealProps) {
+export default function Reveal({ children, className = '', variant = 'rise' }: RevealProps) {
   const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,7 +38,11 @@ export default function Reveal({ children, className = '' }: RevealProps) {
   }, []);
 
   return (
-    <div ref={elementRef} className={['reveal', className].filter(Boolean).join(' ')}>
+    <div
+      ref={elementRef}
+      className={['reveal', className].filter(Boolean).join(' ')}
+      data-reveal-variant={variant}
+    >
       {children}
     </div>
   );

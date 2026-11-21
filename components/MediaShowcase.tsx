@@ -335,7 +335,7 @@ export default function MediaShowcase({ assets }: { assets: MediaAsset[] }) {
       {filteredAssets.length ? (
         <ExpandableGrid className="media-showcase-grid" initialCount={6} itemLabel="media assets">
           {filteredAssets.map((asset, index) => (
-            <Reveal key={asset.id} className="media-card-reveal">
+            <Reveal key={asset.id} className="media-card-reveal" variant="grid">
               <MediaAssetCard asset={asset} index={index}/>
             </Reveal>
           ))}

@@ -471,3 +471,34 @@ test.describe('Admin entry', () => {
     await expect(page.getByText(/no default password or public signup/i)).toBeVisible();
   });
 });
+
+test.describe('Jitter-inspired motion system', () => {
+  test('project masks, media reveals and compact section rhythm work with reduced-motion support', async ({ page }) => {
+    await page.goto('/');
+    const project = page.locator('.project-reveal').first();
+    await expect(project).toHaveAttribute('data-reveal-variant', 'mask');
+    await project.scrollIntoViewIfNeeded();
+    await expect.poll(() => project.locator('.project-art').evaluate((element) => getComputedStyle(element).clipPath)).toBe('inset(0px)');
+
+    const media = page.locator('.media-card-reveal').first();
+    if (await media.count()) {
+      await expect(media).toHaveAttribute('data-reveal-variant', 'grid');
+      await media.scrollIntoViewIfNeeded();
+      await expect.poll(() => media.locator('.media-showcase-image-button').evaluate((element) => getComputedStyle(element).clipPath)).toBe('inset(0px)');
+    }
+
+    const sectionSpacing = await page.locator('#about').evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop));
+    expect(sectionSpacing).toBeLessThanOrEqual(92);
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.reload();
+    const reduced = await page.locator('.project-reveal .project-art').first().evaluate((element) => ({
+      clipPath: getComputedStyle(element).clipPath,
+      transform: getComputedStyle(element).transform,
+      transitionDuration: getComputedStyle(element).transitionDuration,
+    }));
+    expect(reduced.clipPath).toBe('none');
+    expect(reduced.transform).toBe('none');
+    expect(reduced.transitionDuration).toBe('0s');
+  });
+});

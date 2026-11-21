@@ -3703,3 +3703,168 @@ html[data-theme="light"] .icon-button .theme-toggle-moon { display: block; }
 @media (prefers-reduced-motion: reduce) {
   .collection-grid-toggle svg { transition: none; }
 }
+
+
+/* HADES motion direction: Jitter-inspired masks, sequenced reveals and tighter editorial rhythm. */
+@media (min-width: 761px) {
+  .section {
+    padding-block: clamp(66px, 6.1vw, 92px);
+  }
+  .career-section {
+    padding-block: 62px;
+  }
+  .work-heading {
+    padding: 36px 0 30px;
+  }
+}
+@media (max-width: 760px) {
+  .section {
+    padding-block: 54px;
+  }
+  .career-section {
+    padding-block: 48px;
+  }
+  .work-heading {
+    padding: 30px 0 24px;
+  }
+}
+.about-grid,
+.contact-grid {
+  gap: clamp(28px, 5.2vw, 68px);
+}
+.skills-layout {
+  gap: clamp(28px, 5vw, 64px);
+}
+.project-grid,
+.services-grid,
+.career-grid {
+  column-gap: 14px;
+  row-gap: 14px;
+}
+.section-head {
+  position: relative;
+}
+.section-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 1px;
+  background: var(--brand-accent);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal.is-visible .section-head::after {
+    animation: hades-section-rule .85s .12s cubic-bezier(.22, 1, .36, 1) forwards;
+  }
+
+  /* Project artwork unfolds like a masked editorial image, while the card stays in place. */
+  .project-reveal[data-reveal-variant="mask"] .project-art {
+    clip-path: inset(0 0 100% 0);
+    transform: scale(1.035);
+    transform-origin: 50% 50%;
+    transition:
+      clip-path .88s cubic-bezier(.22, 1, .36, 1),
+      transform 1.05s cubic-bezier(.22, 1, .36, 1);
+  }
+  .project-reveal.is-visible[data-reveal-variant="mask"] .project-art {
+    clip-path: inset(0);
+    transform: scale(1);
+  }
+  .project-reveal .art-lines {
+    transition: transform 1.1s cubic-bezier(.22, 1, .36, 1);
+  }
+  .project-reveal.is-visible .art-lines {
+    transform: translate3d(0, 0, 0) rotate(-9deg);
+  }
+
+  /* Media grid reveal is sequenced per card and keeps image movement inside its frame. */
+  .media-card-reveal[data-reveal-variant="grid"] .media-showcase-image-button,
+  .media-card-reveal[data-reveal-variant="grid"] .media-showcase-file {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path .82s cubic-bezier(.22, 1, .36, 1);
+  }
+  .media-card-reveal.is-visible[data-reveal-variant="grid"] .media-showcase-image-button,
+  .media-card-reveal.is-visible[data-reveal-variant="grid"] .media-showcase-file {
+    clip-path: inset(0);
+  }
+  .media-showcase-image-button {
+    overflow: hidden;
+  }
+  .media-showcase-image-button img {
+    transform: scale(1.055) translateY(1.2%);
+    transition: transform 1.15s cubic-bezier(.22, 1, .36, 1);
+    will-change: transform;
+  }
+  .media-showcase-item:hover .media-showcase-image-button img {
+    transform: scale(1.105) translateY(-.4%);
+  }
+
+  .reveal.is-visible .career-group,
+  .reveal.is-visible .career-feature {
+    animation: portfolio-item-rise .64s cubic-bezier(.22, 1, .36, 1) both;
+  }
+  .reveal.is-visible .career-grid > :nth-child(2) { animation-delay: 70ms; }
+  .reveal.is-visible .career-grid > :nth-child(3) { animation-delay: 140ms; }
+  .reveal.is-visible .career-grid > :nth-child(4) { animation-delay: 210ms; }
+
+  .career-group[open] .career-items {
+    animation: hades-detail-open .34s cubic-bezier(.22, 1, .36, 1) both;
+    transform-origin: top;
+  }
+  .media-showcase-filters button,
+  .collection-grid-toggle {
+    transition:
+      transform .24s cubic-bezier(.22, 1, .36, 1),
+      color .2s ease,
+      border-color .2s ease,
+      background-color .2s ease;
+  }
+  .media-showcase-filters button:hover,
+  .collection-grid-toggle:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes hades-section-rule {
+  from { width: 0; }
+  to { width: clamp(34px, 5vw, 64px); }
+}
+@keyframes hades-detail-open {
+  from { opacity: 0; transform: translateY(-7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* A tighter title mask adds a deliberate Jitter-like reveal without changing type or copy. */
+@keyframes hades-hero-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    clip-path: inset(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-head::after {
+    animation: none !important;
+    width: clamp(34px, 5vw, 64px);
+  }
+  .project-reveal[data-reveal-variant="mask"] .project-art,
+  .media-card-reveal[data-reveal-variant="grid"] .media-showcase-image-button,
+  .media-card-reveal[data-reveal-variant="grid"] .media-showcase-file,
+  .media-showcase-image-button img {
+    clip-path: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .career-group[open] .career-items {
+    animation: none !important;
+  }
+}
