@@ -3,7 +3,7 @@
 **Last verified:** 2026-11-21 (Asia/Dhaka)
 **Purpose:** This is the single operational source of truth for continuing the HADES Portfolio project. Start here in every new session. It contains the current project location, live links, code/deployment identity, setup, architecture, recent changes, test evidence, safety constraints and remaining work. Historical notes elsewhere may contain outdated snapshots; this file takes precedence.
 
-> **CURRENT CHECKPOINT - 2026-11-21 (handoff updated):** Local checkout `E:\Projects\HadesPortfolio`, branch `main`, clean working tree, HEAD `631cc4d31f3e2eb66e77257a131329f897e1ecd4`, aligned with `origin/main`. This is a documentation-only handoff update; the latest verified application deployment is `dpl_CofYeZiviuTkr911sScAjK1iXhGt`, **READY**, from application/QA commit `f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f`. Production alias: https://hades-portfolio-amber.vercel.app/. Application verification: ESLint, TypeScript, Next.js build, Playwright **32/32**, npm audit (**0 vulnerabilities**), and `git diff --check` passed. Post-deployment browser smoke: `/` HTTP 200 at 390x844 and 1440x900, no overflow or console/page errors; `/admin` HTTP 200; mobile picker shows 14 options within viewport. The documentation-only commit 631cc4d was pushed and its Vercel production build was still starting at the time of this handoff update.
+> **CURRENT CHECKPOINT - 2026-11-21 (handoff updated):** Local checkout `E:\Projects\HadesPortfolio`, branch `main`, clean working tree, synced with `origin/main`. The latest repository change is a documentation-only handoff update. The latest independently verified application deployment is `dpl_CofYeZiviuTkr911sScAjK1iXhGt`, **READY**, from application/QA commit `f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f`. Production alias: https://hades-portfolio-amber.vercel.app/. Application verification: ESLint, TypeScript, Next.js build, Playwright **32/32**, npm audit (**0 vulnerabilities**), and `git diff --check` passed. Post-deployment browser smoke: `/` HTTP 200 at 390x844 and 1440x900, no overflow or console/page errors; `/admin` HTTP 200; mobile picker shows 14 options within viewport. The documentation-only handoff commit triggers a Vercel deployment but does not change application source.
 
 ## 1. Project at a glance
 
@@ -549,9 +549,9 @@ Implementation commit `29b67f1` was pushed to `main`. GitHub reports the Vercel 
 ## 16. 2026-11-21 - Latest fix handoff and post-deployment confirmation
 
 ### Latest repository and production state
-- Verified application/QA baseline: f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f; latest repository HEAD after this documentation update: 631cc4d31f3e2eb66e77257a131329f897e1ecd4 (docs-only).
-- The handoff metadata was stale and referenced the previous commit/deployment. It was corrected and pushed; documentation-only commit 631cc4d updates this handoff.
-- Last verified application deployment dpl_CofYeZiviuTkr911sScAjK1iXhGt is READY, target production, branch main, source SHA f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f. The documentation-only commit 631cc4d triggered a separate production build; it was BUILDING when this handoff was finalized. Production alias: https://hades-portfolio-amber.vercel.app/.
+- Verified application/QA baseline: f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f. The latest repository commit is a documentation-only update to this handoff; see the GitHub main branch for its current SHA.
+- The handoff metadata was stale and referenced the previous commit/deployment. It has now been corrected and pushed to the GitHub main branch.
+- Last independently verified application deployment dpl_CofYeZiviuTkr911sScAjK1iXhGt is READY, target production, branch main, source SHA f39b24d1ef9bc1c8cb4748cbd722e4e0e8db0d8f. The latest handoff-only commit triggers a separate production build; it does not modify application code. Production alias: https://hades-portfolio-amber.vercel.app/.
 
 ### Regression checks confirmed for the current application state
 | Check | Result |
