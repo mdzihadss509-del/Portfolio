@@ -617,6 +617,9 @@ test.describe('Admin entry', () => {
     for (const theme of ['dark', 'light'] as const) {
       await page.emulateMedia({ colorScheme: theme });
       await page.goto('/admin');
+      await page.locator('.login-card').evaluate(async (element) => {
+        await Promise.all(element.getAnimations().map((animation) => animation.finished));
+      });
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
       const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact || ''));
       expect(serious, `${theme} admin sign-in: ${JSON.stringify(serious.map((item) => ({ id: item.id, help: item.help, nodes: item.nodes.length })), null, 2)}`).toEqual([]);
