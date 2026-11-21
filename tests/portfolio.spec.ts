@@ -132,6 +132,7 @@ test.describe('Portfolio public experience', () => {
           ticker: get('.ticker'),
           panel: get('.project-card'),
           accent,
+          redAccent: getComputedStyle(document.documentElement).getPropertyValue('--red').trim(),
           pageOverlay: getComputedStyle(document.querySelector('main')!, '::before').display,
           glow,
         };
@@ -140,6 +141,9 @@ test.describe('Portfolio public experience', () => {
       expect(result.main).toBe(expected);
       expect(result.pageOverlay).toBe('none');
       expect(result.glow).toBe(false);
+      if (theme === 'dark') {
+        expect(result.redAccent).toBe('#e65c68');
+      }
       if (theme === 'light') {
         expect(result.accent).toBe('rgb(33, 91, 216)');
         expect(result.creator).not.toBe(expected);
