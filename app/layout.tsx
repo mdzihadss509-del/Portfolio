@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './premium-consistency.css';
 import { getPortfolioData } from '@/lib/public-data';
 
 export const dynamic = 'force-dynamic';
