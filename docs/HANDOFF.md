@@ -479,7 +479,7 @@ git remote -v
 git rev-parse HEAD
 ```
 
-Expected HEAD: `2d849af5c0deffd69e028566df22591f9d10a82f`. If Git has advanced since this handoff, trust the actual remote/deployment state after checking it; do not reset or overwrite unexplained changes.
+Expected HEAD at the 2026-11-21 discipline-picker checkpoint: `29b67f1` (`feat: improve mobile discipline picker`). If Git has advanced since this handoff, trust the actual remote/deployment state after checking it; do not reset or overwrite unexplained changes.
 
 For code changes, run the checks serially (the build and Playwright share generated Next.js output): `npm run lint`, `npx tsc --noEmit`, `npm run build`, `npm run test:e2e`, `npm audit --audit-level=low`, and `git diff --check`. Review the diff before committing. Push only the approved intended changes, then verify Vercel's deployment uses the exact pushed SHA and is READY.
 
@@ -507,4 +507,4 @@ For code changes, run the checks serially (the build and Playwright share genera
 | Responsive overflow suite | Passed as part of full E2E |
 | `git diff --check` | Passed |
 
-Production deployment is pending the push of this change. After pushing, verify the exact commit's Vercel deployment reaches READY and smoke-test the live homepage before describing this fix as live.
+Implementation commit `29b67f1` was pushed to `main`. GitHub reports the Vercel commit status as `success` for that SHA. The Vercel account deployment-details API returned 403 in this session, and direct public-page fetch was unavailable; therefore do not claim a fresh post-deploy visual/browser smoke test. The existing production alias remains `https://hades-portfolio-amber.vercel.app/`.
