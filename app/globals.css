@@ -4362,3 +4362,10 @@ html[data-theme="light"] .skills-category-select-control select:focus {
     transform: none !important;
   }
 }
+
+
+/* Dark theme media labels meet WCAG AA contrast on charcoal surfaces. */
+:root {
+  --red: #e65c68;
+  --brand-secondary: #e65c68;
+}
